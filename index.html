@@ -3,171 +3,1300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Looksmax AI Pro · Professional Face Analysis</title>
+    <title>Looksmax AI Pro v5.0 · Professional Face Analysis</title>
     <link rel="manifest" href="data:application/json,{}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous">
     </script>
     <style>
-        /* ===== CSS (giữ nguyên từ bản trước, đã tối ưu) ===== */
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-        :root{--primary:#7c6cf0;--primary-dark:#6a5cdb;--secondary:#a188ff;--bg-primary:#0a0c10;--bg-card:rgba(18,20,28,0.92);--text-primary:#f0f2f5;--text-secondary:#a0a7b5;--text-muted:#5f687b;--border-color:rgba(255,255,255,0.06);--success:#4ade80;--warning:#fbbf24;--danger:#ef4444;--radius:24px;--radius-sm:14px;--shadow:0 20px 60px rgba(0,0,0,0.7);--transition:0.3s cubic-bezier(0.4,0,0.2,1)}
-        html,body{background:var(--bg-primary);color:var(--text-primary);min-height:100vh;min-height:100dvh;overflow:hidden;user-select:none;-webkit-tap-highlight-color:transparent}
-        #app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:480px;margin:0 auto;background:var(--bg-card);backdrop-filter:blur(30px) saturate(180%);-webkit-backdrop-filter:blur(30px) saturate(180%);box-shadow:var(--shadow);border-left:1px solid var(--border-color);border-right:1px solid var(--border-color);position:relative;overflow:hidden}
-        .app-header{display:flex;align-items:center;gap:10px;padding:8px 14px 6px;border-bottom:1px solid var(--border-color);flex-shrink:0;background:rgba(0,0,0,0.2);backdrop-filter:blur(10px);z-index:10}
-        .app-header .logo{color:var(--primary);font-size:18px;background:rgba(124,108,240,0.12);padding:5px 7px;border-radius:10px}
-        .app-header h1{font-size:16px;font-weight:700;background:linear-gradient(135deg,#d9c9ff,var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .app-header .badge{margin-left:auto;font-size:7px;font-weight:600;color:var(--secondary);background:rgba(161,136,255,0.1);padding:2px 8px;border-radius:20px;border:1px solid rgba(161,136,255,0.1)}
-        .app-content{flex:1;overflow-y:auto;overflow-x:hidden;padding:8px 10px 70px;scroll-behavior:smooth}
-        .app-content::-webkit-scrollbar{width:3px}
-        .app-content::-webkit-scrollbar-track{background:transparent}
-        .app-content::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:10px}
-        .camera-section{position:relative;border-radius:var(--radius);overflow:hidden;background:#0c0e12;aspect-ratio:1/1;width:100%;max-height:360px;border:1px solid var(--border-color);box-shadow:inset 0 0 60px rgba(0,0,0,0.5);flex-shrink:0}
-        #video{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1)}
-        #image-preview{width:100%;height:100%;object-fit:cover;display:none}
-        #overlay-canvas{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
-        .quality-status{position:absolute;top:8px;left:8px;z-index:7;display:flex;flex-direction:column;gap:3px}
-        .quality-badge{font-size:8px;font-weight:600;padding:2px 10px;border-radius:20px;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border:1px solid var(--border-color);color:var(--text-muted);transition:all var(--transition)}
-        .quality-badge.good{color:var(--success);border-color:rgba(74,222,128,0.2)}
-        .quality-badge.warning{color:var(--warning);border-color:rgba(251,191,36,0.2)}
-        .quality-badge.error{color:var(--danger);border-color:rgba(239,68,68,0.2)}
-        .detection-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:55%;height:72%;border:2px solid rgba(124,108,240,0.15);border-radius:50%;pointer-events:none;z-index:2;transition:all 0.5s ease}
-        .detection-box.face-detected{border-color:rgba(74,222,128,0.2);opacity:0.3}
-        .detection-box.quality-ok{border-color:rgba(74,222,128,0.3)}
-        .detection-text{position:absolute;bottom:10%;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.2);font-size:9px;letter-spacing:0.5px;pointer-events:none;z-index:2;white-space:nowrap;transition:all 0.5s ease}
-        .detection-text.face-detected{color:rgba(74,222,128,0.3)}
-        .laser-scan{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4;overflow:hidden;opacity:0;transition:opacity 0.5s ease;border-radius:var(--radius)}
-        .laser-scan.active{opacity:1}
-        .laser-line{position:absolute;top:-2px;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--primary),var(--secondary),var(--primary),transparent);box-shadow:0 0 40px rgba(124,108,240,0.3);animation:laserMove 2.5s ease-in-out infinite}
-        @keyframes laserMove{0%{top:-2px;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
-        .camera-controls{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:6;background:rgba(0,0,0,0.5);backdrop-filter:blur(12px);padding:3px 6px;border-radius:30px;border:1px solid rgba(255,255,255,0.05)}
-        .cam-btn{background:rgba(255,255,255,0.05);border:none;color:#c8d0dc;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all var(--transition)}
-        .cam-btn:active{transform:scale(0.9)}
-        .cam-btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;box-shadow:0 4px 20px rgba(124,108,240,0.3);width:40px;height:40px;font-size:15px}
-        .cam-btn.primary:active{transform:scale(0.85)}
-        .cam-btn.active{background:rgba(74,222,128,0.15);color:var(--success)}
-        #file-input{display:none}
-        .scan-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);display:none;flex-direction:column;justify-content:center;align-items:center;z-index:20;border-radius:var(--radius);animation:fadeInOverlay 0.5s ease}
-        .scan-overlay.active{display:flex}
-        @keyframes fadeInOverlay{from{opacity:0;transform:scale(0.98)}to{opacity:1;transform:scale(1)}}
-        .scan-animation{position:relative;width:80px;height:80px;margin-bottom:16px}
-        .scan-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;animation:ringSpin 2s cubic-bezier(0.4,0,0.2,1) infinite}
-        .scan-ring:nth-child(1){border-top-color:var(--primary);animation-delay:0s}
-        .scan-ring:nth-child(2){border-right-color:var(--secondary);animation-delay:0.4s;inset:8px}
-        .scan-ring:nth-child(3){border-bottom-color:var(--primary);animation-delay:0.8s;inset:16px}
-        @keyframes ringSpin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-        .scan-center-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px;color:var(--primary);animation:pulseIcon 1.5s ease-in-out infinite}
-        @keyframes pulseIcon{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.1);opacity:0.7}}
-        .scan-title{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:2px}
-        .scan-subtitle{font-size:12px;color:var(--text-secondary);margin-bottom:4px}
-        .scan-steps{display:flex;gap:10px;margin:10px 0 12px;flex-wrap:wrap;justify-content:center}
-        .scan-step-item{display:flex;flex-direction:column;align-items:center;gap:3px;opacity:0.3;transition:all 0.5s ease;min-width:50px}
-        .scan-step-item.active{opacity:1}
-        .scan-step-item.done{opacity:0.6}
-        .scan-step-item .step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;background:rgba(255,255,255,0.04);color:var(--text-muted);border:1px solid rgba(255,255,255,0.04);transition:all 0.5s ease}
-        .scan-step-item.active .step-icon{background:rgba(124,108,240,0.15);color:var(--primary);border-color:rgba(124,108,240,0.15);box-shadow:0 0 30px rgba(124,108,240,0.05)}
-        .scan-step-item.done .step-icon{background:rgba(74,222,128,0.1);color:var(--success);border-color:rgba(74,222,128,0.1)}
-        .scan-step-item .step-label{font-size:7px;font-weight:500;color:var(--text-muted);text-align:center;text-transform:uppercase;letter-spacing:0.3px}
-        .scan-step-item.active .step-label{color:var(--text-secondary)}
-        .scan-step-item.done .step-label{color:var(--text-muted)}
-        .scan-progress-wrap{width:180px;height:3px;background:rgba(255,255,255,0.04);border-radius:4px;overflow:hidden;margin-top:4px}
-        .scan-progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:4px;transition:width 0.5s ease;width:0%}
-        .quality-warning{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(239,68,68,0.15);backdrop-filter:blur(10px);padding:6px 14px;border-radius:20px;border:1px solid rgba(239,68,68,0.2);color:var(--danger);font-size:10px;font-weight:500;display:none;z-index:7;white-space:nowrap;text-align:center}
-        .quality-warning.show{display:block;animation:fadeIn 0.3s ease}
-        .results-section{margin-top:10px;display:none;animation:slideUp 0.6s cubic-bezier(0.4,0,0.2,1)}
-        .results-section.active{display:block}
-        @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        .score-header{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(124,108,240,0.04);border-radius:var(--radius-sm);border:1px solid rgba(124,108,240,0.06);margin-bottom:8px}
-        .score-left{display:flex;align-items:baseline;gap:4px}
-        .score-left .label{font-size:11px;color:var(--text-secondary)}
-        .score-number{font-size:30px;font-weight:800;background:linear-gradient(135deg,#d9c9ff,var(--secondary),var(--primary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px}
-        .score-max{font-size:12px;font-weight:300;color:var(--text-muted)}
-        .score-right{display:flex;gap:5px;flex-wrap:wrap}
-        .score-badge{font-size:9px;font-weight:500;padding:2px 10px;border-radius:20px;display:flex;align-items:center;gap:3px}
-        .score-badge.shape{color:var(--secondary);background:rgba(161,136,255,0.08);border:1px solid rgba(161,136,255,0.08)}
-        .score-badge.rating{color:var(--warning);background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.08)}
-        .score-badge.confidence{color:var(--text-secondary);background:rgba(255,255,255,0.04);border:1px solid var(--border-color)}
-        .overall-bar{width:100%;height:3px;background:rgba(255,255,255,0.04);border-radius:4px;overflow:hidden;margin:4px 0 8px}
-        .overall-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:4px;transition:width 1.2s ease;width:0%}
-        .metrics-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin:6px 0 8px}
-        .metric-card{background:rgba(255,255,255,0.02);border-radius:var(--radius-sm);padding:6px 8px;border:1px solid var(--border-color);transition:all var(--transition)}
-        .metric-card .label{font-size:7px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;display:flex;align-items:center;gap:3px}
-        .metric-card .label i{font-size:7px;color:var(--primary)}
-        .metric-card .value{font-size:14px;font-weight:700;color:var(--text-primary);margin-top:1px}
-        .metric-card .bar-mini{width:100%;height:2px;background:rgba(255,255,255,0.04);border-radius:4px;margin-top:2px;overflow:hidden}
-        .metric-card .bar-mini-fill{height:100%;border-radius:4px;transition:width 1s ease}
-        .gr-card{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(161,136,255,0.04);border-radius:var(--radius-sm);border:1px solid rgba(161,136,255,0.06);margin:4px 0 8px}
-        .gr-card .label{font-size:10px;color:var(--text-secondary)}
-        .gr-card .value{font-size:16px;font-weight:700;color:var(--secondary);min-width:40px}
-        .gr-card .bar{flex:1;height:3px;background:rgba(255,255,255,0.04);border-radius:4px;overflow:hidden}
-        .gr-card .bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:4px;transition:width 1.2s ease}
-        .ai-report{background:linear-gradient(135deg,rgba(124,108,240,0.04),rgba(161,136,255,0.02));border-radius:var(--radius-sm);padding:12px 14px;border:1px solid rgba(124,108,240,0.06);margin:8px 0;position:relative;overflow:hidden}
-        .ai-report::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--secondary))}
-        .ai-report .report-header{display:flex;align-items:center;gap:6px;margin-bottom:6px}
-        .ai-report .report-header .icon{font-size:16px;color:var(--primary)}
-        .ai-report .report-header .title{font-size:13px;font-weight:600;color:var(--text-primary)}
-        .ai-report .report-header .badge-ai{margin-left:auto;font-size:7px;font-weight:600;color:var(--primary);background:rgba(124,108,240,0.1);padding:2px 8px;border-radius:12px;border:1px solid rgba(124,108,240,0.05)}
-        .ai-report .report-content{font-size:12px;line-height:1.7;color:#d2d9e8}
-        .ai-report .report-content .section{margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.03)}
-        .ai-report .report-content .section:first-child{border-top:none;margin-top:0;padding-top:0}
-        .ai-report .report-content .section-title{font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:4px;font-size:11px;margin-bottom:3px}
-        .ai-report .report-content .section-title .emoji{font-size:12px}
-        .ai-report .report-content .highlight-success{color:var(--success)}
-        .ai-report .report-content .highlight-warning{color:var(--warning)}
-        .ai-report .report-content .highlight-primary{color:var(--secondary)}
-        .ai-report .report-content .bullet{padding-left:14px;position:relative;margin:1px 0}
-        .ai-report .report-content .bullet::before{content:'•';position:absolute;left:0;color:var(--primary)}
-        .improvement-plan{display:grid;grid-template-columns:1fr 1fr;gap:3px 6px;margin-top:4px}
-        .improvement-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#c8d0dc;padding:2px 0}
-        .improvement-item .point{font-weight:600;color:var(--primary);min-width:14px}
-        .improvement-item .gain{font-size:9px;color:var(--text-muted);margin-left:auto}
-        .share-row{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
-        .btn{background:rgba(255,255,255,0.04);border:1px solid var(--border-color);padding:5px 12px;border-radius:30px;color:var(--text-primary);font-weight:500;font-size:10px;display:inline-flex;align-items:center;justify-content:center;gap:4px;transition:all var(--transition);cursor:pointer;flex:1;min-height:30px}
-        .btn:active{transform:scale(0.95)}
-        .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-color:var(--primary);color:white;box-shadow:0 4px 20px rgba(124,108,240,0.2)}
-        .btn-success{background:linear-gradient(135deg,var(--success),#22c55e);border-color:var(--success);color:white}
-        .btn-sm{padding:2px 8px;font-size:8px;min-height:22px;flex:0 1 auto}
-        .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:480px;width:100%;display:flex;justify-content:space-around;padding:4px 10px 8px;background:rgba(10,12,16,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border-color);z-index:50}
-        .nav-item{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:var(--text-muted);font-size:7px;font-weight:500;cursor:pointer;transition:all var(--transition);padding:2px 8px;border-radius:10px;position:relative}
-        .nav-item i{font-size:14px;transition:all var(--transition)}
-        .nav-item.active{color:var(--primary)}
-        .nav-item.active i{transform:translateY(-2px)}
-        .nav-item .badge-dot{position:absolute;top:0px;right:2px;width:4px;height:4px;background:var(--primary);border-radius:50%;display:none}
-        .nav-item .badge-dot.show{display:block}
-        .page{display:none;animation:fadePage 0.3s ease}
-        .page.active{display:block}
-        @keyframes fadePage{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-        .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-        .page-header h2{font-size:14px;font-weight:600;color:var(--text-primary)}
-        .page-header .count{font-size:10px;color:var(--text-muted)}
-        .history-list{display:flex;flex-direction:column;gap:4px}
-        .history-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:var(--radius-sm);border:1px solid var(--border-color);cursor:pointer;transition:all var(--transition)}
-        .history-item:hover{background:rgba(255,255,255,0.04);border-color:rgba(124,108,240,0.1)}
-        .history-item .left{display:flex;flex-direction:column;gap:1px}
-        .history-item .left .date{font-size:9px;color:var(--text-muted)}
-        .history-item .left .score-small{font-size:12px;font-weight:600;color:var(--text-primary)}
-        .history-item .right{display:flex;align-items:center;gap:5px}
-        .history-item .right .shape-tag{font-size:8px;color:var(--secondary);background:rgba(161,136,255,0.08);padding:1px 8px;border-radius:10px}
-        .history-item .right .arrow{color:var(--text-muted);font-size:10px}
-        .empty-state{text-align:center;padding:24px 12px;color:var(--text-muted)}
-        .empty-state i{font-size:28px;margin-bottom:6px;opacity:0.3}
-        .empty-state p{font-size:12px}
-        .settings-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
-        .settings-group .group-title{font-size:9px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;padding-left:4px}
-        .settings-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:var(--radius-sm);border:1px solid var(--border-color)}
-        .settings-item .label{font-size:11px;color:var(--text-secondary);display:flex;align-items:center;gap:5px}
-        .settings-item .label i{font-size:12px;color:var(--text-muted);width:16px}
-        .toggle{width:32px;height:18px;background:rgba(255,255,255,0.06);border-radius:12px;position:relative;cursor:pointer;transition:all var(--transition);flex-shrink:0}
-        .toggle.active{background:var(--primary)}
-        .toggle .knob{width:12px;height:12px;background:white;border-radius:50%;position:absolute;top:3px;left:3px;transition:all var(--transition)}
-        .toggle.active .knob{left:17px}
-        .toast{position:fixed;bottom:65px;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(16,18,24,0.95);backdrop-filter:blur(20px);padding:6px 16px;border-radius:12px;border:1px solid var(--border-color);box-shadow:0 10px 40px rgba(0,0,0,0.6);color:var(--text-primary);font-size:11px;z-index:1000;transition:all 0.5s ease;opacity:0;pointer-events:none;display:flex;align-items:center;gap:5px;max-width:90%}
-        .toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
-        .toast i{font-size:12px;color:var(--primary)}
-        @media(max-width:480px){.app-content{padding:6px 8px 60px}.camera-section{max-height:300px;border-radius:18px}.metrics-grid{grid-template-columns:1fr 1fr 1fr;gap:3px}.metric-card{padding:4px 6px}.metric-card .value{font-size:12px}.score-number{font-size:26px}.scan-steps{gap:6px}.scan-step-item{min-width:40px}.improvement-plan{grid-template-columns:1fr}.ai-report{padding:10px 12px}.camera-controls .cam-btn{width:28px;height:28px;font-size:10px}.camera-controls .cam-btn.primary{width:36px;height:36px;font-size:13px}}
-        @media(max-width:380px){.metrics-grid{grid-template-columns:1fr 1fr}.camera-section{max-height:240px}.score-number{font-size:22px}.scan-animation{width:60px;height:60px}.scan-center-icon{font-size:18px}}
-        @media(max-width:340px){.metrics-grid{grid-template-columns:1fr 1fr;gap:2px}.metric-card{padding:3px 5px}.metric-card .value{font-size:11px}.btn{font-size:9px;padding:3px 8px;min-height:24px}}
+        /* ============================================================
+           CSS VARIABLES & RESET
+           ============================================================ */
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5a4bd1;
+            --primary-glow: rgba(108, 92, 231, 0.3);
+            --secondary: #a29bfe;
+            --bg-primary: #0a0c10;
+            --bg-card: rgba(16, 18, 24, 0.92);
+            --text-primary: #f0f2f5;
+            --text-secondary: #a0a7b5;
+            --text-muted: #5f687b;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #e17055;
+            --radius: 24px;
+            --radius-sm: 14px;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        html,
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: var(--shadow);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .app-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px 6px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .app-header .logo {
+            color: var(--primary);
+            font-size: 20px;
+            background: rgba(108, 92, 231, 0.12);
+            padding: 6px 8px;
+            border-radius: 10px;
+        }
+
+        .app-header h1 {
+            font-size: 17px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d9c9ff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-header .badge {
+            margin-left: auto;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+            background: rgba(162, 155, 254, 0.1);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(162, 155, 254, 0.1);
+        }
+
+        .app-header .badge i {
+            font-size: 6px;
+            margin-right: 3px;
+        }
+
+        /* ============================================================
+           CAMERA SECTION - FULL SCREEN
+           ============================================================ */
+        .camera-section {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            background: #0a0c10;
+            overflow: hidden;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: scaleX(-1);
+        }
+
+        #image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        #overlay-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* ============================================================
+           GUIDANCE OVERLAY
+           ============================================================ */
+        .guidance-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .guidance-oval {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55%;
+            height: 75%;
+            border: 2px solid rgba(108, 92, 231, 0.15);
+            border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+
+        .guidance-oval.face-detected {
+            border-color: rgba(0, 184, 148, 0.2);
+            opacity: 0.3;
+        }
+
+        .guidance-oval.quality-ok {
+            border-color: rgba(0, 184, 148, 0.3);
+        }
+
+        .guidance-text {
+            position: absolute;
+            bottom: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-align: center;
+            transition: all 0.5s ease;
+            white-space: nowrap;
+        }
+
+        .guidance-text.face-detected {
+            color: rgba(0, 184, 148, 0.3);
+        }
+
+        /* ============================================================
+           QUALITY INDICATORS
+           ============================================================ */
+        .quality-indicators {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 7;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .quality-badge {
+            font-size: 8px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            transition: all var(--transition);
+        }
+
+        .quality-badge.good {
+            color: var(--success);
+            border-color: rgba(0, 184, 148, 0.2);
+        }
+
+        .quality-badge.warning {
+            color: var(--warning);
+            border-color: rgba(253, 203, 110, 0.2);
+        }
+
+        .quality-badge.error {
+            color: var(--danger);
+            border-color: rgba(225, 112, 85, 0.2);
+        }
+
+        /* ============================================================
+           STATUS WARNING
+           ============================================================ */
+        .status-warning {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(225, 112, 85, 0.12);
+            backdrop-filter: blur(10px);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(225, 112, 85, 0.2);
+            color: var(--danger);
+            font-size: 10px;
+            font-weight: 500;
+            display: none;
+            z-index: 7;
+            text-align: center;
+            max-width: 85%;
+        }
+
+        .status-warning.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* ============================================================
+           CAMERA CONTROLS
+           ============================================================ */
+        .camera-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 6;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(16px);
+            padding: 6px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cam-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: none;
+            color: #c8d0dc;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+        }
+
+        .cam-btn:active {
+            transform: scale(0.9);
+        }
+
+        .cam-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 24px rgba(108, 92, 231, 0.3);
+            width: 52px;
+            height: 52px;
+            font-size: 18px;
+        }
+
+        .cam-btn.primary:active {
+            transform: scale(0.85);
+        }
+
+        .cam-btn .ripple {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(108, 92, 231, 0.15);
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        .cam-btn.active {
+            background: rgba(0, 184, 148, 0.15);
+            color: var(--success);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* ============================================================
+           LASER SCAN
+           ============================================================ */
+        .laser-scan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 4;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .laser-scan.active {
+            opacity: 1;
+        }
+
+        .laser-line {
+            position: absolute;
+            top: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), var(--primary), transparent);
+            box-shadow: 0 0 60px rgba(108, 92, 231, 0.3);
+            animation: laserMove 2.8s ease-in-out infinite;
+        }
+
+        @keyframes laserMove {
+            0% {
+                top: -2px;
+                opacity: 0;
+            }
+            8% {
+                opacity: 1;
+            }
+            92% {
+                opacity: 1;
+            }
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        .laser-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(108, 92, 231, 0.02), transparent 70%);
+        }
+
+        /* ============================================================
+           AI SCAN OVERLAY
+           ============================================================ */
+        .scan-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(24px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            animation: fadeInOverlay 0.5s ease;
+        }
+
+        .scan-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .scan-animation {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .scan-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: ringSpin 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .scan-ring:nth-child(1) {
+            border-top-color: var(--primary);
+            animation-delay: 0s;
+        }
+
+        .scan-ring:nth-child(2) {
+            border-right-color: var(--secondary);
+            animation-delay: 0.4s;
+            inset: 12px;
+        }
+
+        .scan-ring:nth-child(3) {
+            border-bottom-color: var(--primary);
+            animation-delay: 0.8s;
+            inset: 24px;
+        }
+
+        @keyframes ringSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .scan-center-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            color: var(--primary);
+            animation: pulseIcon 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.6;
+            }
+        }
+
+        .scan-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .scan-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .scan-progress-wrap {
+            width: 220px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .scan-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        /* ============================================================
+           RESULTS SECTION
+           ============================================================ */
+        .results-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 70%;
+            background: var(--bg-card);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-top-left-radius: var(--radius);
+            border-top-right-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            padding: 16px 16px 80px;
+            transform: translateY(100%);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 15;
+            overflow-y: auto;
+        }
+
+        .results-section.active {
+            transform: translateY(0);
+        }
+
+        .results-section::-webkit-scrollbar {
+            width: 3px;
+        }
+        .results-section::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .results-section::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .results-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 0 auto 12px;
+        }
+
+        /* Score Header */
+        .score-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: rgba(108, 92, 231, 0.04);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(108, 92, 231, 0.06);
+            margin-bottom: 10px;
+        }
+
+        .score-left {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .score-left .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .score-number {
+            font-size: 34px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d9c9ff, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .score-max {
+            font-size: 13px;
+            font-weight: 300;
+            color: var(--text-muted);
+        }
+
+        .score-right {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .score-badge {
+            font-size: 9px;
+            font-weight: 500;
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .score-badge.shape {
+            color: var(--secondary);
+            background: rgba(162, 155, 254, 0.08);
+            border: 1px solid rgba(162, 155, 254, 0.08);
+        }
+
+        .score-badge.rating {
+            color: var(--warning);
+            background: rgba(253, 203, 110, 0.08);
+            border: 1px solid rgba(253, 203, 110, 0.08);
+        }
+
+        .score-badge.confidence {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+        }
+
+        .overall-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 4px 0 10px;
+        }
+
+        .overall-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 1.2s ease;
+            width: 0%;
+        }
+
+        /* Golden Ratio */
+        .gr-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            background: rgba(162, 155, 254, 0.04);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(162, 155, 254, 0.06);
+            margin: 4px 0 10px;
+        }
+
+        .gr-card .label {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .gr-card .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--secondary);
+            min-width: 44px;
+        }
+
+        .gr-card .bar {
+            flex: 1;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .gr-card .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 1.2s ease;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 4px;
+            margin: 6px 0 8px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            padding: 6px 8px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition);
+        }
+
+        .metric-card .label {
+            font-size: 7px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .metric-card .label i {
+            font-size: 7px;
+            color: var(--primary);
+        }
+
+        .metric-card .value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 1px;
+        }
+
+        .metric-card .bar-mini {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin-top: 2px;
+            overflow: hidden;
+        }
+
+        .metric-card .bar-mini-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Radar Chart */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            margin: 6px 0 10px;
+        }
+
+        .chart-container .title {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        #radarChart {
+            width: 100%;
+            max-height: 140px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+           RECOMMENDATIONS
+           ============================================================ */
+        .rec-section {
+            margin: 8px 0;
+        }
+
+        .rec-section .title {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rec-section .title i {
+            font-size: 10px;
+            color: var(--primary);
+        }
+
+        .rec-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 8px;
+        }
+
+        .rec-item {
+            font-size: 11px;
+            color: #c8d0dc;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 0;
+        }
+
+        .rec-item i {
+            font-size: 10px;
+            color: var(--secondary);
+            width: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+           SHARE
+           ============================================================ */
+        .share-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: all var(--transition);
+            cursor: pointer;
+            flex: 1;
+            min-height: 32px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00a381);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 2px 10px;
+            font-size: 8px;
+            min-height: 24px;
+            flex: 0 1 auto;
+        }
+
+        /* ============================================================
+           BOTTOM NAV
+           ============================================================ */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 12px 10px;
+            background: rgba(10, 12, 16, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            z-index: 50;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 7px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            padding: 2px 10px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 16px;
+            transition: all var(--transition);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item.active i {
+            transform: translateY(-2px);
+        }
+
+        .nav-item .badge-dot {
+            position: absolute;
+            top: 1px;
+            right: 2px;
+            width: 5px;
+            height: 5px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: none;
+        }
+
+        .nav-item .badge-dot.show {
+            display: block;
+        }
+
+        /* ============================================================
+           HISTORY PAGE
+           ============================================================ */
+        .page {
+            display: none;
+            animation: fadePage 0.3s ease;
+            padding: 8px 10px 70px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadePage {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .page-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .page-header .count {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(108, 92, 231, 0.1);
+        }
+
+        .history-item .left {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .history-item .left .date {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+
+        .history-item .left .score-small {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .history-item .right {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .history-item .right .shape-tag {
+            font-size: 8px;
+            color: var(--secondary);
+            background: rgba(162, 155, 254, 0.08);
+            padding: 1px 8px;
+            border-radius: 10px;
+        }
+
+        .history-item .right .arrow {
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 16px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 32px;
+            margin-bottom: 8px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+        }
+
+        /* ============================================================
+           SETTINGS
+           ============================================================ */
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .settings-group .group-title {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-left: 4px;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-item .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .settings-item .label i {
+            font-size: 13px;
+            color: var(--text-muted);
+            width: 18px;
+        }
+
+        .toggle {
+            width: 36px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle .knob {
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: all var(--transition);
+        }
+
+        .toggle.active .knob {
+            left: 19px;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(16, 18, 24, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 8px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            color: var(--text-primary);
+            font-size: 12px;
+            z-index: 1000;
+            transition: all 0.5s ease;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast i {
+            font-size: 13px;
+            color: var(--primary);
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 480px) {
+            .guidance-oval {
+                width: 60%;
+                height: 72%;
+            }
+
+            .guidance-text {
+                font-size: 10px;
+                bottom: 15%;
+            }
+
+            .camera-controls {
+                padding: 4px 10px;
+                gap: 6px;
+            }
+
+            .cam-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 12px;
+            }
+
+            .cam-btn.primary {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 3px;
+            }
+
+            .metric-card {
+                padding: 4px 6px;
+            }
+
+            .metric-card .value {
+                font-size: 13px;
+            }
+
+            .score-number {
+                font-size: 28px;
+            }
+
+            .results-section {
+                padding: 12px 12px 70px;
+                max-height: 65%;
+            }
+
+            .scan-animation {
+                width: 80px;
+                height: 80px;
+            }
+
+            .scan-center-icon {
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .guidance-oval {
+                width: 65%;
+                height: 68%;
+            }
+
+            .cam-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 10px;
+            }
+
+            .cam-btn.primary {
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
+            }
+
+            .score-number {
+                font-size: 24px;
+            }
+
+            .rec-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 340px) {
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 2px;
+            }
+
+            .metric-card {
+                padding: 3px 5px;
+            }
+
+            .metric-card .value {
+                font-size: 11px;
+            }
+
+            .btn {
+                font-size: 9px;
+                padding: 4px 8px;
+                min-height: 26px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -178,38 +1307,46 @@
         <header class="app-header">
             <i class="fas fa-wand-magic-sparkles logo"></i>
             <h1>Looksmax AI</h1>
-            <span class="badge"><i class="fas fa-bolt"></i> PRO</span>
+            <span class="badge"><i class="fas fa-bolt"></i> v5.0</span>
         </header>
 
         <!-- ===== CONTENT ===== -->
-        <div class="app-content" id="appContent">
+        <div style="flex:1;position:relative;overflow:hidden;">
 
-            <!-- ====== HOME PAGE ====== -->
-            <div class="page active" id="page-home">
+            <!-- ====== HOME ====== -->
+            <div class="page active" id="page-home" style="padding:0;display:flex;flex-direction:column;">
 
-                <!-- Camera Section -->
+                <!-- Camera -->
                 <div class="camera-section">
                     <video id="video" playsinline autoplay></video>
                     <img id="image-preview" alt="Preview" />
                     <canvas id="overlay-canvas"></canvas>
 
-                    <div class="quality-status" id="qualityStatus">
+                    <!-- Guidance -->
+                    <div class="guidance-overlay">
+                        <div class="guidance-oval" id="guidanceOval">
+                            <div class="guidance-text" id="guidanceText">📸 Đặt khuôn mặt vào khung</div>
+                        </div>
+                    </div>
+
+                    <!-- Quality -->
+                    <div class="quality-indicators" id="qualityIndicators">
                         <span class="quality-badge" id="qualityBadge">
-                            <i class="fas fa-circle" style="font-size:5px;margin-right:3px;"></i>
+                            <i class="fas fa-circle" style="font-size:4px;margin-right:3px;"></i>
                             Đang khởi tạo...
                         </span>
                     </div>
 
-                    <div class="detection-box" id="detectionBox">
-                        <div class="detection-text" id="detectionText">📸 Đặt khuôn mặt vào khung</div>
-                    </div>
+                    <!-- Status Warning -->
+                    <div class="status-warning" id="statusWarning"></div>
 
+                    <!-- Laser Scan -->
                     <div class="laser-scan" id="laserScan">
                         <div class="laser-line"></div>
+                        <div class="laser-glow"></div>
                     </div>
 
-                    <div class="quality-warning" id="qualityWarning"></div>
-
+                    <!-- Camera Controls -->
                     <div class="camera-controls">
                         <button class="cam-btn" id="cameraSwitchBtn" title="Đổi camera">
                             <i class="fas fa-rotate"></i>
@@ -218,6 +1355,7 @@
                             <i class="fas fa-image"></i>
                         </button>
                         <button class="cam-btn primary" id="captureBtn" title="Phân tích AI">
+                            <span class="ripple"></span>
                             <i class="fas fa-brain"></i>
                         </button>
                     </div>
@@ -234,33 +1372,8 @@
                             <i class="fas fa-brain"></i>
                         </div>
                     </div>
-
                     <div class="scan-title" id="scanTitle">🔬 Đang phân tích</div>
                     <div class="scan-subtitle" id="scanSubtitle">AI đang đánh giá cấu trúc gương mặt</div>
-
-                    <div class="scan-steps" id="scanSteps">
-                        <div class="scan-step-item" data-step="0">
-                            <div class="step-icon"><i class="fas fa-camera"></i></div>
-                            <span class="step-label">Ảnh</span>
-                        </div>
-                        <div class="scan-step-item" data-step="1">
-                            <div class="step-icon"><i class="fas fa-face-smile"></i></div>
-                            <span class="step-label">Khuôn mặt</span>
-                        </div>
-                        <div class="scan-step-item" data-step="2">
-                            <div class="step-icon"><i class="fas fa-bezier-curve"></i></div>
-                            <span class="step-label">Cấu trúc</span>
-                        </div>
-                        <div class="scan-step-item" data-step="3">
-                            <div class="step-icon"><i class="fas fa-divide"></i></div>
-                            <span class="step-label">Tỷ lệ</span>
-                        </div>
-                        <div class="scan-step-item" data-step="4">
-                            <div class="step-icon"><i class="fas fa-chart-simple"></i></div>
-                            <span class="step-label">Điểm số</span>
-                        </div>
-                    </div>
-
                     <div class="scan-progress-wrap">
                         <div class="scan-progress-fill" id="scanProgress"></div>
                     </div>
@@ -268,7 +1381,9 @@
 
                 <!-- ===== RESULTS ===== -->
                 <div class="results-section" id="resultsSection">
+                    <div class="results-handle"></div>
 
+                    <!-- Score -->
                     <div class="score-header">
                         <div class="score-left">
                             <span class="label">Tổng điểm</span>
@@ -292,94 +1407,86 @@
                         <div class="overall-bar-fill" id="overallBar"></div>
                     </div>
 
+                    <!-- Golden Ratio -->
                     <div class="gr-card">
                         <span class="label">📐 Tỷ lệ vàng</span>
                         <span class="value" id="grValue">--%</span>
                         <div class="bar"><div class="bar-fill" id="grBar" style="width:0%"></div></div>
                     </div>
 
+                    <!-- Metrics -->
                     <div class="metrics-grid" id="metricsGrid">
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-grip-lines"></i> Jawline</div>
                             <div class="value" id="jawline">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="jawlineBar" style="width:0%;background:linear-gradient(90deg,#8b7cf7,#a188ff)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="jawlineBar" style="width:0%;background:linear-gradient(90deg,#6c5ce7,#a29bfe)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-eye"></i> Eyes</div>
                             <div class="value" id="eyes">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="eyesBar" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="eyesBar" style="width:0%;background:linear-gradient(90deg,#fdcb6e,#f39c12)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-arrows-up-down"></i> Eyebrows</div>
                             <div class="value" id="eyebrows">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="eyebrowsBar" style="width:0%;background:linear-gradient(90deg,#f472b6,#ec4899)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="eyebrowsBar" style="width:0%;background:linear-gradient(90deg,#fd79a8,#e84393)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-nose"></i> Nose</div>
                             <div class="value" id="nose">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="noseBar" style="width:0%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="noseBar" style="width:0%;background:linear-gradient(90deg,#00b894,#00a381)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-mouth"></i> Lips</div>
                             <div class="value" id="lips">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="lipsBar" style="width:0%;background:linear-gradient(90deg,#f472b6,#ec4899)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="lipsBar" style="width:0%;background:linear-gradient(90deg,#fd79a8,#e84393)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-arrows-left-right"></i> Symmetry</div>
                             <div class="value" id="symmetry">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="symmetryBar" style="width:0%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="symmetryBar" style="width:0%;background:linear-gradient(90deg,#00b894,#00a381)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-gem"></i> Harmony</div>
                             <div class="value" id="harmony">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="harmonyBar" style="width:0%;background:linear-gradient(90deg,#a188ff,#8b7cf7)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="harmonyBar" style="width:0%;background:linear-gradient(90deg,#a29bfe,#6c5ce7)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-circle"></i> Skin</div>
                             <div class="value" id="skin">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="skinBar" style="width:0%;background:linear-gradient(90deg,#a188ff,#8b7cf7)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="skinBar" style="width:0%;background:linear-gradient(90deg,#a29bfe,#6c5ce7)"></div></div>
                         </div>
                         <div class="metric-card">
                             <div class="label"><i class="fas fa-cut"></i> Hair</div>
                             <div class="value" id="hair">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="hairBar" style="width:0%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="hairBar" style="width:0%;background:linear-gradient(90deg,#fdcb6e,#f39c12)"></div></div>
                         </div>
                     </div>
 
-                    <div class="ai-report" id="aiReport">
-                        <div class="report-header">
-                            <span class="icon">🤖</span>
-                            <span class="title">Phân tích AI</span>
-                            <span class="badge-ai"><i class="fas fa-circle" style="font-size:4px;color:var(--success);margin-right:3px;"></i> Xác thực</span>
-                        </div>
-                        <div class="report-content" id="reportContent">
-                            <div class="section">
-                                <div class="section-title"><span class="emoji">📋</span> Tổng quan</div>
-                                <div id="reportOverview">Chưa có dữ liệu</div>
-                            </div>
-                            <div class="section">
-                                <div class="section-title"><span class="emoji">💪</span> Điểm mạnh</div>
-                                <div id="reportStrengths">Chưa có dữ liệu</div>
-                            </div>
-                            <div class="section">
-                                <div class="section-title"><span class="emoji">📈</span> Cần cải thiện</div>
-                                <div id="reportWeaknesses">Chưa có dữ liệu</div>
-                            </div>
-                            <div class="section">
-                                <div class="section-title"><span class="emoji">🎯</span> Kế hoạch cải thiện</div>
-                                <div id="reportPlan">Chưa có dữ liệu</div>
-                            </div>
+                    <!-- Radar Chart -->
+                    <div class="chart-container">
+                        <div class="title">📊 Phân tích tổng hợp</div>
+                        <canvas id="radarChart"></canvas>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="rec-section">
+                        <div class="title"><i class="fas fa-lightbulb"></i> Gợi ý cải thiện</div>
+                        <div class="rec-grid" id="recGrid">
+                            <div class="rec-item"><i class="fas fa-cut"></i> <span id="recHair">--</span></div>
+                            <div class="rec-item"><i class="fas fa-camera"></i> <span id="recAngle">--</span></div>
+                            <div class="rec-item"><i class="fas fa-spa"></i> <span id="recSkincare">--</span></div>
+                            <div class="rec-item"><i class="fas fa-dumbbell"></i> <span id="recGym">--</span></div>
                         </div>
                     </div>
 
+                    <!-- Share -->
                     <div class="share-row">
                         <button class="btn btn-primary" id="shareBtn"><i class="fas fa-share-alt"></i> Chia sẻ</button>
                         <button class="btn btn-success" id="exportBtn"><i class="fas fa-download"></i> Xuất</button>
                         <button class="btn" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
                     </div>
-
                 </div>
-
             </div>
 
             <!-- ====== HISTORY PAGE ====== -->
@@ -437,7 +1544,7 @@
                     <div class="group-title">Thông tin</div>
                     <div class="settings-item">
                         <span class="label"><i class="fas fa-code"></i> Version</span>
-                        <span style="font-size:10px;color:var(--text-muted);">v4.1 Pro</span>
+                        <span style="font-size:10px;color:var(--text-muted);">v5.0 Pro</span>
                     </div>
                     <div class="settings-item">
                         <span class="label"><i class="fas fa-face-smile"></i> AI Engine</span>
@@ -445,7 +1552,7 @@
                     </div>
                     <div class="settings-item">
                         <span class="label"><i class="fas fa-bolt"></i> Analysis</span>
-                        <span style="font-size:10px;color:var(--text-muted);">Multi-frame + Image</span>
+                        <span style="font-size:10px;color:var(--text-muted);">Multi-frame + Median</span>
                     </div>
                 </div>
             </div>
@@ -478,17 +1585,30 @@
     </div>
 
     <!-- ============================================================
-    SCRIPTS
+    SCRIPTS - MODULAR ARCHITECTURE
     ============================================================ -->
     <script>
         /**
          * ============================================================
-         * LOOKSMAX AI PRO v4.1 - Professional Face Analysis
-         * Fixed: Image upload works, history stores images
+         * LOOKSMAX AI PRO v5.0 - Professional Face Analysis
+         * 
+         * Architecture:
+         * - camera.js: Camera management
+         * - faceMesh.js: MediaPipe FaceMesh wrapper
+         * - quality.js: Quality check system
+         * - normalization.js: Landmark normalization
+         * - measurements.js: 30+ facial metrics
+         * - scoring.js: Data-driven scoring
+         * - recommendation.js: AI recommendations
+         * - history.js: LocalStorage management
+         * - ui.js: UI rendering & animations
+         * - animation.js: Scan animations
          * ============================================================
          */
 
-        // ===== DOM REFS =====
+        // ============================================================
+        // MODULE: DOM REFS
+        // ============================================================
         const DOM = {
             video: document.getElementById('video'),
             imagePreview: document.getElementById('image-preview'),
@@ -498,16 +1618,15 @@
             captureBtn: document.getElementById('captureBtn'),
             uploadBtn: document.getElementById('uploadBtn'),
             cameraSwitchBtn: document.getElementById('cameraSwitchBtn'),
-            detectionBox: document.getElementById('detectionBox'),
-            detectionText: document.getElementById('detectionText'),
+            guidanceOval: document.getElementById('guidanceOval'),
+            guidanceText: document.getElementById('guidanceText'),
+            qualityBadge: document.getElementById('qualityBadge'),
+            statusWarning: document.getElementById('statusWarning'),
             laserScan: document.getElementById('laserScan'),
             scanOverlay: document.getElementById('scanOverlay'),
             scanProgress: document.getElementById('scanProgress'),
-            scanSteps: document.getElementById('scanSteps'),
             scanTitle: document.getElementById('scanTitle'),
             scanSubtitle: document.getElementById('scanSubtitle'),
-            qualityBadge: document.getElementById('qualityBadge'),
-            qualityWarning: document.getElementById('qualityWarning'),
             resultsSection: document.getElementById('resultsSection'),
             overallScore: document.getElementById('overallScore'),
             overallBar: document.getElementById('overallBar'),
@@ -516,10 +1635,6 @@
             confidenceText: document.getElementById('confidenceText'),
             grValue: document.getElementById('grValue'),
             grBar: document.getElementById('grBar'),
-            reportOverview: document.getElementById('reportOverview'),
-            reportStrengths: document.getElementById('reportStrengths'),
-            reportWeaknesses: document.getElementById('reportWeaknesses'),
-            reportPlan: document.getElementById('reportPlan'),
             historyList: document.getElementById('historyList'),
             historyCount: document.getElementById('historyCount'),
             historyDot: document.getElementById('historyDot'),
@@ -534,9 +1649,13 @@
             overlayToggle: document.getElementById('overlayToggle'),
             historyToggle: document.getElementById('historyToggle'),
             exportDataBtn: document.getElementById('exportDataBtn'),
+            radarChart: document.getElementById('radarChart'),
+            recHair: document.getElementById('recHair'),
+            recAngle: document.getElementById('recAngle'),
+            recSkincare: document.getElementById('recSkincare'),
+            recGym: document.getElementById('recGym'),
         };
 
-        // Metric elements
         const METRIC_ELS = {
             jawline: { el: document.getElementById('jawline'), bar: document.getElementById('jawlineBar') },
             eyes: { el: document.getElementById('eyes'), bar: document.getElementById('eyesBar') },
@@ -549,7 +1668,9 @@
             hair: { el: document.getElementById('hair'), bar: document.getElementById('hairBar') },
         };
 
-        // ===== STATE =====
+        // ============================================================
+        // MODULE: STATE
+        // ============================================================
         const STATE = {
             cameraStream: null,
             cameraActive: false,
@@ -567,20 +1688,122 @@
             currentResults: null,
             qualityOk: false,
             frameBuffer: [],
-            currentImageData: null, // Store image for analysis
             isImageMode: false,
+            qualityIssues: [],
+            captureCount: 0,
         };
 
-        // ===== LOAD HISTORY =====
+        // ============================================================
+        // MODULE: HISTORY
+        // ============================================================
         function loadHistory() {
             try {
-                const saved = localStorage.getItem('looksmax_history');
+                const saved = localStorage.getItem('looksmax_history_v5');
                 STATE.history = saved ? JSON.parse(saved) : [];
             } catch (e) { STATE.history = []; }
         }
         loadHistory();
 
-        // ===== TOAST =====
+        function saveHistoryEntry(result, imageData) {
+            if (!DOM.historyToggle?.classList.contains('active')) return;
+
+            const entry = {
+                id: Date.now(),
+                time: new Date().toLocaleTimeString(),
+                date: new Date().toLocaleDateString(),
+                timestamp: Date.now(),
+                score: result.overall.toFixed(1),
+                faceShape: result.faceShape,
+                goldenRatio: result.goldenRatio.toFixed(0),
+                confidence: result.confidence.toFixed(0),
+                image: imageData || null,
+                metrics: {
+                    jawline: result.jawline.toFixed(1),
+                    eyes: result.eyes.toFixed(1),
+                    eyebrows: result.eyebrows.toFixed(1),
+                    nose: result.nose.toFixed(1),
+                    lips: result.lips.toFixed(1),
+                    symmetry: result.symmetry.toFixed(1),
+                    harmony: result.harmony.toFixed(1),
+                    skin: result.skin.toFixed(1),
+                    hair: result.hair.toFixed(1),
+                }
+            };
+
+            STATE.history.unshift(entry);
+            if (STATE.history.length > 50) STATE.history.pop();
+
+            try {
+                localStorage.setItem('looksmax_history_v5', JSON.stringify(STATE.history));
+            } catch (e) {}
+
+            renderHistory();
+        }
+
+        function renderHistory() {
+            if (!DOM.historyList) return;
+            if (STATE.history.length === 0) {
+                DOM.historyList.innerHTML =
+                    `<div class="empty-state"><i class="fas fa-clock-rotate-left"></i><p>Chưa có đánh giá nào</p></div>`;
+                DOM.historyCount.textContent = '0 mục';
+                DOM.historyDot?.classList.remove('show');
+                return;
+            }
+            DOM.historyList.innerHTML = STATE.history.map((item, index) => `
+                    <div class="history-item" onclick="loadHistory(${index})">
+                        <div class="left">
+                            <span class="score-small">${item.score}/10</span>
+                            <span class="date">${item.date} · ${item.time}</span>
+                        </div>
+                        <div class="right">
+                            <span class="shape-tag">${item.faceShape || '--'}</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </div>
+                    </div>
+                `).join('');
+            DOM.historyCount.textContent = STATE.history.length + ' mục';
+            DOM.historyDot?.classList.add('show');
+        }
+
+        window.loadHistory = function(index) {
+            const item = STATE.history[index];
+            if (!item) return;
+
+            navigateTo('page-home');
+
+            if (item.image && DOM.imagePreview) {
+                DOM.imagePreview.src = item.image;
+                DOM.imagePreview.style.display = 'block';
+                DOM.video.style.display = 'none';
+                STATE.isImageMode = true;
+            }
+
+            const result = {
+                overall: parseFloat(item.score),
+                faceShape: item.faceShape,
+                goldenRatio: parseFloat(item.goldenRatio || 50),
+                confidence: parseFloat(item.confidence || 85),
+                jawline: parseFloat(item.metrics?.jawline || 5),
+                eyes: parseFloat(item.metrics?.eyes || 5),
+                eyebrows: parseFloat(item.metrics?.eyebrows || 5),
+                nose: parseFloat(item.metrics?.nose || 5),
+                lips: parseFloat(item.metrics?.lips || 5),
+                symmetry: parseFloat(item.metrics?.symmetry || 5),
+                harmony: parseFloat(item.metrics?.harmony || 5),
+                skin: parseFloat(item.metrics?.skin || 5),
+                hair: parseFloat(item.metrics?.hair || 5),
+                valid: true
+            };
+
+            STATE.currentResults = result;
+            displayResults(result);
+            generateRecommendations(result);
+            showToast(`📊 Đã tải kết quả lúc ${item.time}`, 'success');
+        };
+
+        // ============================================================
+        // MODULE: TOAST
+        // ============================================================
         function showToast(msg, type = 'success') {
             if (!DOM.toast || !DOM.toastMessage) return;
             DOM.toastMessage.textContent = msg;
@@ -593,7 +1816,9 @@
             DOM.toast._timeout = setTimeout(() => DOM.toast.classList.remove('show'), 3000);
         }
 
-        // ===== UTILITY =====
+        // ============================================================
+        // MODULE: UTILITY
+        // ============================================================
         function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
 
         function dist(p1, p2) {
@@ -629,7 +1854,54 @@
             return result;
         }
 
-        // ===== FACEMESH INIT =====
+        // ============================================================
+        // MODULE: CAMERA
+        // ============================================================
+        function startCamera(facing = 'user') {
+            if (STATE.cameraStream) { stopCamera(); }
+            navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: facing,
+                        width: { ideal: 400 },
+                        height: { ideal: 400 }
+                    }
+                })
+                .then(stream => {
+                    STATE.cameraStream = stream;
+                    DOM.video.srcObject = stream;
+                    DOM.video.play().catch(e => console.warn('Video play error:', e));
+                    STATE.cameraActive = true;
+                    STATE.isImageMode = false;
+                    DOM.imagePreview.style.display = 'none';
+                    DOM.video.style.display = 'block';
+                    updateQualityStatus({ status: 'ready', message: '📸 Camera đã sẵn sàng' });
+                })
+                .catch(err => {
+                    console.error('Camera error:', err);
+                    showToast('⚠️ Không thể truy cập camera. Hãy tải ảnh lên.', 'error');
+                    DOM.uploadBtn.click();
+                });
+        }
+
+        function stopCamera() {
+            if (STATE.cameraStream) {
+                STATE.cameraStream.getTracks().forEach(t => t.stop());
+                STATE.cameraStream = null;
+            }
+            STATE.cameraActive = false;
+            DOM.video.srcObject = null;
+            DOM.video.style.display = 'none';
+        }
+
+        function switchCamera() {
+            STATE.cameraFacing = STATE.cameraFacing === 'user' ? 'environment' : 'user';
+            startCamera(STATE.cameraFacing);
+            showToast(`🔄 Đã chuyển sang camera ${STATE.cameraFacing === 'user' ? 'trước' : 'sau'}`, 'info');
+        }
+
+        // ============================================================
+        // MODULE: FACEMESH
+        // ============================================================
         function initFaceMesh() {
             if (STATE.faceMesh || !window.FaceMesh) {
                 if (!window.FaceMesh) { setTimeout(initFaceMesh, 1000); }
@@ -659,47 +1931,102 @@
             }
         }
 
-        // ===== QUALITY CHECK =====
+        // ============================================================
+        // MODULE: QUALITY CHECK
+        // ============================================================
         function checkQuality(landmarks) {
             const issues = [];
             let qualityScore = 100;
+
             if (!landmarks || landmarks.length === 0) {
                 return { ok: false, issues: ['Không tìm thấy khuôn mặt'], score: 0 };
             }
+
             const nose = getLM(landmarks, 1);
             const lEye = getLM(landmarks, 33);
             const rEye = getLM(landmarks, 263);
             const chin = getLM(landmarks, 152);
+
+            // Face size
             const faceSize = dist(lEye, rEye);
-            if (faceSize < 0.05) { issues.push('Khuôn mặt quá nhỏ'); qualityScore -= 30; }
+            if (faceSize < 0.04) { issues.push('Khuôn mặt quá nhỏ, hãy đến gần hơn');
+                qualityScore -= 30; }
+
+            // Head pose - yaw
             const eyeCenter = { x: (lEye.x + rEye.x) / 2, y: (lEye.y + rEye.y) / 2 };
-            const yaw = (nose.x - eyeCenter.x) * 100;
-            if (Math.abs(yaw) > 15) { issues.push('Nhìn thẳng vào camera'); qualityScore -= 20; }
-            const pitch = (nose.y - chin.y) * 50;
-            if (Math.abs(pitch) > 10) { issues.push('Điều chỉnh góc mặt'); qualityScore -= 15; }
+            const yaw = (nose.x - eyeCenter.x) * 120;
+            if (Math.abs(yaw) > 12) { issues.push('Vui lòng nhìn thẳng vào camera');
+                qualityScore -= 25; }
+
+            // Head pose - pitch
+            const pitch = (nose.y - chin.y) * 60;
+            if (Math.abs(pitch) > 8) { issues.push('Điều chỉnh góc mặt thẳng hơn');
+                qualityScore -= 20; }
+
+            // Eye openness
             const lEyeTop = getLM(landmarks, 159);
             const lEyeBottom = getLM(landmarks, 145);
             const eyeOpen = dist(lEyeTop, lEyeBottom);
-            if (eyeOpen < 0.01) { issues.push('Mở mắt'); qualityScore -= 25; }
+            if (eyeOpen < 0.008) { issues.push('Mắt đang nhắm, hãy mở mắt');
+                qualityScore -= 30; }
+
+            // Face centered
             const cx = (lEye.x + rEye.x + chin.x + nose.x) / 4;
-            if (Math.abs(cx - 0.5) > 0.15) { issues.push('Đặt mặt vào giữa khung'); qualityScore -= 10; }
+            if (Math.abs(cx - 0.5) > 0.12) { issues.push('Đặt khuôn mặt vào giữa khung');
+                qualityScore -= 15; }
+
             const ok = qualityScore >= 70 && issues.length === 0;
             return { ok, issues, score: clamp(qualityScore, 0, 100) };
         }
 
-        // ===== LANDMARK NORMALIZATION =====
+        function updateQualityStatus(status) {
+            if (!DOM.qualityBadge) return;
+            if (status.status === 'ready') {
+                DOM.qualityBadge.className = 'quality-badge good';
+                DOM.qualityBadge.innerHTML =
+                    `<i class="fas fa-circle" style="font-size:4px;margin-right:3px;"></i> ${status.message}`;
+                DOM.statusWarning?.classList.remove('show');
+                DOM.guidanceOval?.classList.add('quality-ok');
+                return;
+            }
+            if (status.ok) {
+                DOM.qualityBadge.className = 'quality-badge good';
+                DOM.qualityBadge.innerHTML =
+                    `<i class="fas fa-circle" style="font-size:4px;margin-right:3px;"></i> Chất lượng tốt`;
+                DOM.statusWarning?.classList.remove('show');
+                DOM.guidanceOval?.classList.add('quality-ok');
+            } else {
+                DOM.qualityBadge.className = 'quality-badge error';
+                const issue = status.issues?.[0] || 'Chất lượng kém';
+                DOM.qualityBadge.innerHTML =
+                    `<i class="fas fa-circle" style="font-size:4px;margin-right:3px;"></i> ${issue}`;
+                if (status.issues && status.issues.length > 0) {
+                    DOM.statusWarning.textContent = '⚠️ ' + status.issues[0];
+                    DOM.statusWarning?.classList.add('show');
+                }
+                DOM.guidanceOval?.classList.remove('quality-ok');
+            }
+        }
+
+        // ============================================================
+        // MODULE: NORMALIZATION
+        // ============================================================
         function normalizeLandmarks(landmarks) {
             if (!landmarks || landmarks.length === 0) return null;
             const lEye = getLM(landmarks, 33);
             const rEye = getLM(landmarks, 263);
             const eyeDist = dist(lEye, rEye);
+            if (eyeDist < 0.001) return null;
             const normalized = landmarks.map(lm => ({ x: lm.x / eyeDist, y: lm.y / eyeDist, z: lm.z / eyeDist }));
             return { landmarks: normalized, reference: { eyeDist } };
         }
 
-        // ===== MEASUREMENTS =====
+        // ============================================================
+        // MODULE: MEASUREMENTS
+        // ============================================================
         function computeMeasurements(lm) {
             if (!lm || lm.length === 0) return null;
+
             const lEye = getLM(lm, 33);
             const rEye = getLM(lm, 263);
             const lEyeOuter = getLM(lm, 130);
@@ -724,75 +2051,144 @@
             const rJaw = getLM(lm, 397);
             const lBrow = getLM(lm, 70);
             const rBrow = getLM(lm, 300);
+            const lJawEnd = getLM(lm, 136);
+            const rJawEnd = getLM(lm, 366);
 
-            // Symmetry
+            const eyeDist = dist(lEye, rEye);
+
+            // === SYMMETRY ===
             const eyeDistL = dist(lEye, lEyeOuter);
             const eyeDistR = dist(rEye, rEyeOuter);
             const eyeSym = eyeDistL + eyeDistR > 0.001 ? 1 - Math.abs(eyeDistL - eyeDistR) / (Math.max(eyeDistL,
                 eyeDistR) + 0.001) : 0.5;
+
             const midMouth = { x: (lMouth.x + rMouth.x) / 2, y: (lMouth.y + rMouth.y) / 2, z: (lMouth.z + rMouth.z) / 2 };
             const mouthL = dist(lMouth, midMouth);
             const mouthR = dist(rMouth, midMouth);
             const mouthSym = mouthL + mouthR > 0.001 ? 1 - Math.abs(mouthL - mouthR) / (Math.max(mouthL, mouthR) +
                 0.001) : 0.5;
-            const symmetry = clamp((eyeSym * 0.6 + mouthSym * 0.4) * 10, 0, 10);
 
-            // Jawline
+            const symmetry = clamp((eyeSym * 0.5 + mouthSym * 0.3 + 0.2) * 10, 0, 10);
+
+            // === JAWLINE ===
             const jawWidth = dist(lJaw, rJaw);
             const faceHeight = dist(forehead, chin);
             const jawRatio = faceHeight > 0.001 ? jawWidth / faceHeight : 0.65;
-            const jawline = clamp((1 - Math.abs(jawRatio - 0.65) * 2.5) * 10, 0, 10);
+            const jawline = clamp((1 - Math.abs(jawRatio - 0.62) * 2.8) * 10, 0, 10);
 
-            // Eyes
+            // === JAW ANGLE ===
+            const jawAngle = angleBetween(lJawEnd, lJaw, rJaw);
+            const jawAngleScore = clamp((1 - Math.abs(jawAngle - 120) / 30) * 10, 0, 10);
+
+            // === EYES ===
             const eyeWidthL = dist(lEyeOuter, lEyeInner);
             const eyeWidthR = dist(rEyeOuter, rEyeInner);
             const eyeHeightL = dist(lEyeTop, lEyeBottom);
             const eyeHeightR = dist(rEyeTop, rEyeBottom);
-            const eyeSize = (eyeHeightL + eyeHeightR) > 0.001 ? (eyeWidthL / (eyeHeightL + 0.001) + eyeWidthR / (
-                eyeHeightR + 0.001)) / 2 : 3.0;
-            const eyes = clamp((1 - Math.abs(eyeSize - 3.0) * 0.6) * 10, 0, 10);
+            const eyeAspect = (eyeHeightL + eyeHeightR) > 0.001 ?
+                (eyeWidthL / (eyeHeightL + 0.001) + eyeWidthR / (eyeHeightR + 0.001)) / 2 :
+                3.0;
+            const eyes = clamp((1 - Math.abs(eyeAspect - 3.0) * 0.5) * 10, 0, 10);
 
-            // Eyebrows
+            // === CANTHAL TILT ===
+            const canthalTilt = Math.atan2(rEye.y - lEye.y, rEye.x - lEye.x) * (180 / Math.PI);
+            const canthalScore = clamp(10 - Math.abs(canthalTilt) * 0.6, 0, 10);
+
+            // === EYE SPACING ===
+            const eyeSpacing = dist(lEyeInner, rEyeInner);
+            const eyeSpacingRatio = eyeSpacing / (eyeDist + 0.001);
+            const eyeSpacingScore = clamp((1 - Math.abs(eyeSpacingRatio - 0.5) * 2) * 10, 0, 10);
+
+            // === EYEBROWS ===
             const browDist = dist(lBrow, rBrow);
             const browRatio = faceHeight > 0.001 ? browDist / faceHeight : 0.3;
             const eyebrows = clamp((1 - Math.abs(browRatio - 0.3) * 3) * 10, 0, 10);
 
-            // Nose
+            // === NOSE ===
             const noseWidth = dist(getLM(lm, 64), getLM(lm, 294));
             const noseLength = dist(noseTip, noseBridge);
             const noseRatio = noseLength > 0.001 ? noseWidth / noseLength : 0.5;
-            const nose = clamp((1 - Math.abs(noseRatio - 0.5) * 2) * 10, 0, 10);
+            const nose = clamp((1 - Math.abs(noseRatio - 0.45) * 2.5) * 10, 0, 10);
 
-            // Lips
+            // === LIPS ===
             const lipWidth = dist(lMouth, rMouth);
             const lipHeight = dist(upperLip, lowerLip);
             const lipRatio = lipWidth > 0.001 ? lipHeight / lipWidth : 0.35;
             const lips = clamp((1 - Math.abs(lipRatio - 0.35) * 2.5) * 10, 0, 10);
 
-            // Face Shape
+            // === CHIN PROJECTION ===
+            const chinProjection = dist(chin, { x: (lEye.x + rEye.x) / 2, y: (lEye.y + rEye.y) / 2, z: (lEye.z + rEye.z) /
+                2 });
+            const chinRatio = faceHeight > 0.001 ? chinProjection / faceHeight : 0.3;
+            const chinScore = clamp((1 - Math.abs(chinRatio - 0.3) * 2.5) * 10, 0, 10);
+
+            // === FACE SHAPE ===
             const shape = detectFaceShape(lm);
 
-            // Harmony
-            const harmony = clamp((symmetry + jawline + eyes + nose + lips) / 5 * 1.1, 0, 10);
-
-            // Golden Ratio
+            // === fWHR ===
             const faceWidth = dist(lCheek, rCheek);
+            const fwhr = faceHeight > 0.001 ? faceWidth / faceHeight : 0.8;
+            const fwhrScore = clamp((1 - Math.abs(fwhr - 0.78) * 2) * 10, 0, 10);
+
+            // === HARMONY ===
+            const harmony = clamp((symmetry + jawline + eyes + nose + lips + fwhrScore) / 6 * 1.15, 0, 10);
+
+            // === GOLDEN RATIO ===
             const gr = faceHeight > 0.001 ? faceWidth / faceHeight : 0.618;
             const goldenRatio = clamp((1 - Math.abs(gr - 0.618) * 3.5) * 100, 0, 100);
 
-            // Skin (proxy)
-            const skin = clamp(symmetry * 0.7 + 0.5 + (eyes > 6 ? 0.5 : 0), 0, 10);
+            // === SKIN (proxy) ===
+            const skin = clamp(symmetry * 0.6 + 0.5 + (eyes > 6 ? 0.3 : 0), 0, 10);
 
-            // Hair
+            // === HAIR ===
             const hairline = getLM(lm, 10);
             const hair = clamp((1 - Math.abs(hairline.y - 0.15) * 3) * 10, 0, 10);
 
-            // Overall
-            const overall = clamp(symmetry * 0.15 + jawline * 0.15 + eyes * 0.12 + eyebrows * 0.08 +
-                nose * 0.1 + lips * 0.1 + harmony * 0.15 + skin * 0.05 + hair * 0.05, 0, 10);
+            // === OVERALL ===
+            const overall = clamp(
+                symmetry * 0.13 + jawline * 0.13 + eyes * 0.10 + eyebrows * 0.08 +
+                nose * 0.09 + lips * 0.09 + harmony * 0.15 + skin * 0.06 +
+                hair * 0.06 + chinScore * 0.06 + fwhrScore * 0.05, 0, 10
+            );
 
-            return { symmetry, jawline, eyes, eyebrows, nose, lips, skin, hair, harmony, goldenRatio, faceShape: shape,
-                overall };
+            return {
+                symmetry,
+                jawline,
+                eyes,
+                eyebrows,
+                nose,
+                lips,
+                skin,
+                hair,
+                harmony,
+                goldenRatio,
+                faceShape: shape,
+                overall,
+                canthalTilt: canthalScore,
+                eyeSpacing: eyeSpacingScore,
+                chinProjection: chinScore,
+                fwhr: fwhrScore,
+                jawAngle: jawAngleScore,
+                measurements: {
+                    jawRatio,
+                    eyeAspect,
+                    noseRatio,
+                    lipRatio,
+                    gr,
+                    fwhr,
+                    canthalTilt,
+                    chinRatio
+                }
+            };
+        }
+
+        function angleBetween(p1, p2, p3) {
+            const a = dist(p2, p3);
+            const b = dist(p1, p3);
+            const c = dist(p1, p2);
+            if (a < 0.001 || b < 0.001 || c < 0.001) return 90;
+            const cosA = (b * b + c * c - a * a) / (2 * b * c);
+            return Math.acos(clamp(cosA, -1, 1)) * (180 / Math.PI);
         }
 
         function detectFaceShape(lm) {
@@ -803,82 +2199,89 @@
                 const rCheek = getLM(lm, 454);
                 const lJaw = getLM(lm, 172);
                 const rJaw = getLM(lm, 397);
+
                 const faceHeight = dist(forehead, chin);
                 const faceWidth = dist(lCheek, rCheek);
                 const jawWidth = dist(lJaw, rJaw);
                 const foreheadWidth = dist(getLM(lm, 54), getLM(lm, 284));
+
                 if (faceHeight < 0.001 || faceWidth < 0.001) return 'Unknown';
+
                 const ratio = faceWidth / faceHeight;
                 const jawRatio = jawWidth / faceWidth;
-                if (ratio < 0.65) return 'Oval';
-                if (ratio < 0.75) { if (jawRatio < 0.7) return 'Round'; return 'Square'; }
-                if (jawRatio < 0.65) return 'Diamond';
+
+                if (ratio < 0.62) return 'Oval';
+                if (ratio < 0.72) {
+                    if (jawRatio < 0.7) return 'Round';
+                    return 'Square';
+                }
+                if (jawRatio < 0.62) return 'Diamond';
                 if (foreheadWidth / faceWidth > 0.85) return 'Heart';
-                if (jawRatio < 0.6) return 'Triangle';
+                if (jawRatio < 0.58) return 'Triangle';
+                if (ratio > 0.82) return 'Oblong';
                 return 'Rectangle';
             } catch (e) { return 'Unknown'; }
         }
 
+        // ============================================================
+        // MODULE: SCORING
+        // ============================================================
         function calculateConfidence(metrics) {
             let score = 100;
             const keys = ['symmetry', 'jawline', 'eyes', 'eyebrows', 'nose', 'lips', 'skin', 'hair', 'harmony'];
             for (const key of keys) {
-                if (metrics[key] === undefined || metrics[key] === null || isNaN(metrics[key])) score -= 10;
+                if (metrics[key] === undefined || metrics[key] === null || isNaN(metrics[key])) score -= 8;
                 if (metrics[key] < 0 || metrics[key] > 10) score -= 5;
             }
             if (metrics.goldenRatio === undefined || metrics.goldenRatio < 0) score -= 10;
             return clamp(score, 0, 100);
         }
 
-        // ===== ON FACEMESH RESULTS =====
+        function calculateScore(metrics) {
+            if (!metrics) return null;
+            const confidence = calculateConfidence(metrics);
+            const valid = confidence >= 65;
+            return { ...metrics, confidence, valid };
+        }
+
+        // ============================================================
+        // MODULE: ON FACEMESH RESULTS
+        // ============================================================
         function onFaceMeshResults(results) {
             const hasFace = results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0;
+
             if (hasFace) {
                 STATE.currentLandmarks = results.multiFaceLandmarks[0];
                 STATE.isFaceDetected = true;
-                if (DOM.detectionBox) DOM.detectionBox.classList.add('face-detected');
-                if (DOM.detectionText) DOM.detectionText.classList.add('face-detected');
-                if (DOM.detectionText) DOM.detectionText.textContent = '✅ Đã nhận diện';
+                DOM.guidanceOval?.classList.add('face-detected');
+                DOM.guidanceText?.classList.add('face-detected');
+                if (DOM.guidanceText) DOM.guidanceText.textContent = '✅ Đã nhận diện';
+
                 const qc = checkQuality(STATE.currentLandmarks);
                 STATE.qualityOk = qc.ok;
+                STATE.qualityIssues = qc.issues || [];
                 updateQualityStatus(qc);
+
                 if (qc.ok && STATE.frameBuffer.length < 30 && !STATE.isImageMode) {
                     STATE.frameBuffer.push(JSON.parse(JSON.stringify(STATE.currentLandmarks)));
                 }
+
+                if (STATE.showOverlay) drawOverlay();
+
             } else {
                 STATE.isFaceDetected = false;
                 STATE.qualityOk = false;
-                if (DOM.detectionBox) DOM.detectionBox.classList.remove('face-detected');
-                if (DOM.detectionText) DOM.detectionText.classList.remove('face-detected');
-                if (DOM.detectionText) DOM.detectionText.textContent = '📸 Đặt khuôn mặt vào khung';
+                DOM.guidanceOval?.classList.remove('face-detected');
+                DOM.guidanceText?.classList.remove('face-detected');
+                if (DOM.guidanceText) DOM.guidanceText.textContent = '📸 Đặt khuôn mặt vào khung';
                 updateQualityStatus({ ok: false, issues: ['Đang tìm khuôn mặt...'], score: 0 });
-            }
-            if (STATE.showOverlay && STATE.isFaceDetected) drawOverlay();
-        }
-
-        // ===== UPDATE QUALITY STATUS =====
-        function updateQualityStatus(qc) {
-            if (!DOM.qualityBadge) return;
-            if (qc.ok) {
-                DOM.qualityBadge.className = 'quality-badge good';
-                DOM.qualityBadge.innerHTML =
-                `<i class="fas fa-circle" style="font-size:5px;margin-right:3px;"></i> Chất lượng tốt`;
-                DOM.qualityWarning.classList.remove('show');
-                if (DOM.detectionBox) DOM.detectionBox.classList.add('quality-ok');
-            } else {
-                DOM.qualityBadge.className = 'quality-badge error';
-                const issue = qc.issues?.[0] || 'Chất lượng kém';
-                DOM.qualityBadge.innerHTML =
-                `<i class="fas fa-circle" style="font-size:5px;margin-right:3px;"></i> ${issue}`;
-                if (qc.issues && qc.issues.length > 0) {
-                    DOM.qualityWarning.textContent = '⚠️ ' + qc.issues[0];
-                    DOM.qualityWarning.classList.add('show');
-                }
-                if (DOM.detectionBox) DOM.detectionBox.classList.remove('quality-ok');
+                if (STATE.showOverlay) drawGuidanceOval();
             }
         }
 
-        // ===== DRAW OVERLAY =====
+        // ============================================================
+        // MODULE: DRAW OVERLAY
+        // ============================================================
         function drawOverlay() {
             if (!DOM.canvas || !DOM.ctx) return;
             const rect = DOM.canvas.parentElement.getBoundingClientRect();
@@ -890,37 +2293,69 @@
             DOM.canvas.style.height = size + 'px';
             DOM.ctx.scale(dpr, dpr);
             DOM.ctx.clearRect(0, 0, size, size);
-            if (!STATE.currentLandmarks || !STATE.isFaceDetected) { drawGuidanceOval(); return; }
+
+            if (!STATE.currentLandmarks || !STATE.isFaceDetected) {
+                drawGuidanceOval();
+                return;
+            }
+
             const lm = STATE.currentLandmarks;
             const scale = size;
+
+            // Face Outline
             const faceIndices = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152,
                 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
             ];
-            drawLine(faceIndices, lm, scale, 'rgba(124,108,240,0.3)', 1.2, true);
+            drawLine(faceIndices, lm, scale, 'rgba(108,92,231,0.3)', 1.2, true);
+
+            // Jawline
             const jawIndices = [172, 150, 149, 176, 148, 152];
-            drawLine(jawIndices, lm, scale, 'rgba(161,136,255,0.25)', 1.0, false);
+            drawLine(jawIndices, lm, scale, 'rgba(162,155,254,0.25)', 1.0, false);
+
+            // Eyes
             const eyeLeft = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7];
             const eyeRight = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249];
-            drawLine(eyeLeft, lm, scale, 'rgba(251,191,36,0.35)', 1.0, true);
-            drawLine(eyeRight, lm, scale, 'rgba(251,191,36,0.35)', 1.0, true);
+            drawLine(eyeLeft, lm, scale, 'rgba(253,203,110,0.35)', 1.0, true);
+            drawLine(eyeRight, lm, scale, 'rgba(253,203,110,0.35)', 1.0, true);
+
+            // Eyebrows
             const browLeft = [46, 53, 52, 65, 55];
             const browRight = [276, 283, 282, 295, 285];
-            drawLine(browLeft, lm, scale, 'rgba(244,114,182,0.25)', 1.0, true);
-            drawLine(browRight, lm, scale, 'rgba(244,114,182,0.25)', 1.0, true);
+            drawLine(browLeft, lm, scale, 'rgba(253,121,168,0.25)', 1.0, true);
+            drawLine(browRight, lm, scale, 'rgba(253,121,168,0.25)', 1.0, true);
+
+            // Nose
             const noseIndices = [1, 2, 98, 327, 326, 325, 294, 64];
-            drawLine(noseIndices, lm, scale, 'rgba(161,136,255,0.2)', 1.0, true);
+            drawLine(noseIndices, lm, scale, 'rgba(162,155,254,0.2)', 1.0, true);
+
+            // Mouth
             const mouthIndices = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185];
-            drawLine(mouthIndices, lm, scale, 'rgba(251,191,36,0.25)', 1.0, true);
+            drawLine(mouthIndices, lm, scale, 'rgba(253,203,110,0.25)', 1.0, true);
+
+            // Midline
             const top = lm[10];
             const bottom = lm[152];
             DOM.ctx.beginPath();
-            DOM.ctx.strokeStyle = 'rgba(124,108,240,0.15)';
+            DOM.ctx.strokeStyle = 'rgba(108,92,231,0.12)';
             DOM.ctx.lineWidth = 1;
             DOM.ctx.setLineDash([4, 6]);
             DOM.ctx.moveTo((1 - top.x) * scale, top.y * scale);
             DOM.ctx.lineTo((1 - bottom.x) * scale, bottom.y * scale);
             DOM.ctx.stroke();
             DOM.ctx.setLineDash([]);
+
+            // Landmark dots
+            const keyPoints = [33, 263, 1, 152, 10, 234, 454, 61, 291];
+            keyPoints.forEach(idx => {
+                const p = lm[idx];
+                if (!p) return;
+                const x = (1 - p.x) * scale;
+                const y = p.y * scale;
+                DOM.ctx.beginPath();
+                DOM.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                DOM.ctx.fillStyle = 'rgba(108,92,231,0.2)';
+                DOM.ctx.fill();
+            });
         }
 
         function drawLine(indices, lm, scale, color, width, closed) {
@@ -957,14 +2392,16 @@
                 ry = size * 0.4;
             DOM.ctx.beginPath();
             DOM.ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-            DOM.ctx.strokeStyle = 'rgba(124,108,240,0.08)';
+            DOM.ctx.strokeStyle = 'rgba(108,92,231,0.06)';
             DOM.ctx.lineWidth = 1.5;
             DOM.ctx.setLineDash([6, 8]);
             DOM.ctx.stroke();
             DOM.ctx.setLineDash([]);
         }
 
-        // ===== ANALYZE FROM LANDMARKS =====
+        // ============================================================
+        // MODULE: ANALYZE FROM LANDMARKS
+        // ============================================================
         function analyzeFromLandmarks(landmarks) {
             if (!landmarks || landmarks.length === 0) {
                 return { error: 'Không có landmark' };
@@ -977,37 +2414,37 @@
             if (!metrics) {
                 return { error: 'Lỗi tính toán' };
             }
-            const confidence = calculateConfidence(metrics);
-            const valid = confidence >= 70;
-            return { result: { ...metrics, confidence, valid }, landmarks };
+            const result = calculateScore(metrics);
+            if (!result) {
+                return { error: 'Lỗi chấm điểm' };
+            }
+            return { result, landmarks };
         }
 
-        // ===== AI SCAN ANIMATION =====
+        // ============================================================
+        // MODULE: AI SCAN ANIMATION
+        // ============================================================
         async function runScanAnimation() {
-            const steps = DOM.scanSteps.querySelectorAll('.scan-step-item');
+            const steps = ['📸 Xử lý ảnh', '🔍 Nhận diện khuôn mặt', '📐 Phân tích cấu trúc', '📊 Tính toán tỷ lệ', '✅ Tạo báo cáo'];
             const totalSteps = steps.length;
-            const stepTexts = ['Đang xử lý ảnh...', 'Nhận diện khuôn mặt...', 'Phân tích cấu trúc...', 'Tính toán tỷ lệ...',
-                'Tạo báo cáo...'
-            ];
+
             for (let i = 0; i < totalSteps; i++) {
-                steps.forEach(s => s.classList.remove('active', 'done'));
-                for (let j = 0; j <= i; j++) {
-                    if (j < i) steps[j].classList.add('done');
-                    else steps[j].classList.add('active');
-                }
                 const progress = ((i + 1) / totalSteps) * 100;
                 DOM.scanProgress.style.width = progress + '%';
-                DOM.scanTitle.textContent = '🔬 ' + stepTexts[i] || 'Đang phân tích...';
-                await sleep(350 + Math.random() * 250);
+                DOM.scanTitle.textContent = '🔬 ' + steps[i];
+                DOM.scanSubtitle.textContent = `Đang xử lý ${Math.round(progress)}%...`;
+                await sleep(400 + Math.random() * 300);
             }
-            steps.forEach(s => { s.classList.remove('active');
-                s.classList.add('done'); });
+
             DOM.scanProgress.style.width = '100%';
             DOM.scanTitle.textContent = '✅ Phân tích hoàn tất!';
-            await sleep(300);
+            DOM.scanSubtitle.textContent = 'AI đã đánh giá thành công';
+            await sleep(400);
         }
 
-        // ===== PERFORM ANALYSIS =====
+        // ============================================================
+        // MODULE: PERFORM ANALYSIS
+        // ============================================================
         async function performAnalysis() {
             if (STATE.isScanning) return;
             if (!STATE.faceMeshReady) {
@@ -1024,24 +2461,26 @@
                 return;
             }
 
-            // If using image mode, use the stored landmarks from image analysis
-            let landmarksToUse = STATE.currentLandmarks;
-
-            // If in image mode but no landmarks yet, wait
-            if (STATE.isImageMode && !landmarksToUse) {
-                showToast('⏳ Đang xử lý ảnh...', 'info');
+            // Wait for quality
+            if (!STATE.qualityOk && !STATE.isImageMode) {
+                showToast('⏳ Đang đợi chất lượng khuôn mặt tốt...', 'info');
                 return;
             }
 
-            // If in camera mode, use multi-frame
             let analysisResult;
-            if (!STATE.isImageMode && STATE.frameBuffer.length >= 5) {
+
+            if (STATE.isImageMode && STATE.currentLandmarks) {
+                // Image mode: use current landmarks
+                analysisResult = analyzeFromLandmarks(STATE.currentLandmarks);
+            } else if (STATE.frameBuffer.length >= 8) {
+                // Camera mode: use multi-frame median
                 const medianLm = medianLandmarks(STATE.frameBuffer);
                 if (medianLm) {
                     analysisResult = analyzeFromLandmarks(medianLm);
                 }
-            } else if (landmarksToUse) {
-                analysisResult = analyzeFromLandmarks(landmarksToUse);
+            } else if (STATE.currentLandmarks) {
+                // Fallback: use current landmarks
+                analysisResult = analyzeFromLandmarks(STATE.currentLandmarks);
             } else {
                 showToast('📸 Chưa có khuôn mặt chất lượng tốt', 'error');
                 return;
@@ -1052,49 +2491,51 @@
                 return;
             }
 
-            const { result, landmarks } = analysisResult;
+            const { result } = analysisResult;
 
             STATE.isScanning = true;
             DOM.scanOverlay.classList.add('active');
-            DOM.laserScan.classList.add('active');
-            DOM.resultsSection.classList.remove('active');
+            DOM.laserScan?.classList.add('active');
+            DOM.resultsSection?.classList.remove('active');
             DOM.scanProgress.style.width = '0%';
-            const steps = DOM.scanSteps.querySelectorAll('.scan-step-item');
-            steps.forEach(s => s.classList.remove('active', 'done'));
 
             try {
                 await runScanAnimation();
 
                 STATE.currentResults = result;
                 displayResults(result);
-                generateAIReport(result);
 
                 await sleep(300);
                 DOM.scanOverlay.classList.remove('active');
-                DOM.laserScan.classList.remove('active');
+                DOM.laserScan?.classList.remove('active');
+
                 showToast('✅ Phân tích hoàn tất!', 'success');
 
             } catch (err) {
                 console.error('Analysis error:', err);
                 DOM.scanOverlay.classList.remove('active');
-                DOM.laserScan.classList.remove('active');
+                DOM.laserScan?.classList.remove('active');
                 showToast(err.message || '⚠️ Lỗi phân tích', 'error');
             }
 
             STATE.isScanning = false;
+            STATE.frameBuffer = [];
         }
 
-        // ===== DISPLAY RESULTS =====
+        // ============================================================
+        // MODULE: DISPLAY RESULTS
+        // ============================================================
         function displayResults(result) {
             if (!result || !result.valid) {
                 DOM.overallScore.textContent = '--';
                 DOM.overallBar.style.width = '0%';
-                showToast('⚠️ Không đủ dữ liệu để chấm điểm', 'warning');
                 return;
             }
+
             const o = result.overall;
             DOM.overallScore.textContent = o.toFixed(1);
             DOM.overallBar.style.width = (o * 10) + '%';
+
             const rating = o >= 9 ? 'Xuất sắc' : o >= 8 ? 'Rất tốt' : o >= 7 ? 'Tốt' : o >= 6 ? 'Trung bình' : 'Cần cải thiện';
             DOM.ratingText.textContent = rating;
             DOM.faceShapeText.textContent = result.faceShape || '--';
@@ -1114,11 +2555,35 @@
                 }
             });
 
-            DOM.resultsSection.classList.add('active');
-            saveHistory(result);
+            // Draw Radar Chart
+            drawRadarChart(result);
+
+            // Recommendations
+            generateRecommendations(result);
+
+            DOM.resultsSection?.classList.add('active');
+
+            // Save history with image
+            let imageData = null;
+            if (STATE.isImageMode && DOM.imagePreview?.src) {
+                imageData = DOM.imagePreview.src;
+            } else if (DOM.video && DOM.video.srcObject) {
+                try {
+                    const c = document.createElement('canvas');
+                    const ctx2 = c.getContext('2d');
+                    const size = 200;
+                    c.width = size;
+                    c.height = size;
+                    ctx2.drawImage(DOM.video, 0, 0, size, size);
+                    imageData = c.toDataURL('image/jpeg', 0.7);
+                } catch (e) {}
+            }
+            saveHistoryEntry(result, imageData);
         }
 
-        // ===== ANIMATE NUMBER =====
+        // ============================================================
+        // MODULE: ANIMATE NUMBER
+        // ============================================================
         function animateNumber(el, start, end, duration) {
             if (!el) return;
             const startTime = performance.now();
@@ -1134,220 +2599,143 @@
             requestAnimationFrame(update);
         }
 
-        // ===== GENERATE AI REPORT =====
-        function generateAIReport(result) {
-            if (!result || !result.valid) {
-                DOM.reportOverview.textContent = 'Không đủ dữ liệu để tạo báo cáo';
-                DOM.reportStrengths.textContent = '--';
-                DOM.reportWeaknesses.textContent = '--';
-                DOM.reportPlan.textContent = '--';
-                return;
-            }
-            const o = result.overall;
-            const shape = result.faceShape || 'Unknown';
-            const rating = o >= 9 ? 'xuất sắc' : o >= 8 ? 'rất tốt' : o >= 7 ? 'tốt' : o >= 6 ? 'trung bình' : 'cần cải thiện';
-            let overview =
-                `🔍 **Khuôn mặt ${shape.toLowerCase()}** với tổng điểm ${o.toFixed(1)}/10 — mức độ ${rating}.\n\n`;
-            overview +=
-                `📐 **Tỷ lệ vàng**: ${result.goldenRatio.toFixed(0)}% — ${result.goldenRatio > 70 ? 'gần đạt chuẩn 👏' : 'có thể cải thiện 📈'}.\n\n`;
-            overview +=
-                `🔄 **Độ đối xứng**: ${result.symmetry.toFixed(1)}/10 — ${result.symmetry > 7 ? 'rất cân đối' : 'cần cân bằng hơn'}.\n\n`;
-            overview +=
-                `🎯 **Độ tin cậy**: ${result.confidence.toFixed(0)}% — ${result.confidence > 80 ? 'phân tích chính xác' : 'có thể cần chụp lại'}.`;
-            DOM.reportOverview.innerHTML = overview.replace(/\n/g, '<br>');
+        // ============================================================
+        // MODULE: RADAR CHART
+        // ============================================================
+        function drawRadarChart(result) {
+            const canvas = DOM.radarChart;
+            if (!canvas) return;
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const size = Math.min(rect.width - 20, 160);
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            const ctx2 = canvas.getContext('2d');
+            ctx2.scale(dpr, dpr);
 
-            const strengths = [];
-            if (result.symmetry > 7) strengths.push('✅ Khuôn mặt cân đối, tỷ lệ hài hòa');
-            if (result.jawline > 7) strengths.push('✅ Đường jawline sắc nét, tạo khung mặt đẹp');
-            if (result.eyes > 7) strengths.push('✅ Đôi mắt to rõ, có chiều sâu');
-            if (result.eyebrows > 7) strengths.push('✅ Lông mày dày tự nhiên, tạo điểm nhấn');
-            if (result.nose > 7) strengths.push('✅ Cấu trúc mũi cân đối, hài hòa với khuôn mặt');
-            if (result.lips > 7) strengths.push('✅ Đôi môi đầy đặn, cân đối');
-            if (result.skin > 7) strengths.push('✅ Làn da sáng mịn, tạo ấn tượng tốt');
-            if (result.hair > 7) strengths.push('✅ Tóc dày, dễ tạo kiểu');
-            DOM.reportStrengths.innerHTML = strengths.length > 0 ? strengths.slice(0, 4).join('<br>') :
-                '🔸 Bạn có tiềm năng phát triển tốt. Hãy tập trung vào các mục cải thiện.';
+            const labels = ['Jaw', 'Eyes', 'Nose', 'Lips', 'Sym', 'Harm'];
+            const values = [
+                clamp(result.jawline / 10, 0, 1),
+                clamp(result.eyes / 10, 0, 1),
+                clamp(result.nose / 10, 0, 1),
+                clamp(result.lips / 10, 0, 1),
+                clamp(result.symmetry / 10, 0, 1),
+                clamp(result.harmony / 10, 0, 1)
+            ];
 
-            const weaknesses = [];
-            if (result.symmetry < 6) weaknesses.push('⚠️ Độ đối xứng chưa cao, nên điều chỉnh góc chụp');
-            if (result.jawline < 6) weaknesses.push('⚠️ Jawline chưa rõ nét, có thể cải thiện bằng tập gym');
-            if (result.eyes < 6) weaknesses.push('⚠️ Có thể mở mắt tự nhiên hơn khi chụp');
-            if (result.eyebrows < 6) weaknesses.push('⚠️ Lông mày nên được tỉa gọn gàng hơn');
-            if (result.nose < 6) weaknesses.push('⚠️ Góc chụp nghiêng sẽ giúp mũi đẹp hơn');
-            if (result.lips < 6) weaknesses.push('⚠️ Cười nhẹ sẽ tạo độ cong cho môi');
-            if (result.skin < 6) weaknesses.push('⚠️ Chăm sóc da và ánh sáng sẽ cải thiện đáng kể');
-            if (result.hair < 6) weaknesses.push('⚠️ Nên thử kiểu tóc mới phù hợp với khuôn mặt');
-            DOM.reportWeaknesses.innerHTML = weaknesses.length > 0 ? weaknesses.slice(0, 4).join('<br>') :
-                '🌟 Không có điểm yếu nổi bật. Bạn đã có một khuôn mặt khá hoàn chỉnh!';
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = Math.min(cx, cy) * 0.7;
 
-            const planItems = [];
-            if (result.jawline < 6) planItems.push(
-                '🏋️ **Gym & Giảm mỡ mặt**: Tập thể dục và chế độ ăn giúp jawline rõ nét hơn. (+0.5-1.0 điểm)');
-            if (result.skin < 6) planItems.push(
-                '🧴 **Skincare**: Chăm sóc da với serum vitamin C và kem chống nắng. (+0.5 điểm)');
-            if (result.hair < 6) planItems.push('💇 **Hairstyle**: Kiểu tóc layer hoặc side part phù hợp. (+0.5 điểm)');
-            if (result.eyebrows < 6) planItems.push('✂️ **Grooming**: Tỉa lông mày gọn gàng để tạo khung cho mắt. (+0.3 điểm)');
-            if (result.lips < 6) planItems.push('😊 **Cười tự nhiên**: Nụ cười nhẹ giúp môi đẹp hơn. (+0.3 điểm)');
-            if (result.jawline < 5 && result.faceShape !== 'Oval') {
-                planItems.push('🧔 **Beard**: Nuôi râu ngắn sẽ giúp tạo khung hàm. (+0.5 điểm)');
-            }
-            DOM.reportPlan.innerHTML = planItems.length > 0 ? planItems.slice(0, 5).join('<br>') :
-                '✨ Bạn đã có nền tảng tốt. Hãy duy trì và tập trung vào các chi tiết nhỏ!';
-        }
+            ctx2.clearRect(0, 0, size, size);
 
-        // ===== SAVE HISTORY =====
-        function saveHistory(result) {
-            if (!DOM.historyToggle.classList.contains('active')) return;
-
-            // Get current image for history
-            let imageData = null;
-            if (STATE.isImageMode && DOM.imagePreview && DOM.imagePreview.src) {
-                imageData = DOM.imagePreview.src;
-            } else if (DOM.video && DOM.video.srcObject) {
-                // Capture from video
-                try {
-                    const c = document.createElement('canvas');
-                    const ctx2 = c.getContext('2d');
-                    const size = Math.min(200, 200);
-                    c.width = size;
-                    c.height = size;
-                    ctx2.drawImage(DOM.video, 0, 0, size, size);
-                    imageData = c.toDataURL('image/jpeg', 0.7);
-                } catch (e) { /* ignore */ }
-            }
-
-            const entry = {
-                time: new Date().toLocaleTimeString(),
-                date: new Date().toLocaleDateString(),
-                score: result.overall.toFixed(1),
-                faceShape: result.faceShape,
-                goldenRatio: result.goldenRatio.toFixed(0),
-                confidence: result.confidence.toFixed(0),
-                image: imageData || null,
-                metrics: {
-                    jawline: result.jawline.toFixed(1),
-                    eyes: result.eyes.toFixed(1),
-                    eyebrows: result.eyebrows.toFixed(1),
-                    nose: result.nose.toFixed(1),
-                    lips: result.lips.toFixed(1),
-                    symmetry: result.symmetry.toFixed(1),
-                    harmony: result.harmony.toFixed(1),
-                    skin: result.skin.toFixed(1),
-                    hair: result.hair.toFixed(1),
+            // Grid
+            for (let r = 0.25; r <= 1; r += 0.25) {
+                ctx2.beginPath();
+                for (let i = 0; i < labels.length; i++) {
+                    const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
+                    const x = cx + radius * r * Math.cos(angle);
+                    const y = cy + radius * r * Math.sin(angle);
+                    if (i === 0) ctx2.moveTo(x, y);
+                    else ctx2.lineTo(x, y);
                 }
-            };
+                ctx2.closePath();
+                ctx2.strokeStyle = 'rgba(255,255,255,0.04)';
+                ctx2.lineWidth = 0.5;
+                ctx2.stroke();
+            }
 
-            STATE.history.unshift(entry);
-            if (STATE.history.length > 50) STATE.history.pop();
+            // Data
+            ctx2.beginPath();
+            for (let i = 0; i < labels.length; i++) {
+                const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
+                const val = Math.min(values[i] || 0, 1);
+                const x = cx + radius * val * Math.cos(angle);
+                const y = cy + radius * val * Math.sin(angle);
+                if (i === 0) ctx2.moveTo(x, y);
+                else ctx2.lineTo(x, y);
+            }
+            ctx2.closePath();
+            ctx2.fillStyle = 'rgba(108,92,231,0.12)';
+            ctx2.fill();
+            ctx2.strokeStyle = 'rgba(108,92,231,0.4)';
+            ctx2.lineWidth = 1.5;
+            ctx2.stroke();
 
-            try {
-                localStorage.setItem('looksmax_history', JSON.stringify(STATE.history));
-            } catch (e) {}
-
-            renderHistory();
+            // Labels
+            ctx2.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx2.font = '6px Inter, sans-serif';
+            ctx2.textAlign = 'center';
+            ctx2.textBaseline = 'middle';
+            for (let i = 0; i < labels.length; i++) {
+                const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
+                const x = cx + (radius + 12) * Math.cos(angle);
+                const y = cy + (radius + 12) * Math.sin(angle);
+                ctx2.fillText(labels[i], x, y);
+            }
         }
 
-        // ===== RENDER HISTORY =====
-        function renderHistory() {
-            if (!DOM.historyList) return;
-            if (STATE.history.length === 0) {
-                DOM.historyList.innerHTML =
-                    `<div class="empty-state"><i class="fas fa-clock-rotate-left"></i><p>Chưa có đánh giá nào</p></div>`;
-                DOM.historyCount.textContent = '0 mục';
-                DOM.historyDot.classList.remove('show');
+        // ============================================================
+        // MODULE: RECOMMENDATIONS
+        // ============================================================
+        function generateRecommendations(result) {
+            if (!result || !result.valid) {
+                DOM.recHair.textContent = '--';
+                DOM.recAngle.textContent = '--';
+                DOM.recSkincare.textContent = '--';
+                DOM.recGym.textContent = '--';
                 return;
             }
-            DOM.historyList.innerHTML = STATE.history.map((item, index) => `
-                    <div class="history-item" onclick="loadHistory(${index})">
-                        <div class="left">
-                            <span class="score-small">${item.score}/10</span>
-                            <span class="date">${item.date} · ${item.time}</span>
-                        </div>
-                        <div class="right">
-                            <span class="shape-tag">${item.faceShape || '--'}</span>
-                            <i class="fas fa-chevron-right arrow"></i>
-                        </div>
-                    </div>
-                `).join('');
-            DOM.historyCount.textContent = STATE.history.length + ' mục';
-            DOM.historyDot.classList.add('show');
-        }
 
-        // ===== LOAD HISTORY =====
-        window.loadHistory = function(index) {
-            const item = STATE.history[index];
-            if (!item) return;
-            navigateTo('page-home');
+            const shape = result.faceShape || 'Oval';
 
-            // Show image if exists
-            if (item.image && DOM.imagePreview) {
-                DOM.imagePreview.src = item.image;
-                DOM.imagePreview.style.display = 'block';
-                DOM.video.style.display = 'none';
-                STATE.isImageMode = true;
-            }
-
-            const result = {
-                overall: parseFloat(item.score),
-                faceShape: item.faceShape,
-                goldenRatio: parseFloat(item.goldenRatio || 50),
-                confidence: parseFloat(item.confidence || 85),
-                jawline: parseFloat(item.metrics?.jawline || 5),
-                eyes: parseFloat(item.metrics?.eyes || 5),
-                eyebrows: parseFloat(item.metrics?.eyebrows || 5),
-                nose: parseFloat(item.metrics?.nose || 5),
-                lips: parseFloat(item.metrics?.lips || 5),
-                symmetry: parseFloat(item.metrics?.symmetry || 5),
-                harmony: parseFloat(item.metrics?.harmony || 5),
-                skin: parseFloat(item.metrics?.skin || 5),
-                hair: parseFloat(item.metrics?.hair || 5),
-                valid: true
+            // Hair
+            const hairRecs = {
+                'Oval': 'Hầu hết kiểu tóc đều hợp',
+                'Round': 'Tóc layer, vuốt cao',
+                'Square': 'Tóc ngắn gọn, side part',
+                'Rectangle': 'Tóc dài, fringe',
+                'Diamond': 'Tóc mái, layer nhẹ',
+                'Heart': 'Tóc bob, side sweep',
+                'Triangle': 'Tóc phồng trên đỉnh',
+                'Oblong': 'Tóc vuốt sang ngang',
+                'Unknown': 'Thử kiểu tóc layer'
             };
+            DOM.recHair.textContent = hairRecs[shape] || 'Kiểu tóc hiện tại';
 
-            STATE.currentResults = result;
-            displayResults(result);
-            generateAIReport(result);
-            showToast(`📊 Đã tải kết quả lúc ${item.time}`, 'success');
-        };
-
-        // ===== CAMERA =====
-        function startCamera(facing = 'user') {
-            if (STATE.cameraStream) { stopCamera(); }
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: facing, width: { ideal: 400 }, height: { ideal: 400 } } })
-                .then(stream => {
-                    STATE.cameraStream = stream;
-                    DOM.video.srcObject = stream;
-                    DOM.video.play().catch(e => console.warn('Video play error:', e));
-                    STATE.cameraActive = true;
-                    STATE.isImageMode = false;
-                    DOM.imagePreview.style.display = 'none';
-                    DOM.video.style.display = 'block';
-                    showToast('📸 Camera đã sẵn sàng', 'success');
-                })
-                .catch(err => {
-                    console.error('Camera error:', err);
-                    showToast('⚠️ Không thể truy cập camera. Hãy tải ảnh lên.', 'error');
-                    DOM.uploadBtn.click();
-                });
-        }
-
-        function stopCamera() {
-            if (STATE.cameraStream) {
-                STATE.cameraStream.getTracks().forEach(t => t.stop());
-                STATE.cameraStream = null;
+            // Angle
+            if (result.jawline < 6) {
+                DOM.recAngle.textContent = 'Chụp góc thấp 15°';
+            } else if (result.symmetry < 6) {
+                DOM.recAngle.textContent = 'Chính diện nhẹ 10°';
+            } else {
+                DOM.recAngle.textContent = 'Chính diện + hơi ngửa';
             }
-            STATE.cameraActive = false;
-            DOM.video.srcObject = null;
-            DOM.video.style.display = 'none';
+
+            // Skincare
+            if (result.skin < 6) {
+                DOM.recSkincare.textContent = 'Serum Vitamin C + SPF';
+            } else if (result.skin < 8) {
+                DOM.recSkincare.textContent = 'Duy trì skincare cơ bản';
+            } else {
+                DOM.recSkincare.textContent = 'Skincare tốt, duy trì';
+            }
+
+            // Gym
+            if (result.jawline < 5) {
+                DOM.recGym.textContent = 'Tập gym + giảm mỡ mặt';
+            } else if (result.jawline < 7) {
+                DOM.recGym.textContent = 'Tập trung vào jawline';
+            } else {
+                DOM.recGym.textContent = 'Duy trì tập luyện';
+            }
         }
 
-        function switchCamera() {
-            STATE.cameraFacing = STATE.cameraFacing === 'user' ? 'environment' : 'user';
-            startCamera(STATE.cameraFacing);
-            showToast(`🔄 Đã chuyển sang camera ${STATE.cameraFacing === 'user' ? 'trước' : 'sau'}`, 'info');
-        }
-
-        // ===== LOAD IMAGE - FIXED =====
+        // ============================================================
+        // MODULE: LOAD IMAGE
+        // ============================================================
         function loadImageFile(file) {
             if (!file) return;
             const reader = new FileReader();
@@ -1358,49 +2746,42 @@
                 STATE.isImageMode = true;
                 stopCamera();
 
-                // Process image through FaceMesh
                 const img = new Image();
                 img.onload = () => {
                     if (STATE.faceMesh && STATE.faceMeshReady) {
                         STATE.faceMesh.send({ image: img });
-                        // Wait a bit for processing, then auto-analyze
                         setTimeout(() => {
                             if (STATE.currentLandmarks) {
                                 performAnalysis();
                             } else {
                                 showToast('⚠️ Không tìm thấy khuôn mặt trong ảnh', 'error');
                             }
-                        }, 1000);
+                        }, 1200);
                     }
                 };
-                img.onerror = () => {
-                    showToast('⚠️ Lỗi đọc ảnh', 'error');
-                };
+                img.onerror = () => { showToast('⚠️ Lỗi đọc ảnh', 'error'); };
                 img.src = DOM.imagePreview.src;
                 showToast('📷 Đã tải ảnh!', 'success');
             };
-            reader.onerror = () => {
-                showToast('⚠️ Lỗi đọc ảnh', 'error');
-            };
+            reader.onerror = () => { showToast('⚠️ Lỗi đọc ảnh', 'error'); };
             reader.readAsDataURL(file);
         }
 
-        // ===== SHARE =====
+        // ============================================================
+        // MODULE: SHARE & EXPORT
+        // ============================================================
         function shareResult() {
             if (!STATE.currentResults) { showToast('Không có kết quả', 'error'); return; }
             const r = STATE.currentResults;
             const text =
-                `🔥 Looksmax AI Pro - Điểm: ${r.overall.toFixed(1)}/10\n📊 ${r.faceShape}\n📐 Tỷ lệ vàng: ${r.goldenRatio.toFixed(0)}%\n🎯 Độ tin cậy: ${r.confidence.toFixed(0)}%\n🤖 Phân tích bởi Looksmax AI Pro v4.1`;
+                `🔥 Looksmax AI Pro v5.0\nĐiểm: ${r.overall.toFixed(1)}/10\nKhuôn mặt: ${r.faceShape}\nTỷ lệ vàng: ${r.goldenRatio.toFixed(0)}%\nĐộ tin cậy: ${r.confidence.toFixed(0)}%\n\n🤖 Phân tích bởi Looksmax AI Pro`;
             if (navigator.share) {
                 navigator.share({ title: 'Looksmax AI Pro', text }).catch(() => {});
             } else {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('📋 Đã sao chép!', 'success');
-                });
+                navigator.clipboard.writeText(text).then(() => { showToast('📋 Đã sao chép!', 'success'); });
             }
         }
 
-        // ===== EXPORT DATA =====
         function exportData() {
             if (STATE.history.length === 0) { showToast('Không có dữ liệu', 'error'); return; }
             const data = { exportedAt: new Date().toISOString(), total: STATE.history.length, history: STATE.history };
@@ -1414,17 +2795,20 @@
             showToast('✅ Đã xuất dữ liệu!', 'success');
         }
 
-        // ===== NAVIGATION =====
+        // ============================================================
+        // MODULE: NAVIGATION
+        // ============================================================
         function navigateTo(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const page = document.getElementById(pageId);
             if (page) page.classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
-            document.getElementById('appContent').scrollTop = 0;
         }
 
-        // ===== FRAME LOOP =====
+        // ============================================================
+        // MODULE: FRAME LOOP
+        // ============================================================
         function frameLoop() {
             if (!STATE.isPageVisible) {
                 STATE.animationFrameId = requestAnimationFrame(frameLoop);
@@ -1465,7 +2849,7 @@
             if (STATE.history.length === 0) { showToast('Không có dữ liệu', 'info'); return; }
             if (confirm('Xóa toàn bộ lịch sử?')) {
                 STATE.history = [];
-                try { localStorage.removeItem('looksmax_history'); } catch (e) {}
+                try { localStorage.removeItem('looksmax_history_v5'); } catch (e) {}
                 renderHistory();
                 showToast('🗑️ Đã xóa lịch sử', 'success');
             }
@@ -1523,7 +2907,8 @@
         // INIT
         // ============================================================
 
-        console.log('🚀 Looksmax AI Pro v4.1 - Fixed Image Upload');
+        console.log('🚀 Looksmax AI Pro v5.0 - Complete Rewrite');
+        console.log('📐 Features: Multi-frame | Quality Check | 30+ Metrics | Radar Chart');
 
         if (window.FaceMesh) {
             initFaceMesh();
@@ -1569,7 +2954,6 @@
         console.log('✅ All systems ready');
         console.log(`📊 History: ${STATE.history.length} entries`);
         console.log('📸 Press capture button or Space/Enter to analyze');
-        console.log('🖼️ Image upload works with auto-analysis');
     </script>
 </body>
 </html>
