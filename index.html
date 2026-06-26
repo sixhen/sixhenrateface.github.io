@@ -1,2102 +1,561 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🔥 SIXHEN Rate V5 - AI Beauty Predictor</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        :root {
-            --bg-primary: #0a0a1a;
-            --bg-glass: rgba(255, 255, 255, 0.03);
-            --border-glass: rgba(255, 255, 255, 0.06);
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --text-muted: #475569;
-            --accent-blue: #60a5fa;
-            --accent-purple: #a78bfa;
-            --accent-pink: #f472b6;
-            --accent-green: #34d399;
-            --accent-yellow: #fbbf24;
-            --accent-red: #f87171;
-            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.5);
-            --radius: 16px;
-        }
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 16px;
-            line-height: 1.6;
-        }
-        .glass {
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-glass);
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .header {
-            padding: 18px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .logo {
-            font-size: 22px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .logo i {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 26px;
-        }
-        .logo span {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .badge-v5 {
-            font-size: 9px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
-            padding: 2px 12px;
-            border-radius: 40px;
-            -webkit-text-fill-color: #fff;
-        }
-        .badge-ai {
-            font-size: 9px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
-            padding: 2px 10px;
-            border-radius: 40px;
-            -webkit-text-fill-color: #fff;
-        }
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
-            background: var(--bg-glass);
-            color: var(--text-primary);
-            border: 1px solid var(--border-glass);
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            color: #fff;
-            border: none;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 8px 30px rgba(96, 165, 250, 0.3);
-        }
-        .btn-success {
-            background: linear-gradient(135deg, var(--accent-green), #059669);
-            color: #fff;
-            border: none;
-        }
-        .btn-danger {
-            background: linear-gradient(135deg, var(--accent-red), #ef4444);
-            color: #fff;
-            border: none;
-        }
-        .btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 12px;
-        }
-        .upload-area {
-            padding: 44px 20px;
-            text-align: center;
-            border: 2px dashed var(--border-glass);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 20px;
-        }
-        .upload-area:hover {
-            border-color: var(--accent-blue);
-            background: rgba(96, 165, 250, 0.04);
-        }
-        .upload-area.dragover {
-            border-color: var(--accent-purple);
-            background: rgba(167, 139, 250, 0.06);
-        }
-        .upload-area i {
-            font-size: 44px;
-            color: var(--accent-blue);
-            margin-bottom: 10px;
-        }
-        .upload-area h3 {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-        .upload-area p {
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-        .upload-area input {
-            display: none;
-        }
-        .preview-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        @media (max-width:720px) {
-            .preview-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .preview-box {
-            padding: 14px;
-            min-height: 240px;
-            position: relative;
-        }
-        .preview-box .label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .preview-box img,
-        .preview-box canvas {
-            width: 100%;
-            border-radius: 10px;
-            display: none;
-            max-height: 380px;
-            object-fit: contain;
-        }
-        .preview-box img.show,
-        .preview-box canvas.show {
-            display: block;
-        }
-        .preview-box .placeholder {
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 40px 16px;
-            font-size: 13px;
-        }
-        .preview-box .placeholder i {
-            font-size: 32px;
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-        }
-        .toolbar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-        .status-bar {
-            padding: 12px 18px;
-            margin-bottom: 16px;
-            font-size: 13px;
-            border-radius: 10px;
-            display: none;
-        }
-        .status-bar.show {
-            display: block;
-        }
-        .status-bar.loading {
-            background: rgba(96, 165, 250, 0.1);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-            color: var(--accent-blue);
-        }
-        .status-bar.success {
-            background: rgba(52, 211, 153, 0.1);
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            color: var(--accent-green);
-        }
-        .status-bar.error {
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid rgba(248, 113, 113, 0.2);
-            color: var(--accent-red);
-        }
-        .status-bar.warning {
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            color: var(--accent-yellow);
-        }
-        .status-bar .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top-color: var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        #resultsContainer {
-            display: none;
-        }
-        #resultsContainer.show {
-            display: block;
-            animation: fadeUp 0.5s ease;
-        }
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .result-main {
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-        .score-display {
-            text-align: center;
-            padding: 10px 0 16px;
-        }
-        .score-display .number {
-            font-size: 60px;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .score-display .label {
-            font-size: 16px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        .score-display .tier {
-            font-size: 22px;
-            font-weight: 700;
-            margin-top: 2px;
-        }
-        .score-display .tier .emoji {
-            font-size: 28px;
-        }
-        .score-display .psl-tier {
-            font-size: 24px;
-            font-weight: 900;
-            margin-top: 4px;
-            padding: 4px 20px;
-            display: inline-block;
-            border-radius: 40px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-glass);
-        }
-        .score-display .confidence {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-        .score-display .top-percent {
-            font-size: 14px;
-            color: var(--accent-green);
-            margin-top: 2px;
-        }
-        .score-display .warning-msg {
-            font-size: 13px;
-            color: var(--accent-yellow);
-            margin-top: 4px;
-            padding: 8px 16px;
-            background: rgba(251, 191, 36, 0.1);
-            border-radius: 8px;
-            border: 1px solid rgba(251, 191, 36, 0.2);
-        }
-        .score-display .pose-status {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-        .tier-legendary {
-            color: #fcd34d;
-            background: rgba(252, 211, 77, 0.15);
-            border-color: #fcd34d;
-        }
-        .tier-chad {
-            color: #34d399;
-            background: rgba(52, 211, 153, 0.15);
-            border-color: #34d399;
-        }
-        .tier-hightier {
-            color: #60a5fa;
-            background: rgba(96, 165, 250, 0.15);
-            border-color: #60a5fa;
-        }
-        .tier-above {
-            color: #a78bfa;
-            background: rgba(167, 139, 250, 0.15);
-            border-color: #a78bfa;
-        }
-        .tier-average {
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.15);
-            border-color: #fbbf24;
-        }
-        .tier-below {
-            color: #f87171;
-            background: rgba(248, 113, 113, 0.15);
-            border-color: #f87171;
-        }
-        .tier-low {
-            color: #475569;
-            background: rgba(71, 85, 105, 0.15);
-            border-color: #475569;
-        }
-
-        .sub-scores {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin: 16px 0;
-        }
-        .sub-score-item {
-            background: var(--bg-glass);
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: 1px solid var(--border-glass);
-            text-align: center;
-        }
-        .sub-score-item .value {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .sub-score-item .value.good {
-            color: var(--accent-green);
-        }
-        .sub-score-item .value.avg {
-            color: var(--accent-yellow);
-        }
-        .sub-score-item .value.bad {
-            color: var(--accent-red);
-        }
-        .sub-score-item .label {
-            font-size: 9px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .sub-score-item .bar-track {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-            margin-top: 6px;
-            overflow: hidden;
-        }
-        .sub-score-item .bar-track .bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-        .divider {
-            border: none;
-            height: 1px;
-            background: var(--border-glass);
-            margin: 14px 0;
-        }
-        .face-shape-badge {
-            display: inline-block;
-            padding: 4px 18px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 600;
-            background: rgba(167, 139, 250, 0.12);
-            border: 1px solid rgba(167, 139, 250, 0.2);
-            color: var(--accent-purple);
-            margin-top: 4px;
-        }
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 8px;
-            margin: 12px 0;
-        }
-        .info-item {
-            padding: 10px 14px;
-            background: var(--bg-glass);
-            border-radius: 8px;
-            border: 1px solid var(--border-glass);
-            font-size: 13px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .info-item .key {
-            color: var(--text-secondary);
-            font-size: 11px;
-        }
-        .info-item .val {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .info-item .val.positive {
-            color: var(--accent-green);
-        }
-        .info-item .val.negative {
-            color: var(--accent-red);
-        }
-        .info-item .val.neutral {
-            color: var(--accent-yellow);
-        }
-        .thirds-display {
-            display: flex;
-            gap: 4px;
-            margin: 8px 0;
-            height: 12px;
-            border-radius: 6px;
-            overflow: hidden;
-            background: var(--bg-glass);
-        }
-        .thirds-display .segment {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-        .halo-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 12px 0;
-        }
-        @media (max-width:480px) {
-            .halo-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .halo-box {
-            padding: 14px 18px;
-            border-radius: 12px;
-            border: 1px solid var(--border-glass);
-        }
-        .halo-box strong {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-        .halo-box ul {
-            list-style: none;
-            padding: 0;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        .halo-box ul li {
-            padding: 2px 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .halo-box.halo {
-            border-left: 3px solid var(--accent-green);
-        }
-        .halo-box.failo {
-            border-left: 3px solid var(--accent-red);
-        }
-        .rec-box {
-            padding: 16px 20px;
-            border-radius: 12px;
-            margin: 12px 0;
-            background: rgba(96, 165, 250, 0.04);
-            border-left: 3px solid var(--accent-blue);
-            line-height: 1.8;
-            font-size: 14px;
-        }
-        .rec-box strong {
-            color: var(--accent-blue);
-        }
-        .rec-box ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 6px;
-        }
-        .rec-box ul li {
-            padding: 2px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        .history-section {
-            padding: 18px 20px;
-            margin-top: 16px;
-        }
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .history-header h3 {
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 14px;
-            background: var(--bg-glass);
-            border-radius: 10px;
-            border: 1px solid var(--border-glass);
-            margin-bottom: 4px;
-            font-size: 13px;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .history-item .h-score {
-            font-weight: 700;
-            color: var(--accent-blue);
-        }
-        .history-item .h-tier {
-            font-weight: 700;
-            font-size: 13px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 24px 16px;
-            color: var(--text-secondary);
-        }
-        .empty-state i {
-            font-size: 30px;
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-        }
-        .clear-btn {
-            background: none;
-            border: none;
-            color: var(--accent-red);
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 14px;
-        }
-        .loading-overlay.show {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-        .loading-overlay .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.05);
-            border-top-color: var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        .loading-overlay .text {
-            color: var(--text-secondary);
-            font-size: 15px;
-        }
-        .loading-overlay .progress {
-            width: 200px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .loading-overlay .progress .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
-            border-radius: 4px;
-            transition: width 0.4s ease;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-width: 380px;
-        }
-        .toast {
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 13px;
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            color: var(--text-primary);
-            animation: slideUp 0.4s ease;
-            box-shadow: var(--shadow-glass);
-        }
-        .toast.success {
-            border-left: 4px solid var(--accent-green);
-        }
-        .toast.error {
-            border-left: 4px solid var(--accent-red);
-        }
-        .toast.info {
-            border-left: 4px solid var(--accent-blue);
-        }
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(16px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @media (max-width:600px) {
-            .score-display .number {
-                font-size: 44px;
-            }
-            .sub-scores {
-                grid-template-columns: 1fr 1fr;
-            }
-            .result-main {
-                padding: 16px;
-            }
-            .preview-box {
-                min-height: 160px;
-                padding: 10px;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .halo-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Looksmax AI · Face Rating</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body {
+      background: #0b0d10;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .glass-card {
+      max-width: 440px;
+      width: 100%;
+      background: rgba(20, 22, 26, 0.75);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      border-radius: 40px;
+      padding: 24px 20px 30px;
+      box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: all 0.2s ease;
+      color: #f0f2f5;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.3px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 18px;
+    }
+    h1 i { color: #b9a6ff; font-size: 24px; background: rgba(185, 166, 255, 0.12); padding: 8px; border-radius: 16px; }
+    h1 small { font-size: 13px; font-weight: 400; color: #a0a7b5; margin-left: auto; letter-spacing: 0.2px; }
+    .media-area {
+      position: relative;
+      background: #14181e;
+      border-radius: 28px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+    }
+    #video, #image-preview {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #101316;
+    }
+    #image-preview { display: none; }
+    .overlay-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 14px 16px;
+      justify-content: center;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+      border-top: 1px solid rgba(255,255,255,0.03);
+    }
+    .btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 16px;
+      border-radius: 40px;
+      color: #e8ecf2;
+      font-weight: 500;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(4px);
+      transition: 0.2s;
+      cursor: pointer;
+      flex: 1 0 auto;
+      justify-content: center;
+    }
+    .btn-primary {
+      background: #7c6cf0;
+      border-color: #7c6cf0;
+      color: white;
+      box-shadow: 0 4px 14px rgba(124, 108, 240, 0.25);
+    }
+    .btn-primary i { color: white; }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-outline { background: transparent; border-color: rgba(255,255,255,0.15); }
+    .btn:active { transform: scale(0.96); }
+    #file-input { display: none; }
+    .scan-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      z-index: 10;
+      border-radius: 28px;
+    }
+    .scan-overlay.active { display: flex; }
+    .scan-spinner {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.08);
+      border-top-color: #b9a6ff;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .scan-text { font-weight: 500; font-size: 18px; letter-spacing: 0.3px; color: #d9dee8; }
+    .result-card {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(4px);
+      border-radius: 28px;
+      padding: 18px 18px 14px;
+      margin-top: 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+      display: none;
+      animation: fadeUp 0.4s ease;
+    }
+    .result-card.active { display: block; }
+    @keyframes fadeUp { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+    .overall-score {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+    }
+    .score-number {
+      font-size: 44px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #d9c9ff, #a188ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+    }
+    .score-label { font-size: 16px; font-weight: 400; color: #afb8c7; }
+    .score-max { font-size: 18px; font-weight: 300; color: #6a7385; }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 18px;
+      margin: 14px 0 16px;
+    }
+    .metric-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.04);
+    }
+    .metric-name { color: #b3bcca; }
+    .metric-value { font-weight: 600; color: #eef2f8; }
+    .feedback-block {
+      background: rgba(0,0,0,0.2);
+      border-radius: 20px;
+      padding: 14px 16px;
+      margin: 12px 0 8px;
+    }
+    .feedback-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: #b9c2d3;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feedback-title i { color: #b9a6ff; font-size: 14px; }
+    .feedback-text { font-size: 14px; line-height: 1.6; color: #d2d9e8; padding-left: 4px; }
+    .feedback-text strong { color: #c8d0e3; }
+    .strength-list, .improve-list { list-style: none; padding-left: 4px; margin-top: 6px; }
+    .strength-list li, .improve-list li {
+      font-size: 14px;
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #d2d9e8;
+    }
+    .strength-list li i { color: #7fdfb6; width: 18px; }
+    .improve-list li i { color: #f7b87a; width: 18px; }
+    .history-section {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .history-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #99a2b5;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .history-list {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 10px;
+      padding: 6px 2px 12px;
+      scrollbar-width: thin;
+      scrollbar-color: #3a3f4a transparent;
+    }
+    .history-item {
+      background: rgba(255,255,255,0.04);
+      border-radius: 18px;
+      padding: 8px 16px 8px 14px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .history-item i { color: #b9a6ff; font-size: 12px; }
+    .history-score { font-weight: 600; color: #d4dbf0; }
+    .empty-history { color: #5f687b; font-size: 13px; padding: 6px 0; }
+    @media (max-width: 480px) { .glass-card { padding: 18px 14px 22px; } .btn { font-size: 13px; padding: 8px 12px; } }
+  </style>
 </head>
 <body>
 
-    <!-- LOADING -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-        <div class="text" id="loadingText">🧠 AI đang phân tích...</div>
-        <div class="progress"><div class="fill" id="progressFill"></div></div>
+<div class="glass-card">
+  <h1><i class="fas fa-robot"></i> Looksmax AI <small><i class="fas fa-bolt" style="color: #b9a6ff;"></i> v1</small></h1>
+
+  <div class="media-area">
+    <video id="video" playsinline></video>
+    <img id="image-preview" alt="preview" />
+    <div class="scan-overlay" id="scanOverlay">
+      <div class="scan-spinner"></div>
+      <div class="scan-text"><i class="fas fa-face-smile"></i> Đang phân tích...</div>
     </div>
-
-    <!-- TOAST -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <div class="container">
-
-        <header class="header glass">
-            <div class="logo">
-                <i class="fas fa-crown"></i>
-                <span>SIXHEN Rate</span>
-                <span class="badge-v5">V5</span>
-                <span class="badge-ai">AI</span>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn btn-danger btn-sm" id="clearBtn" disabled><i class="fas fa-trash"></i> Xóa</button>
-            </div>
-        </header>
-
-        <div class="upload-area glass" id="uploadArea">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <h3>Kéo thả ảnh hoặc <span style="color:var(--accent-blue);">bấm chọn</span></h3>
-            <p>AI Beauty Predictor V5 - 478 landmarks - TensorFlow.js</p>
-            <input type="file" id="fileInput" accept="image/*" />
-        </div>
-
-        <div class="preview-grid">
-            <div class="preview-box glass">
-                <div class="label"><i class="fas fa-image"></i> Ảnh gốc</div>
-                <img id="originalImage" />
-                <div class="placeholder" id="originalPlaceholder"><i class="fas fa-image"></i> Chưa có ảnh</div>
-            </div>
-            <div class="preview-box glass">
-                <div class="label"><i class="fas fa-robot"></i> AI phân tích</div>
-                <canvas id="analysisCanvas"></canvas>
-                <div class="placeholder" id="analysisPlaceholder"><i class="fas fa-robot"></i> Chờ phân tích</div>
-            </div>
-        </div>
-
-        <div class="toolbar">
-            <button class="btn btn-primary" id="analyzeBtn" disabled><i class="fas fa-microchip"></i> Analyze</button>
-            <button class="btn" id="zoomInBtn" disabled><i class="fas fa-search-plus"></i></button>
-            <button class="btn" id="zoomOutBtn" disabled><i class="fas fa-search-minus"></i></button>
-            <button class="btn" id="resetZoomBtn" disabled><i class="fas fa-undo"></i></button>
-        </div>
-
-        <div class="status-bar" id="statusBar"></div>
-
-        <div id="resultsContainer">
-            <div class="result-main glass">
-                <div class="score-display">
-                    <div class="number" id="scoreNumber">0.00</div>
-                    <div class="label">Appeal Score</div>
-                    <div class="tier"><span class="emoji" id="tierEmoji">✨</span> <span id="tierLabel">Đang phân tích</span></div>
-                    <div class="psl-tier" id="pslTier"><span class="label" id="pslLabel">--</span></div>
-                    <div class="face-shape-badge" id="faceShapeBadge">🔮 Face Shape: --</div>
-                    <div class="pose-status" id="poseStatus">📐 Pose: --</div>
-                    <div class="confidence" id="confidenceDisplay">🎯 Confidence: <span class="warn">Đang tính...</span></div>
-                    <div class="top-percent" id="topPercent">📊 Top: --</div>
-                    <div class="warning-msg" id="warningMsg" style="display:none;"></div>
-                </div>
-
-                <div class="sub-scores" id="subScores">
-                    <div class="sub-score-item"><div class="value" id="subAppeal">--</div><div class="label">🔥 Appeal</div><div class="bar-track"><div class="bar-fill" id="barAppeal" style="width:0%;background:linear-gradient(90deg,#60a5fa,#a78bfa);"></div></div></div>
-                    <div class="sub-score-item"><div class="value" id="subEyes">--</div><div class="label">👁️ Eyes</div><div class="bar-track"><div class="bar-fill" id="barEyes" style="width:0%;background:linear-gradient(90deg,#f472b6,#ec4899);"></div></div></div>
-                    <div class="sub-score-item"><div class="value" id="subJaw">--</div><div class="label">🦴 Jaw</div><div class="bar-track"><div class="bar-fill" id="barJaw" style="width:0%;background:linear-gradient(90deg,#34d399,#059669);"></div></div></div>
-                    <div class="sub-score-item"><div class="value" id="subHarmony">--</div><div class="label">🎵 Harmony</div><div class="bar-track"><div class="bar-fill" id="barHarmony" style="width:0%;background:linear-gradient(90deg,#a78bfa,#8b5cf6);"></div></div></div>
-                    <div class="sub-score-item"><div class="value" id="subSkin">--</div><div class="label">✨ Skin</div><div class="bar-track"><div class="bar-fill" id="barSkin" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f59e0b);"></div></div></div>
-                    <div class="sub-score-item"><div class="value" id="subHair">--</div><div class="label">💇 Hair</div><div class="bar-track"><div class="bar-fill" id="barHair" style="width:0%;background:linear-gradient(90deg,#f87171,#ef4444);"></div></div></div>
-                    <div class="sub-score-item"><div class="value" id="subPotential">--</div><div class="label">📈 Potential</div><div class="bar-track"><div class="bar-fill" id="barPotential" style="width:0%;background:linear-gradient(90deg,#fcd34d,#f59e0b);"></div></div></div>
-                </div>
-
-                <div class="divider"></div>
-
-                <div style="font-size:14px; font-weight:600; margin-bottom:8px;">📐 Facial Metrics</div>
-                <div class="info-grid" id="infoGrid"></div>
-
-                <div style="font-size:13px; font-weight:500; margin-top:8px;">Facial Thirds</div>
-                <div class="thirds-display" id="thirdsDisplay"></div>
-
-                <div class="divider"></div>
-
-                <div class="halo-grid">
-                    <div class="halo-box halo"><strong>✅ Strengths</strong><ul id="haloList"><li>Chưa có dữ liệu</li></ul></div>
-                    <div class="halo-box failo"><strong>❌ Weaknesses</strong><ul id="failoList"><li>Chưa có dữ liệu</li></ul></div>
-                </div>
-
-                <div class="rec-box">
-                    <strong>💡 AI Recommendations</strong>
-                    <ul id="recList"><li>Chưa có dữ liệu</li></ul>
-                </div>
-
-                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-                    <button class="btn btn-success btn-sm" onclick="shareResult()"><i class="fas fa-share-alt"></i> Chia sẻ</button>
-                    <button class="btn btn-sm" onclick="copyResult()"><i class="fas fa-copy"></i> Sao chép</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="history-section glass">
-            <div class="history-header">
-                <h3><i class="fas fa-history"></i> Lịch sử</h3>
-                <button class="clear-btn" id="clearHistoryBtn"><i class="fas fa-trash"></i> Xóa</button>
-            </div>
-            <div id="historyContainer"><div class="empty-state"><i class="fas fa-clock"></i> Chưa có dữ liệu</div></div>
-        </div>
-
+    <div class="overlay-controls">
+      <button class="btn btn-outline" id="cameraBtn"><i class="fas fa-camera"></i> Camera</button>
+      <button class="btn btn-outline" id="uploadBtn"><i class="fas fa-image"></i> Tải ảnh</button>
+      <button class="btn btn-primary" id="captureBtn"><i class="fas fa-sync"></i> Quét</button>
     </div>
+    <input type="file" id="file-input" accept="image/*">
+  </div>
 
-    <!-- ============================================================
-    SCRIPTS
-    ============================================================ -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
+  <div class="result-card" id="resultCard">
+    <div class="overall-score">
+      <span class="score-label">Tổng điểm</span>
+      <span><span class="score-number" id="overallScore">8.6</span><span class="score-max"> /10</span></span>
+    </div>
+    <div class="metrics-grid" id="metricsGrid">
+      <div class="metric-item"><span class="metric-name">Đối xứng</span><span class="metric-value" id="symmetry">9.1</span></div>
+      <div class="metric-item"><span class="metric-name">Jawline</span><span class="metric-value" id="jawline">8.4</span></div>
+      <div class="metric-item"><span class="metric-name">Mắt</span><span class="metric-value" id="eyes">8.8</span></div>
+      <div class="metric-item"><span class="metric-name">Mũi</span><span class="metric-value" id="nose">8.2</span></div>
+      <div class="metric-item"><span class="metric-name">Môi</span><span class="metric-value" id="lips">8.0</span></div>
+      <div class="metric-item"><span class="metric-name">Da</span><span class="metric-value" id="skin">8.5</span></div>
+      <div class="metric-item"><span class="metric-name">Tóc</span><span class="metric-value" id="hair">9.0</span></div>
+      <div class="metric-item"><span class="metric-name">Góc nghiêng</span><span class="metric-value" id="angle">7.8</span></div>
+    </div>
+    <div class="feedback-block">
+      <div class="feedback-title"><i class="fas fa-star"></i> Điểm mạnh</div>
+      <ul class="strength-list" id="strengthList">
+        <li><i class="fas fa-check-circle"></i> Khuôn mặt cân đối</li>
+        <li><i class="fas fa-check-circle"></i> Mắt rõ</li>
+        <li><i class="fas fa-check-circle"></i> Tóc hợp</li>
+      </ul>
+    </div>
+    <div class="feedback-block">
+      <div class="feedback-title"><i class="fas fa-lightbulb"></i> Cải thiện</div>
+      <ul class="improve-list" id="improveList">
+        <li><i class="fas fa-arrow-right"></i> Tăng ánh sáng khi chụp</li>
+        <li><i class="fas fa-arrow-right"></i> Góc máy thấp hơn một chút</li>
+        <li><i class="fas fa-arrow-right"></i> Cười nhẹ sẽ tăng điểm</li>
+      </ul>
+    </div>
+  </div>
 
-    <script>
-        // ============================================================
-        // TIERS
-        // ============================================================
-        const TIERS = [
-            { min: 8.5, label: 'Legendary', emoji: '👑', cls: 'tier-legendary' },
-            { min: 7.5, label: 'Chad', emoji: '🔥', cls: 'tier-chad' },
-            { min: 6.8, label: 'High Tier', emoji: '🌟', cls: 'tier-hightier' },
-            { min: 6.0, label: 'Above Average', emoji: '✨', cls: 'tier-above' },
-            { min: 5.0, label: 'Average', emoji: '😊', cls: 'tier-average' },
-            { min: 4.0, label: 'Below Average', emoji: '🌿', cls: 'tier-below' },
-            { min: 3.0, label: 'Low Tier', emoji: '😌', cls: 'tier-low' },
-            { min: 0, label: 'Subhuman', emoji: '💀', cls: 'tier-low' },
-        ];
+  <div class="history-section">
+    <div class="history-title">
+      <span><i class="fas fa-clock-rotate-left" style="margin-right: 6px;"></i> Lịch sử</span>
+      <span style="font-size:12px; cursor:pointer;" id="clearHistoryBtn"><i class="fas fa-trash-can"></i> Xóa</span>
+    </div>
+    <div class="history-list" id="historyList">
+      <span class="empty-history">Chưa có đánh giá nào</span>
+    </div>
+  </div>
+</div>
 
-        function getTier(score) {
-            return TIERS.find(t => score >= t.min) || TIERS[TIERS.length - 1];
+<script>
+  (function(){
+    const video = document.getElementById('video');
+    const imagePreview = document.getElementById('image-preview');
+    const fileInput = document.getElementById('file-input');
+    const cameraBtn = document.getElementById('cameraBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const captureBtn = document.getElementById('captureBtn');
+    const scanOverlay = document.getElementById('scanOverlay');
+    const resultCard = document.getElementById('resultCard');
+    const overallScore = document.getElementById('overallScore');
+    const symmetryEl = document.getElementById('symmetry');
+    const jawlineEl = document.getElementById('jawline');
+    const eyesEl = document.getElementById('eyes');
+    const noseEl = document.getElementById('nose');
+    const lipsEl = document.getElementById('lips');
+    const skinEl = document.getElementById('skin');
+    const hairEl = document.getElementById('hair');
+    const angleEl = document.getElementById('angle');
+    const strengthList = document.getElementById('strengthList');
+    const improveList = document.getElementById('improveList');
+    const historyList = document.getElementById('historyList');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+    let cameraStream = null;
+    let cameraActive = false;
+    let faceMesh = null;
+    let isScanning = false;
+    let history = JSON.parse(localStorage.getItem('looksmax_history') || '[]');
+
+    function initFaceMesh() {
+      if (faceMesh) return;
+      faceMesh = new FaceMesh({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+      });
+      faceMesh.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: true,
+        minDetectionConfidence: 0.6,
+        minTrackingConfidence: 0.5
+      });
+      faceMesh.onResults(onFaceMeshResults);
+    }
+
+    function getCurrentFrame() {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let src = video;
+        if (imagePreview.style.display !== 'none' && imagePreview.src) {
+          src = imagePreview;
         }
+        canvas.width = 400;
+        canvas.height = 400;
+        ctx.drawImage(src, 0, 0, 400, 400);
+        canvas.toBlob((blob) => {
+          resolve(blob);
+        }, 'image/jpeg', 0.9);
+      });
+    }
 
-        function getTopPercent(score) {
-            if (score >= 8.5) return '0.01%';
-            if (score >= 7.5) return '1%';
-            if (score >= 6.8) return '5%';
-            if (score >= 6.0) return '15%';
-            if (score >= 5.0) return '35%';
-            if (score >= 4.0) return '60%';
-            return '>60%';
+    async function performScan() {
+      if (isScanning) return;
+      isScanning = true;
+      scanOverlay.classList.add('active');
+      resultCard.classList.remove('active');
+
+      try {
+        const blob = await getCurrentFrame();
+        if (!blob) {
+          alert('Vui lòng bật camera hoặc tải ảnh lên trước.');
+          isScanning = false;
+          scanOverlay.classList.remove('active');
+          return;
         }
-
-        // ============================================================
-        // UTILITIES
-        // ============================================================
-        const Utils = {
-            clamp: (v, min, max) => Math.max(min, Math.min(max, v)),
-            dist: (p1, p2) => {
-                if (!p1 || !p2) return 0;
-                return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-            },
-            angle: (p1, p2) => {
-                if (!p1 || !p2) return 0;
-                return Math.atan2(p2.y - p1.y, p2.x - p1.x);
-            },
-            safe: (v, fallback = 0) => {
-                if (typeof v === 'number' && !isNaN(v) && isFinite(v)) return v;
-                return fallback;
-            },
-            round: (v, d = 1) => Math.round(v * 10 ** d) / 10 ** d,
-            scoreFromError: (value, ideal, tolerance) => {
-                const error = Math.abs(value - ideal) / (ideal + 0.001);
-                return Utils.clamp(1 - error / tolerance, 0, 1) * 100;
-            },
-            normalize: (v, min, max) => Utils.clamp((v - min) / (max - min + 0.001), 0, 1) * 100,
-        };
-
-        // ============================================================
-        // TOAST, LOADING
-        // ============================================================
-        function showToast(msg, type = 'info') {
-            const el = document.createElement('div');
-            el.className = `toast ${type}`;
-            el.textContent = msg;
-            document.getElementById('toastContainer').appendChild(el);
-            setTimeout(() => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateX(20px)';
-                setTimeout(() => el.remove(), 400);
-            }, 3500);
-        }
-
-        const Loading = {
-            overlay: document.getElementById('loadingOverlay'),
-            text: document.getElementById('loadingText'),
-            progress: document.getElementById('progressFill'),
-            show: (msg) => {
-                Loading.overlay.classList.add('show');
-                Loading.text.textContent = msg || '🧠 Đang phân tích...';
-                Loading.progress.style.width = '0%';
-            },
-            update: (p) => { Loading.progress.style.width = Math.min(p, 100) + '%'; },
-            hide: () => {
-                Loading.overlay.classList.remove('show');
-                Loading.progress.style.width = '0%';
-            }
-        };
-
-        // ============================================================
-        // FACE DETECTOR
-        // ============================================================
-        class FaceDetector {
-            constructor() {
-                this.detector = null;
-                this.initialized = false;
-                this.landmarks = [];
-            }
-
-            async init() {
-                if (this.initialized) return;
-                try {
-                    const model = faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh;
-                    this.detector = await faceLandmarksDetection.createDetector(model, {
-                        runtime: 'tfjs',
-                        maxFaces: 1,
-                        refineLandmarks: true,
-                    });
-                    this.initialized = true;
-                    console.log('✅ Face detector initialized');
-                } catch (e) {
-                    throw new Error('Không thể khởi tạo AI. Vui lòng thử lại.');
-                }
-            }
-
-            async detect(image) {
-                if (!this.initialized) await this.init();
-                const faces = await this.detector.estimateFaces(image);
-                if (!faces || faces.length === 0) return null;
-                return faces[0];
-            }
-
-            extractLandmarks(face) {
-                const points = face.keypoints || [];
-                this.landmarks = points.map(p => ({
-                    x: Utils.safe(p.x, 0),
-                    y: Utils.safe(p.y, 0),
-                    z: Utils.safe(p.z, 0),
-                }));
-                return this.landmarks;
-            }
-
-            get(idx) {
-                if (idx < 0 || idx >= this.landmarks.length) return null;
-                return this.landmarks[idx] || null;
-            }
-
-            getSafe(idx, fallback = { x: 0, y: 0 }) {
-                const p = this.get(idx);
-                return p || fallback;
-            }
-
-            getCount() { return this.landmarks.length; }
-            isValid() { return this.landmarks.length >= 300; }
-        }
-
-        // ============================================================
-        // LANDMARK INDEXES (MediaPipe 478)
-        // ============================================================
-        const L = {
-            // Eyes
-            LEFT_EYE_INNER: 33,
-            LEFT_EYE_OUTER: 133,
-            LEFT_EYE_TOP: 27,
-            LEFT_EYE_BOTTOM: 23,
-            RIGHT_EYE_INNER: 362,
-            RIGHT_EYE_OUTER: 263,
-            RIGHT_EYE_TOP: 257,
-            RIGHT_EYE_BOTTOM: 253,
-            LEFT_IRIS: 468,
-            RIGHT_IRIS: 473,
-
-            // Eyebrows
-            LEFT_BROW_INNER: 55,
-            LEFT_BROW_OUTER: 65,
-            LEFT_BROW_TOP: 52,
-            RIGHT_BROW_INNER: 285,
-            RIGHT_BROW_OUTER: 295,
-            RIGHT_BROW_TOP: 282,
-
-            // Nose
-            NOSE_TIP: 1,
-            NOSE_LEFT: 64,
-            NOSE_RIGHT: 294,
-            NOSE_BRIDGE: 168,
-
-            // Mouth
-            MOUTH_LEFT: 61,
-            MOUTH_RIGHT: 291,
-            MOUTH_TOP: 13,
-            MOUTH_BOTTOM: 14,
-
-            // Jaw/Chin
-            CHIN: 152,
-            JAW_LEFT: 356,
-            JAW_RIGHT: 50,
-            CHIN_LEFT: 172,
-            CHIN_RIGHT: 397,
-            GONION_LEFT: 356,
-            GONION_RIGHT: 50,
-
-            // Face boundaries
-            FACE_TOP: 10,
-            FACE_BOTTOM: 152,
-            FACE_LEFT: 234,
-            FACE_RIGHT: 454,
-
-            // Thirds
-            FOREHEAD: 108,
-
-            // Cheekbones
-            CHEEK_LEFT: 117,
-            CHEEK_RIGHT: 346,
-
-            // Canthal
-            LEFT_CANTHUS: 33,
-            RIGHT_CANTHUS: 263,
-
-            // Hairline
-            HAIRLINE_LEFT: 234,
-            HAIRLINE_RIGHT: 454,
-            HAIRLINE_CENTER: 10,
-        };
-
-        // ============================================================
-        // AI BEAUTY PREDICTOR ENGINE
-        // ============================================================
-        class AIBeautyPredictor {
-            constructor(detector, canvas) {
-                this.detector = detector;
-                this.canvas = canvas;
-                this.m = {};
-                this.scores = {};
-                this.pose = { yaw: 0, pitch: 0, roll: 0, valid: true };
-            }
-
-            _get(idx) { return this.detector.getSafe(idx); }
-            _dist(i1, i2) { return Utils.dist(this._get(i1), this._get(i2)); }
-            _angle(i1, i2) { return Utils.angle(this._get(i1), this._get(i2)); }
-
-            // ============================================================
-            // POSE VALIDATION
-            // ============================================================
-            _validatePose() {
-                const m = this.m;
-                const leftEye = this._dist(L.LEFT_EYE_INNER, L.LEFT_EYE_OUTER);
-                const rightEye = this._dist(L.RIGHT_EYE_INNER, L.RIGHT_EYE_OUTER);
-                const eyeRatio = leftEye / (rightEye + 0.001);
-                this.pose.yaw = (1 - eyeRatio) * 30;
-
-                const eyeToNose = Utils.dist(this._get(L.RIGHT_EYE_INNER), this._get(L.NOSE_TIP));
-                this.pose.pitch = (eyeToNose / (m.faceH * 0.33) - 1) * 20;
-                this.pose.roll = m.canthalTilt;
-
-                this.pose.valid = (
-                    Math.abs(this.pose.yaw) < 15 &&
-                    Math.abs(this.pose.pitch) < 12 &&
-                    Math.abs(this.pose.roll) < 20
-                );
-                return this.pose;
-            }
-
-            // ============================================================
-            // EXTRACT ALL METRICS
-            // ============================================================
-            extractMetrics() {
-                const m = {};
-
-                m.faceW = this._dist(L.FACE_LEFT, L.FACE_RIGHT);
-                m.faceH = this._dist(L.FACE_TOP, L.FACE_BOTTOM);
-
-                // ===== FACIAL THIRDS =====
-                m.upperThird = this._dist(L.FACE_TOP, L.FOREHEAD);
-                m.midThird = this._dist(L.FOREHEAD, L.CHIN);
-                m.lowerThird = this._dist(L.CHIN, L.MOUTH_BOTTOM);
-                m.totalThird = m.upperThird + m.midThird + m.lowerThird;
-
-                // ===== FACIAL FIFTHS =====
-                const faceL = this._get(L.FACE_LEFT);
-                const lEyeOut = this._get(L.LEFT_EYE_OUTER);
-                const rEyeIn = this._get(L.RIGHT_EYE_INNER);
-                const rEyeOut = this._get(L.RIGHT_EYE_OUTER);
-                const faceR = this._get(L.FACE_RIGHT);
-                if (faceL && lEyeOut && rEyeIn && rEyeOut && faceR) {
-                    m.fifth1 = Utils.dist(faceL, lEyeOut);
-                    m.fifth2 = Utils.dist(lEyeOut, rEyeIn);
-                    m.fifth3 = Utils.dist(rEyeIn, rEyeOut);
-                    m.fifth4 = Utils.dist(rEyeOut, faceR);
-                } else {
-                    m.fifth1 = m.fifth2 = m.fifth3 = m.fifth4 = m.faceW / 4;
-                }
-
-                // ===== EYES =====
-                m.leftPFL = this._dist(L.LEFT_EYE_INNER, L.LEFT_EYE_OUTER);
-                m.rightPFL = this._dist(L.RIGHT_EYE_INNER, L.RIGHT_EYE_OUTER);
-                m.eyeDist = this._dist(L.LEFT_EYE_INNER, L.RIGHT_EYE_INNER);
-                m.ESR = m.eyeDist / (m.faceW + 0.001);
-                m.leftEyeH = this._dist(L.LEFT_EYE_TOP, L.LEFT_EYE_BOTTOM);
-                m.rightEyeH = this._dist(L.RIGHT_EYE_TOP, L.RIGHT_EYE_BOTTOM);
-
-                // Upper eyelid exposure
-                const lTop = this._get(L.LEFT_EYE_TOP);
-                const lInner = this._get(L.LEFT_EYE_INNER);
-                const lBottom = this._get(L.LEFT_EYE_BOTTOM);
-                if (lTop && lInner && lBottom) {
-                    m.upperExposure = Math.abs(lTop.y - lInner.y) / (lTop.y - lBottom.y + 0.001);
-                } else { m.upperExposure = 0.25; }
-
-                // Scleral show
-                m.scleralShow = m.upperExposure;
-
-                // Lower eyelid support
-                const lBottom2 = this._get(L.LEFT_EYE_BOTTOM);
-                const rBottom2 = this._get(L.RIGHT_EYE_BOTTOM);
-                if (lBottom2 && rBottom2) {
-                    m.lowerSupport = (lBottom2.y + rBottom2.y) / 2 / m.faceH;
-                } else { m.lowerSupport = 0.5; }
-
-                // Interpupillary distance
-                const lPupil = this._get(L.LEFT_PUPIL);
-                const rPupil = this._get(L.RIGHT_PUPIL);
-                if (lPupil && rPupil) {
-                    m.IPD = Utils.dist(lPupil, rPupil) / m.faceW;
-                } else { m.IPD = 0.46; }
-
-                // ===== CANTHAL TILT =====
-                const leftInner = this._get(L.LEFT_EYE_INNER);
-                const rightInner = this._get(L.RIGHT_EYE_INNER);
-                if (leftInner && rightInner) {
-                    m.canthalTilt = Math.atan2(rightInner.y - leftInner.y, rightInner.x - leftInner.x) * 180 / Math.PI;
-                } else { m.canthalTilt = 0; }
-
-                // ===== JAW =====
-                m.jawW = this._dist(L.JAW_LEFT, L.JAW_RIGHT);
-                m.chinW = this._dist(L.CHIN_LEFT, L.CHIN_RIGHT);
-                m.cheekW = this._dist(L.CHEEK_LEFT, L.CHEEK_RIGHT);
-                m.bigonialW = this._dist(L.GONION_LEFT, L.GONION_RIGHT);
-
-                // Gonial Angle
-                const chin = this._get(L.CHIN);
-                const gL = this._get(L.GONION_LEFT);
-                const gR = this._get(L.GONION_RIGHT);
-                if (chin && gL && gR) {
-                    const a1 = Utils.angle(chin, gL);
-                    const a2 = Utils.angle(chin, gR);
-                    m.gonialAngle = Math.abs(a1 - a2) * 180 / Math.PI;
-                } else { m.gonialAngle = 125; }
-
-                // Ramus Height
-                const jawL = this._get(L.JAW_LEFT);
-                const jawR = this._get(L.JAW_RIGHT);
-                if (jawL && jawR) {
-                    m.ramusHeight = (Utils.dist(jawL, gL) + Utils.dist(jawR, gR)) / 2;
-                } else { m.ramusHeight = m.faceH * 0.15; }
-
-                // Chin Projection
-                const noseTip = this._get(L.NOSE_TIP);
-                const mouthTop = this._get(L.MOUTH_TOP);
-                const chinPt = this._get(L.CHIN);
-                if (noseTip && mouthTop && chinPt) {
-                    m.chinProjection = Utils.dist(noseTip, chinPt) / (Utils.dist(noseTip, mouthTop) + 0.001);
-                } else { m.chinProjection = 1.5; }
-
-                // Chin Forwardness
-                if (noseTip && chinPt) {
-                    m.chinForwardness = (chinPt.x - noseTip.x) / m.faceW;
-                } else { m.chinForwardness = 0; }
-
-                // ===== NOSE =====
-                m.noseW = this._dist(L.NOSE_LEFT, L.NOSE_RIGHT);
-                m.noseH = this._dist(L.NOSE_BRIDGE, L.NOSE_TIP);
-
-                // ===== MOUTH =====
-                m.mouthW = this._dist(L.MOUTH_LEFT, L.MOUTH_RIGHT);
-                m.mouthH = this._dist(L.MOUTH_TOP, L.MOUTH_BOTTOM);
-
-                // ===== HAIRLINE =====
-                const hairL = this._get(L.HAIRLINE_LEFT);
-                const hairR = this._get(L.HAIRLINE_RIGHT);
-                if (hairL && hairR) {
-                    m.hairlineWidth = Utils.dist(hairL, hairR);
-                    m.foreheadExposure = m.upperThird / (m.faceH + 0.001);
-                } else {
-                    m.hairlineWidth = m.faceW * 0.8;
-                    m.foreheadExposure = 0.33;
-                }
-
-                // ===== RATIOS =====
-                m.fwhr = m.faceW / (m.faceH + 0.001);
-                m.midfaceRatio = m.midThird / (m.faceH + 0.001);
-                m.lowerThirdRatio = m.lowerThird / (m.faceH + 0.001);
-                m.jawRatio = m.jawW / (m.faceW + 0.001);
-                m.chinWidthRatio = m.chinW / (m.jawW + 0.001);
-                m.cheekRatio = m.cheekW / (m.faceW + 0.001);
-                m.noseWidthRatio = m.noseW / (m.faceW + 0.001);
-                m.mouthWidthRatio = m.mouthW / (m.faceW + 0.001);
-                m.bigonialRatio = m.bigonialW / (m.faceW + 0.001);
-                m.goldenRatio = m.fwhr / 1.618;
-
-                // ===== SYMMETRY (Mirror 478 landmarks) =====
-                const leftEyeW = this._dist(L.LEFT_EYE_INNER, L.LEFT_EYE_OUTER);
-                const rightEyeW = this._dist(L.RIGHT_EYE_INNER, L.RIGHT_EYE_OUTER);
-                const leftBrow = this._dist(L.LEFT_BROW_INNER, L.LEFT_BROW_OUTER);
-                const rightBrow = this._dist(L.RIGHT_BROW_INNER, L.RIGHT_BROW_OUTER);
-                const leftMouth = this._dist(L.MOUTH_LEFT, L.NOSE_TIP);
-                const rightMouth = this._dist(L.MOUTH_RIGHT, L.NOSE_TIP);
-                const leftCheek = this._dist(L.CHEEK_LEFT, L.NOSE_TIP);
-                const rightCheek = this._dist(L.CHEEK_RIGHT, L.NOSE_TIP);
-                const leftJaw = this._dist(L.JAW_LEFT, L.NOSE_TIP);
-                const rightJaw = this._dist(L.JAW_RIGHT, L.NOSE_TIP);
-
-                const symVals = [
-                    1 - Math.abs(leftEyeW - rightEyeW) / (leftEyeW + rightEyeW + 0.001),
-                    1 - Math.abs(leftBrow - rightBrow) / (leftBrow + rightBrow + 0.001),
-                    1 - Math.abs(leftMouth - rightMouth) / (leftMouth + rightMouth + 0.001),
-                    1 - Math.abs(leftCheek - rightCheek) / (leftCheek + rightCheek + 0.001),
-                    1 - Math.abs(leftJaw - rightJaw) / (leftJaw + rightJaw + 0.001),
-                ];
-                m.facialSymmetry = symVals.reduce((a, b) => a + b, 0) / symVals.length;
-
-                this.m = m;
-                this._validatePose();
-                return m;
-            }
-
-            // ============================================================
-            // AI PREDICTION MODEL
-            // ============================================================
-            _predictBeauty() {
-                const m = this.m;
-
-                // ===== EYE AREA SCORE =====
-                const pflScore = Utils.clamp((m.leftPFL + m.rightPFL) / (m.faceW * 0.15) * 100, 0, 100);
-                const esrScore = Utils.scoreFromError(m.ESR, 0.46, 0.1);
-                const scleralScore = Utils.clamp(100 - m.scleralShow * 150, 0, 100);
-                const exposureScore = Utils.clamp(100 - m.upperExposure * 120, 0, 100);
-                const tiltScore = Utils.clamp(100 - Math.abs(m.canthalTilt - 6) * 4, 0, 100);
-                const supportScore = Utils.clamp(100 - Math.abs(m.lowerSupport - 0.45) * 200, 0, 100);
-                const ipdScore = Utils.scoreFromError(m.IPD, 0.46, 0.08);
-                const symScore = Utils.safe(m.facialSymmetry, 0.5) * 100;
-
-                const eyeScore = (
-                    pflScore * 0.18 +
-                    esrScore * 0.16 +
-                    scleralScore * 0.14 +
-                    exposureScore * 0.14 +
-                    tiltScore * 0.16 +
-                    supportScore * 0.10 +
-                    ipdScore * 0.06 +
-                    symScore * 0.06
-                );
-
-                // ===== JAW SCORE =====
-                const jawScore = Utils.scoreFromError(m.jawRatio, 0.85, 0.12);
-                const angleScore = Utils.clamp(100 - Math.abs(m.gonialAngle - 125) * 2, 0, 100);
-                const ramusScore = Utils.clamp(m.ramusHeight / (m.faceH * 0.2) * 100, 0, 100);
-                const bigonialScore = Utils.scoreFromError(m.bigonialRatio, 0.75, 0.1);
-                const chinScore = Utils.scoreFromError(m.chinProjection, 1.65, 0.2);
-                const forwardScore = Utils.clamp((m.chinForwardness + 0.1) * 500, 0, 100);
-                const chinWScore = Utils.scoreFromError(m.chinWidthRatio, 0.6, 0.15);
-
-                const boneScore = (
-                    jawScore * 0.18 +
-                    angleScore * 0.18 +
-                    ramusScore * 0.14 +
-                    bigonialScore * 0.14 +
-                    chinScore * 0.14 +
-                    forwardScore * 0.12 +
-                    chinWScore * 0.10
-                );
-
-                // ===== HARMONY SCORE =====
-                const thirds = [m.upperThird, m.midThird, m.lowerThird];
-                const avgThird = thirds.reduce((a, b) => a + b, 0) / 3;
-                const thirdErr = thirds.reduce((a, b) => a + Math.abs(b - avgThird), 0) / (avgThird + 0.001);
-                const thirdScore = Utils.clamp(1 - thirdErr * 2.5, 0, 1) * 100;
-
-                const fifths = [m.fifth1, m.fifth2, m.fifth3, m.fifth4];
-                const avgFifth = fifths.reduce((a, b) => a + b, 0) / 4;
-                const fifthErr = fifths.reduce((a, b) => a + Math.abs(b - avgFifth), 0) / (avgFifth + 0.001);
-                const fifthScore = Utils.clamp(1 - fifthErr * 2.5, 0, 1) * 100;
-
-                const midScore = Utils.scoreFromError(m.midfaceRatio, 0.33, 0.08);
-                const lowerScore = Utils.scoreFromError(m.lowerThirdRatio, 0.33, 0.08);
-                const goldenScore = Utils.clamp(100 - Math.abs(m.goldenRatio - 1) * 200, 0, 100);
-                const fwhrScore = Utils.scoreFromError(m.fwhr, 1.618, 0.15);
-
-                const harmonyScore = (
-                    thirdScore * 0.20 +
-                    fifthScore * 0.16 +
-                    midScore * 0.18 +
-                    lowerScore * 0.14 +
-                    goldenScore * 0.16 +
-                    fwhrScore * 0.16
-                );
-
-                // ===== SKIN SCORE =====
-                let skinScore = 70;
-                try {
-                    const ctx = this.canvas.getContext('2d');
-                    const w = this.canvas.width,
-                        h = this.canvas.height;
-                    const imageData = ctx.getImageData(0, 0, Math.min(w, 200), Math.min(h, 200));
-                    const data = imageData.data;
-
-                    let sum = 0,
-                        sumSq = 0,
-                        count = 0;
-                    const colors = [];
-                    for (let i = 0; i < data.length; i += 8) {
-                        const r = data[i],
-                            g = data[i + 1],
-                            b = data[i + 2];
-                        const bright = (r + g + b) / 3;
-                        sum += bright;
-                        sumSq += bright * bright;
-                        count++;
-                        colors.push({ r, g, b });
-                    }
-
-                    if (count > 0) {
-                        const mean = sum / count;
-                        const variance = sumSq / count - mean * mean;
-                        const uniformity = Utils.clamp(100 - Math.sqrt(variance) * 0.3, 0, 100);
-
-                        let rVar = 0,
-                            gVar = 0,
-                            bVar = 0;
-                        for (const c of colors.slice(0, Math.min(100, colors.length))) {
-                            rVar += (c.r - 128) ** 2;
-                            gVar += (c.g - 128) ** 2;
-                            bVar += (c.b - 128) ** 2;
-                        }
-                        const totalVar = Math.sqrt((rVar + gVar + bVar) / colors.length);
-                        const clarity = Utils.clamp(100 - totalVar * 0.3, 0, 100);
-                        const acne = Utils.clamp(100 - totalVar * 0.25, 0, 100);
-
-                        skinScore = uniformity * 0.35 + clarity * 0.35 + acne * 0.30;
-                    }
-                } catch (e) { skinScore = 65; }
-
-                // ===== HAIR SCORE =====
-                const hairScore = Utils.clamp(100 - m.foreheadExposure * 150, 0, 100);
-                const hairWidthScore = Utils.clamp(m.hairlineWidth / (m.faceW * 0.85) * 100, 0, 100);
-                const finalHairScore = hairScore * 0.6 + hairWidthScore * 0.4;
-
-                // ===== POTENTIAL SCORE =====
-                const potentialScore = (boneScore * 0.5 + harmonyScore * 0.3 + eyeScore * 0.2) * 0.8 + 10;
-
-                // ===== AI PREDICTED BEAUTY SCORE =====
-                // Weighted: AI Model 70%, Landmark 20%, Symmetry 10%
-                const beautyScore = (
-                    eyeScore * 0.25 +
-                    boneScore * 0.22 +
-                    harmonyScore * 0.18 +
-                    skinScore * 0.10 +
-                    finalHairScore * 0.08 +
-                    potentialScore * 0.07 +
-                    symScore * 0.10
-                );
-
-                const finalScore = Utils.clamp(beautyScore / 10, 0, 10);
-
-                this.scores = {
-                    appeal: Utils.round(beautyScore, 1),
-                    eyes: Utils.round(eyeScore, 1),
-                    jaw: Utils.round(boneScore, 1),
-                    harmony: Utils.round(harmonyScore, 1),
-                    skin: Utils.round(skinScore, 1),
-                    hair: Utils.round(finalHairScore, 1),
-                    potential: Utils.round(potentialScore, 1),
-                    psl: Utils.round(finalScore, 2),
-                    symmetry: Utils.round(symScore, 1),
-                };
-
-                return this.scores;
-            }
-
-            // ============================================================
-            // CONFIDENCE
-            // ============================================================
-            calcConfidence() {
-                let conf = 100;
-                const count = this.detector.getCount();
-                if (count < 400) conf -= (400 - count) * 0.2;
-                if (this.m.faceW < 50 || this.m.faceH < 50) conf -= 20;
-                if (Math.abs(this.m.canthalTilt) > 25) conf -= 15;
-                if (!this.pose.valid) conf -= 30;
-                if (this.m.facialSymmetry < 0.7) conf -= 10;
-                return Utils.clamp(conf, 0, 100);
-            }
-
-            // ============================================================
-            // FACE SHAPE
-            // ============================================================
-            detectFaceShape() {
-                const m = this.m;
-                const ratio = m.faceW / (m.faceH + 0.001);
-                const jawRatio = m.jawW / (m.faceW + 0.001);
-                const chinRatio = m.chinW / (m.jawW + 0.001);
-                const cheekRatio = m.cheekW / (m.faceW + 0.001);
-                const fwhr = m.fwhr;
-
-                if (ratio > 0.9 && jawRatio < 0.7 && chinRatio > 0.5) return 'Oval';
-                if (ratio < 0.8 && jawRatio > 0.8 && chinRatio > 0.7) return 'Square';
-                if (ratio > 0.85 && jawRatio > 0.75 && chinRatio > 0.6 && fwhr < 1.5) return 'Round';
-                if (ratio > 0.8 && jawRatio < 0.65 && chinRatio < 0.5 && cheekRatio > 0.7) return 'Heart';
-                if (ratio < 0.8 && jawRatio < 0.65 && chinRatio < 0.5 && cheekRatio > 0.7) return 'Diamond';
-                if (ratio > 0.85 && jawRatio < 0.7 && chinRatio < 0.5 && fwhr > 1.6) return 'Oblong';
-                return 'Oval';
-            }
-
-            // ============================================================
-            // HALOS / FAILOS
-            // ============================================================
-            detectHalos(scores) {
-                const halos = [];
-                const failos = [];
-                const m = this.m;
-
-                if (m.canthalTilt > 4) halos.push('✓ Positive canthal tilt');
-                else if (m.canthalTilt < -2) failos.push('✗ Negative canthal tilt');
-
-                if (m.upperExposure < 0.2) halos.push('✓ Low eyelid exposure');
-                else if (m.upperExposure > 0.4) failos.push('✗ High eyelid exposure');
-
-                if (m.ESR > 0.43 && m.ESR < 0.49) halos.push('✓ Good eye spacing');
-
-                if (m.midfaceRatio > 0.31 && m.midfaceRatio < 0.36) halos.push('✓ Compact midface');
-                else if (m.midfaceRatio > 0.38) failos.push('✗ Long midface');
-
-                if (scores.jaw > 70) halos.push('✓ Strong jaw');
-                else if (scores.jaw < 50) failos.push('✗ Weak jaw');
-
-                if (m.chinProjection > 1.4 && m.chinProjection < 1.9) halos.push('✓ Strong chin');
-                else if (m.chinProjection < 1.2) failos.push('✗ Weak chin');
-
-                if (m.cheekRatio > 0.7 && m.cheekRatio < 0.8) halos.push('✓ High cheekbones');
-
-                if (scores.harmony > 70) halos.push('✓ Good facial harmony');
-                else if (scores.harmony < 50) failos.push('✗ Poor facial harmony');
-
-                if (scores.skin > 70) halos.push('✓ Clear skin');
-                else if (scores.skin < 50) failos.push('✗ Poor skin quality');
-
-                if (m.facialSymmetry > 0.92) halos.push('✓ Good symmetry');
-                else if (m.facialSymmetry < 0.80) failos.push('✗ Facial asymmetry');
-
-                if (scores.hair > 70) halos.push('✓ Good hairline');
-
-                if (Math.abs(m.goldenRatio - 1) < 0.05) halos.push('✓ Good proportions');
-
-                if (scores.appeal > 75) halos.push('✓ High overall appeal');
-
-                return { halos: halos.slice(0, 8), failos: failos.slice(0, 8) };
-            }
-
-            // ============================================================
-            // MAIN ANALYZE
-            // ============================================================
-            analyze() {
-                this.extractMetrics();
-                const scores = this._predictBeauty();
-                const confidence = this.calcConfidence();
-                const halos = this.detectHalos(scores);
-                const faceShape = this.detectFaceShape();
-
-                let warning = null;
-                if (confidence < 70) {
-                    warning = '⚠️ Ảnh chưa đủ chất lượng. Hãy thử ảnh rõ nét, thẳng mặt hơn.';
-                }
-                if (!this.pose.valid) {
-                    warning = '⚠️ Góc mặt nghiêng quá nhiều. Vui lòng chọn ảnh chính diện để đánh giá chính xác.';
-                }
-
-                return {
-                    scores: scores,
-                    confidence: confidence,
-                    halos: halos.halos,
-                    failos: halos.failos,
-                    faceShape: faceShape,
-                    warning: warning,
-                    pose: this.pose,
-                    metrics: {
-                        canthalTilt: Utils.round(this.m.canthalTilt, 1) + '°',
-                        midfaceRatio: Utils.round(this.m.midfaceRatio, 3),
-                        fwhr: Utils.round(this.m.fwhr, 3),
-                        ESR: Utils.round(this.m.ESR, 3),
-                        jawWidth: Utils.round(this.m.jawRatio, 3),
-                        chinProjection: Utils.round(this.m.chinProjection, 2),
-                        symmetry: Utils.round(this.m.facialSymmetry * 100, 1) + '%',
-                        gonialAngle: Utils.round(this.m.gonialAngle, 1) + '°',
-                        PFL: Utils.round((this.m.leftPFL + this.m.rightPFL) / 2, 2),
-                        upperExposure: Utils.round(this.m.upperExposure * 100, 1) + '%',
-                        goldenRatio: Utils.round(this.m.goldenRatio, 3),
-                        IPD: Utils.round(this.m.IPD, 3),
-                        lowerSupport: Utils.round(this.m.lowerSupport, 2),
-                    },
-                    thirds: {
-                        upper: Utils.round((this.m.upperThird / this.m.totalThird) * 100, 1),
-                        mid: Utils.round((this.m.midThird / this.m.totalThird) * 100, 1),
-                        lower: Utils.round((this.m.lowerThird / this.m.totalThird) * 100, 1),
-                    }
-                };
-            }
-        }
-
-        // ============================================================
-        // APP CONTROLLER
-        // ============================================================
-        class App {
-            constructor() {
-                this.detector = new FaceDetector();
-                this.image = null;
-                this.file = null;
-                this.imgElement = null;
-                this.zoom = 1;
-                this.history = JSON.parse(localStorage.getItem('sixhenV5History')) || [];
-
-                this._bindEvents();
-                this._renderHistory();
-                this.detector.init().catch(e => console.warn('Init warning:', e));
-            }
-
-            _bindEvents() {
-                const upload = document.getElementById('uploadArea');
-                const fileInput = document.getElementById('fileInput');
-
-                upload.addEventListener('click', () => fileInput.click());
-                upload.addEventListener('dragover', (e) => { e.preventDefault();
-                    upload.classList.add('dragover'); });
-                upload.addEventListener('dragleave', () => upload.classList.remove('dragover'));
-                upload.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    upload.classList.remove('dragover');
-                    if (e.dataTransfer.files.length) this._handleFile(e.dataTransfer.files[0]);
-                });
-                fileInput.addEventListener('change', (e) => {
-                    if (e.target.files.length) this._handleFile(e.target.files[0]);
-                    e.target.value = '';
-                });
-
-                document.getElementById('analyzeBtn').addEventListener('click', () => this._analyze());
-                document.getElementById('clearBtn').addEventListener('click', () => this._clear());
-                document.getElementById('clearHistoryBtn').addEventListener('click', () => {
-                    if (confirm('Xóa toàn bộ lịch sử?')) {
-                        this.history = [];
-                        localStorage.removeItem('sixhenV5History');
-                        this._renderHistory();
-                        showToast('🗑️ Đã xóa lịch sử', 'info');
-                    }
-                });
-
-                document.getElementById('zoomInBtn').addEventListener('click', () => this._zoom(0.15));
-                document.getElementById('zoomOutBtn').addEventListener('click', () => this._zoom(-0.15));
-                document.getElementById('resetZoomBtn').addEventListener('click', () => this._zoom(0, true));
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.ctrlKey && e.key === 'Enter') { e.preventDefault();
-                        document.getElementById('analyzeBtn').click(); }
-                });
-            }
-
-            _handleFile(file) {
-                if (!file || !file.type.startsWith('image/')) {
-                    showToast('⚠️ Vui lòng chọn ảnh hợp lệ!', 'error');
-                    return;
-                }
-                this.file = file;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.image = e.target.result;
-                    document.getElementById('originalImage').src = this.image;
-                    document.getElementById('originalImage').className = 'show';
-                    document.getElementById('originalPlaceholder').style.display = 'none';
-                    document.getElementById('analysisCanvas').className = '';
-                    document.getElementById('analysisPlaceholder').style.display = 'block';
-                    document.getElementById('resultsContainer').classList.remove('show');
-
-                    document.getElementById('analyzeBtn').disabled = false;
-                    document.getElementById('clearBtn').disabled = false;
-                    document.getElementById('zoomInBtn').disabled = false;
-                    document.getElementById('zoomOutBtn').disabled = false;
-                    document.getElementById('resetZoomBtn').disabled = false;
-                    document.getElementById('statusBar').className = 'status-bar';
-                    document.getElementById('statusBar').textContent = '';
-
-                    const img = new Image();
-                    img.src = this.image;
-                    img.onload = () => {
-                        this.imgElement = img;
-                        this._resetZoom();
-                        this._drawImageOnly();
-                    };
-                    showToast('✅ Đã tải ảnh: ' + file.name, 'success');
-                };
-                reader.readAsDataURL(file);
-            }
-
-            _drawImageOnly() {
-                const canvas = document.getElementById('analysisCanvas');
-                const ctx = canvas.getContext('2d');
-                const img = this.imgElement;
-                const maxDim = 600;
-                let w = img.width,
-                    h = img.height;
-                if (w > maxDim) { h = h * maxDim / w;
-                    w = maxDim; }
-                if (h > maxDim) { w = w * maxDim / h;
-                    h = maxDim; }
-                canvas.width = w;
-                canvas.height = h;
-                canvas.className = 'show';
-                document.getElementById('analysisPlaceholder').style.display = 'none';
-                ctx.drawImage(img, 0, 0, w, h);
-            }
-
-            _zoom(delta, reset = false) {
-                if (reset) { this.zoom = 1; } else { this.zoom = Math.max(0.5, Math.min(3, this.zoom + delta)); }
-                document.getElementById('originalImage').style.transform = `scale(${this.zoom})`;
-                document.getElementById('originalImage').style.transformOrigin = 'center center';
-            }
-
-            _resetZoom() {
-                this.zoom = 1;
-                document.getElementById('originalImage').style.transform = 'scale(1)';
-                document.getElementById('originalImage').style.transformOrigin = 'center center';
-            }
-
-            _clear() {
-                this.image = null;
-                this.file = null;
-                this.imgElement = null;
-                document.getElementById('originalImage').className = '';
-                document.getElementById('originalPlaceholder').style.display = 'block';
-                document.getElementById('analysisCanvas').className = '';
-                document.getElementById('analysisPlaceholder').style.display = 'block';
-                document.getElementById('resultsContainer').classList.remove('show');
-                document.getElementById('analyzeBtn').disabled = true;
-                document.getElementById('clearBtn').disabled = true;
-                document.getElementById('zoomInBtn').disabled = true;
-                document.getElementById('zoomOutBtn').disabled = true;
-                document.getElementById('resetZoomBtn').disabled = true;
-                document.getElementById('fileInput').value = '';
-                document.getElementById('statusBar').className = 'status-bar';
-                document.getElementById('statusBar').textContent = '';
-                this._resetZoom();
-                showToast('🔄 Đã xóa ảnh', 'info');
-            }
-
-            async _analyze() {
-                if (!this.imgElement) {
-                    showToast('⚠️ Chưa có ảnh!', 'error');
-                    return;
-                }
-
-                const analyzeBtn = document.getElementById('analyzeBtn');
-                const statusBar = document.getElementById('statusBar');
-
-                analyzeBtn.disabled = true;
-                Loading.show('🧠 AI đang phân tích...');
-                Loading.update(10);
-
-                try {
-                    const face = await this.detector.detect(this.imgElement);
-                    Loading.update(30);
-
-                    if (!face) {
-                        Loading.hide();
-                        analyzeBtn.disabled = false;
-                        statusBar.className = 'status-bar error show';
-                        statusBar.textContent = '❌ Không tìm thấy khuôn mặt!';
-                        showToast('❌ Không tìm thấy khuôn mặt!', 'error');
-                        return;
-                    }
-
-                    this.detector.extractLandmarks(face);
-                    Loading.update(50);
-                    Loading.text.textContent = '🧠 AI đang dự đoán điểm số...';
-
-                    const count = this.detector.getCount();
-                    if (!this.detector.isValid()) {
-                        Loading.hide();
-                        analyzeBtn.disabled = false;
-                        statusBar.className = 'status-bar warning show';
-                        statusBar.textContent = `⚠️ Chỉ có ${count}/478 landmarks. Ảnh chưa đủ chất lượng!`;
-                        showToast(`⚠️ Chỉ có ${count}/478 landmarks!`, 'warning');
-                        return;
-                    }
-
-                    const canvas = document.getElementById('analysisCanvas');
-                    const engine = new AIBeautyPredictor(this.detector, canvas);
-                    const result = engine.analyze();
-                    Loading.update(75);
-
-                    const tier = getTier(result.scores.psl);
-                    const topPercent = getTopPercent(result.scores.psl);
-
-                    Loading.text.textContent = '🎨 Đang tổng hợp kết quả...';
-                    Loading.update(85);
-
-                    this._drawAnalysis(face, engine);
-                    this._displayResults(result, tier, topPercent);
-
-                    this.history.unshift({
-                        date: new Date().toISOString(),
-                        fileName: this.file?.name || 'image',
-                        psl: result.scores.psl,
-                        tier: tier.label,
-                    });
-                    if (this.history.length > 20) this.history.pop();
-                    localStorage.setItem('sixhenV5History', JSON.stringify(this.history));
-                    this._renderHistory();
-
-                    Loading.update(100);
-                    setTimeout(() => {
-                        Loading.hide();
-                        analyzeBtn.disabled = false;
-                        statusBar.className = 'status-bar success show';
-                        statusBar.textContent = `✅ Appeal: ${result.scores.psl.toFixed(2)} – ${tier.label}`;
-                        showToast(`✅ Appeal: ${result.scores.psl.toFixed(2)} – ${tier.label}`, 'success');
-                    }, 300);
-
-                } catch (err) {
-                    console.error('Analysis error:', err);
-                    Loading.hide();
-                    analyzeBtn.disabled = false;
-                    statusBar.className = 'status-bar error show';
-                    statusBar.textContent = `❌ Lỗi: ${err.message}`;
-                    showToast('❌ Lỗi: ' + err.message, 'error');
-                }
-            }
-
-            _drawAnalysis(face, engine) {
-                const canvas = document.getElementById('analysisCanvas');
-                const ctx = canvas.getContext('2d');
-                const img = this.imgElement;
-                const maxDim = 600;
-                let w = img.width,
-                    h = img.height;
-                if (w > maxDim) { h = h * maxDim / w;
-                    w = maxDim; }
-                if (h > maxDim) { w = w * maxDim / h;
-                    h = maxDim; }
-                canvas.width = w;
-                canvas.height = h;
-                canvas.className = 'show';
-                document.getElementById('analysisPlaceholder').style.display = 'none';
-
-                ctx.drawImage(img, 0, 0, w, h);
-                const sx = w / img.width,
-                    sy = h / img.height;
-                const points = face.keypoints || [];
-
-                if (face.box) {
-                    const bx = face.box.xMin * sx,
-                        by = face.box.yMin * sy;
-                    ctx.strokeStyle = 'rgba(96,165,250,0.2)';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([4, 4]);
-                    ctx.strokeRect(bx, by, (face.box.xMax - face.box.xMin) * sx, (face.box.yMax - face.box.yMin) * sy);
-                    ctx.setLineDash([]);
-                }
-
-                const colors = ['#60a5fa', '#34d399', '#f472b6', '#fbbf24', '#a78bfa', '#f87171'];
-                points.forEach((p, i) => {
-                    const x = p.x * sx,
-                        y = p.y * sy;
-                    ctx.beginPath();
-                    ctx.arc(x, y, i % 7 === 0 ? 2.5 : 1.2, 0, Math.PI * 2);
-                    ctx.fillStyle = colors[i % colors.length] + (i % 7 === 0 ? 'cc' : '55');
-                    ctx.fill();
-                });
-
-                // Draw thirds
-                const top = engine._get(L.FACE_TOP);
-                const fore = engine._get(L.FOREHEAD);
-                const chin = engine._get(L.CHIN);
-                const bot = engine._get(L.FACE_BOTTOM);
-                if (top && fore && chin && bot) {
-                    const ys = [top.y * sy, fore.y * sy, chin.y * sy, bot.y * sy];
-                    ctx.setLineDash([4, 4]);
-                    ctx.lineWidth = 1;
-                    ['rgba(96,165,250,0.3)', 'rgba(167,139,250,0.3)', 'rgba(244,114,182,0.3)'].forEach((c, i) => {
-                        ctx.strokeStyle = c;
-                        ctx.beginPath();
-                        ctx.moveTo(0, ys[i + 1]);
-                        ctx.lineTo(w, ys[i + 1]);
-                        ctx.stroke();
-                    });
-                    ctx.setLineDash([]);
-                }
-
-                // Draw jaw line
-                const jawL = engine._get(L.JAW_LEFT);
-                const jawR = engine._get(L.JAW_RIGHT);
-                const chinP = engine._get(L.CHIN);
-                if (jawL && jawR && chinP) {
-                    ctx.strokeStyle = 'rgba(52,211,153,0.3)';
-                    ctx.lineWidth = 1.5;
-                    ctx.setLineDash([3, 3]);
-                    ctx.beginPath();
-                    ctx.moveTo(jawL.x * sx, jawL.y * sy);
-                    ctx.lineTo(chinP.x * sx, chinP.y * sy);
-                    ctx.lineTo(jawR.x * sx, jawR.y * sy);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
-
-                // Draw canthal tilt line
-                const lEye = engine._get(L.LEFT_EYE_INNER);
-                const rEye = engine._get(L.RIGHT_EYE_INNER);
-                if (lEye && rEye) {
-                    ctx.strokeStyle = 'rgba(244,114,182,0.3)';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([3, 3]);
-                    ctx.beginPath();
-                    ctx.moveTo(lEye.x * sx, lEye.y * sy);
-                    ctx.lineTo(rEye.x * sx, rEye.y * sy);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
-
-                ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                ctx.fillRect(8, 8, 150, 24);
-                ctx.fillStyle = '#60a5fa';
-                ctx.font = 'bold 11px Inter, sans-serif';
-                ctx.fillText(`🤖 ${points.length} landmarks`, 14, 24);
-            }
-
-            _displayResults(result, tier, topPercent) {
-                const s = result.scores;
-
-                document.getElementById('scoreNumber').textContent = s.psl.toFixed(2);
-                document.getElementById('tierEmoji').textContent = tier.emoji;
-                document.getElementById('tierLabel').textContent = tier.label;
-                document.getElementById('pslLabel').textContent = `${tier.emoji} ${tier.label}`;
-                document.getElementById('pslTier').className = `psl-tier ${tier.cls}`;
-
-                document.getElementById('faceShapeBadge').textContent = `🔮 Face Shape: ${result.faceShape || 'Oval'}`;
-
-                const pose = result.pose || { yaw: 0, pitch: 0, roll: 0, valid: true };
-                const poseText = pose.valid ? '✅ Chính diện' : '⚠️ Nghiêng mặt';
-                document.getElementById('poseStatus').textContent =
-                    `📐 Pose: ${poseText} | Yaw: ${pose.yaw.toFixed(1)}° Pitch: ${pose.pitch.toFixed(1)}° Roll: ${pose.roll.toFixed(1)}°`;
-
-                const conf = result.confidence || 80;
-                const confClass = conf > 80 ? 'good' : conf > 50 ? 'warn' : 'bad';
-                document.getElementById('confidenceDisplay').innerHTML =
-                    `🎯 Confidence: <span class="${confClass}">${conf}%</span>`;
-
-                document.getElementById('topPercent').textContent = `📊 Top: ${topPercent}`;
-
-                const warningEl = document.getElementById('warningMsg');
-                if (result.warning) {
-                    warningEl.style.display = 'block';
-                    warningEl.textContent = result.warning;
-                } else {
-                    warningEl.style.display = 'none';
-                }
-
-                const subs = {
-                    appeal: document.getElementById('subAppeal'),
-                    eyes: document.getElementById('subEyes'),
-                    jaw: document.getElementById('subJaw'),
-                    harmony: document.getElementById('subHarmony'),
-                    skin: document.getElementById('subSkin'),
-                    hair: document.getElementById('subHair'),
-                    potential: document.getElementById('subPotential'),
-                };
-                const bars = {
-                    appeal: document.getElementById('barAppeal'),
-                    eyes: document.getElementById('barEyes'),
-                    jaw: document.getElementById('barJaw'),
-                    harmony: document.getElementById('barHarmony'),
-                    skin: document.getElementById('barSkin'),
-                    hair: document.getElementById('barHair'),
-                    potential: document.getElementById('barPotential'),
-                };
-
-                const subKeys = ['appeal', 'eyes', 'jaw', 'harmony', 'skin', 'hair', 'potential'];
-                subKeys.forEach(k => {
-                    const el = subs[k];
-                    const bar = bars[k];
-                    const val = s[k] || 0;
-                    el.textContent = val;
-                    el.className = 'value ' + (val >= 75 ? 'good' : val >= 50 ? 'avg' : 'bad');
-                    bar.style.width = val + '%';
-                });
-
-                const metrics = result.metrics || {};
-                const infoItems = {
-                    'Canthal Tilt': { val: metrics.canthalTilt || '--', cls: metrics.canthalTilt && parseFloat(
-                            metrics.canthalTilt) > 2 ? 'positive' :
-                        metrics.canthalTilt && parseFloat(metrics.canthalTilt) < -2 ? 'negative' : 'neutral' },
-                    'Midface Ratio': { val: metrics.midfaceRatio || '--', cls: metrics.midfaceRatio && parseFloat(
-                            metrics.midfaceRatio) > 0.31 && parseFloat(metrics.midfaceRatio) < 0.36 ? 'positive' :
-                        'neutral' },
-                    'ESR': { val: metrics.ESR || '--', cls: metrics.ESR && parseFloat(metrics.ESR) > 0.42 && parseFloat(
-                            metrics.ESR) < 0.50 ? 'positive' : 'neutral' },
-                    'Jaw Width': { val: metrics.jawWidth || '--', cls: metrics.jawWidth && parseFloat(metrics.jawWidth) >
-                            0.75 && parseFloat(metrics.jawWidth) < 0.95 ? 'positive' : 'neutral' },
-                    'Chin Projection': { val: metrics.chinProjection || '--', cls: metrics.chinProjection && parseFloat(
-                            metrics.chinProjection) > 1.3 && parseFloat(metrics.chinProjection) < 1.9 ? 'positive' :
-                        'neutral' },
-                    'Gonial Angle': { val: metrics.gonialAngle || '--', cls: metrics.gonialAngle && parseFloat(metrics
-                            .gonialAngle) > 118 && parseFloat(metrics.gonialAngle) < 132 ? 'positive' : 'neutral' },
-                    'Symmetry': { val: metrics.symmetry || '--', cls: metrics.symmetry && parseFloat(metrics.symmetry) >
-                            85 ? 'positive' : 'neutral' },
-                    'Golden Ratio': { val: metrics.goldenRatio || '--', cls: metrics.goldenRatio && parseFloat(metrics
-                            .goldenRatio) > 0.95 && parseFloat(metrics.goldenRatio) < 1.05 ? 'positive' : 'neutral' },
-                    'PFL': { val: metrics.PFL || '--', cls: metrics.PFL && parseFloat(metrics.PFL) > 0.8 ? 'positive' :
-                            'neutral' },
-                    'Upper Exposure': { val: metrics.upperExposure || '--', cls: metrics.upperExposure && parseFloat(
-                            metrics.upperExposure) < 20 ? 'positive' : 'neutral' },
-                    'IPD': { val: metrics.IPD || '--', cls: metrics.IPD && parseFloat(metrics.IPD) > 0.42 && parseFloat(
-                            metrics.IPD) < 0.50 ? 'positive' : 'neutral' },
-                };
-
-                document.getElementById('infoGrid').innerHTML = Object.entries(infoItems).map(([k, v]) =>
-                    `<div class="info-item"><span class="key">${k}</span><span class="val ${v.cls}">${v.val}</span></div>`
-                ).join('');
-
-                const t = result.thirds || { upper: 33, mid: 34, lower: 33 };
-                document.getElementById('thirdsDisplay').innerHTML = `
-                    <div class="segment" style="width:${t.upper}%;background:#60a5fa;"></div>
-                    <div class="segment" style="width:${t.mid}%;background:#a78bfa;"></div>
-                    <div class="segment" style="width:${t.lower}%;background:#f472b6;"></div>
-                `;
-
-                const halos = result.halos || ['✓ AI analysis complete'];
-                const failos = result.failos || ['No significant failos detected'];
-
-                document.getElementById('haloList').innerHTML = halos.map(h => `<li>${h}</li>`).join('');
-                document.getElementById('failoList').innerHTML = failos.map(f => `<li>${f}</li>`).join('');
-
-                const recs = this._generateRecommendations(s, result);
-                document.getElementById('recList').innerHTML = recs.map(r =>
-                    `<li><span style="font-size:16px;">${r.icon}</span> ${r.text}</li>`
-                ).join('');
-
-                document.getElementById('resultsContainer').classList.add('show');
-                const statusBar = document.getElementById('statusBar');
-                statusBar.className = 'status-bar success show';
-                statusBar.textContent = `✅ Appeal: ${s.psl.toFixed(2)} – ${tier.label}`;
-            }
-
-            _generateRecommendations(scores, result) {
-                const recs = [];
-                if (scores.eyes < 60) recs.push({ icon: '👁️', text: 'Cải thiện vùng mắt: ngủ đủ 7-8 giờ, dùng kem dưỡng mắt, tập thể dục mắt.' });
-                if (scores.jaw < 60) recs.push({ icon: '🦴', text: 'Tập cơ hàm (mewing), giảm bodyfat để định hình xương hàm rõ hơn.' });
-                if (scores.harmony < 60) recs.push({ icon: '🎵', text: 'Cân bằng tỷ lệ gương mặt bằng kiểu tóc phù hợp.' });
-                if (scores.skin < 60) recs.push({ icon: '✨', text: 'Xây dựng routine skincare: cleanser, toner, moisturizer, sunscreen.' });
-                if (scores.hair < 60) recs.push({ icon: '💇', text: 'Chăm sóc tóc và da đầu, thử kiểu tóc phù hợp với shape mặt.' });
-                if (scores.potential < 60) recs.push({ icon: '📈', text: 'Có tiềm năng cải thiện với tập luyện và chăm sóc bản thân.' });
-
-                if (result.failos) {
-                    if (result.failos.some(f => f.includes('Weak chin'))) {
-                        recs.push({ icon: '🦴', text: 'Tập cơ cằm, để râu để tạo ảo giác cằm mạnh mẽ hơn.' });
-                    }
-                    if (result.failos.some(f => f.includes('Long midface'))) {
-                        recs.push({ icon: '🎵', text: 'Kiểu tóc dày hai bên để làm mặt rộng hơn, cân bằng tỷ lệ.' });
-                    }
-                    if (result.failos.some(f => f.includes('Negative canthal tilt'))) {
-                        recs.push({ icon: '👁️', text: 'Kỹ thuật trang điểm mắt để tạo góc nâng, hoặc tham khảo bài tập mắt.' });
-                    }
-                    if (result.failos.some(f => f.includes('Poor skin'))) {
-                        recs.push({ icon: '✨', text: 'Tham khảo bác sĩ da liễu để có routine phù hợp.' });
-                    }
-                    if (result.failos.some(f => f.includes('Facial asymmetry'))) {
-                        recs.push({ icon: '🔄', text: 'Tập các bài tập đối xứng, chụp ảnh góc thẳng để nhận diện rõ hơn.' });
-                    }
-                }
-
-                const shapeAdvice = {
-                    'Oval': { icon: '🥚', text: 'Hầu hết kiểu tóc đều hợp. Thử nghiệm để tìm phong cách.' },
-                    'Square': { icon: '🔲', text: 'Tóc mái dài, râu thưa để làm mềm góc cạnh.' },
-                    'Round': { icon: '🟣', text: 'Tóc vuốt cao, râu góc cạnh để làm mặt dài hơn.' },
-                    'Heart': { icon: '❤️', text: 'Tóc dài, râu dày ở cằm để cân bằng trán rộng.' },
-                    'Diamond': { icon: '💎', text: 'Tóc ngang tai, râu dày để làm đầy góc cằm.' },
-                    'Oblong': { icon: '📏', text: 'Tóc dày hai bên để làm mặt rộng hơn.' },
-                };
-                const shape = result.faceShape || 'Oval';
-                if (shapeAdvice[shape]) recs.push(shapeAdvice[shape]);
-
-                if (recs.length === 0) {
-                    recs.push({ icon: '🌟', text: 'Bạn có tỷ lệ gương mặt tuyệt vời! Duy trì phong cách hiện tại.' });
-                }
-
-                return recs;
-            }
-
-            _renderHistory() {
-                const container = document.getElementById('historyContainer');
-                if (this.history.length === 0) {
-                    container.innerHTML = `<div class="empty-state"><i class="fas fa-clock"></i> Chưa có dữ liệu</div>`;
-                    return;
-                }
-                container.innerHTML = this.history.map((h, i) => {
-                    const tier = getTier(h.psl || 0);
-                    return `
-                        <div class="history-item">
-                            <span>${h.fileName}</span>
-                            <span class="h-score">${(h.psl||0).toFixed(2)}</span>
-                            <span class="h-tier" style="color:${h.psl >= 8.5 ? '#fcd34d' : h.psl >= 7.5 ? '#34d399' : h.psl >= 6.8 ? '#60a5fa' : h.psl >= 6.0 ? '#a78bfa' : h.psl >= 5.0 ? '#fbbf24' : h.psl >= 4.0 ? '#f87171' : '#475569'}">${tier.emoji} ${tier.label}</span>
-                            <span style="font-size:11px;color:var(--text-muted);">${new Date(h.date).toLocaleString()}</span>
-                            <button onclick="this._deleteHistory(${i})" style="background:none;border:none;color:var(--accent-red);cursor:pointer;font-size:12px;"><i class="fas fa-times"></i></button>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            _deleteHistory(i) {
-                this.history.splice(i, 1);
-                localStorage.setItem('sixhenV5History', JSON.stringify(this.history));
-                this._renderHistory();
-                showToast('🗑️ Đã xóa', 'info');
-            }
-        }
-
-        // ============================================================
-        // SHARE & COPY
-        // ============================================================
-        function shareResult() {
-            const score = document.getElementById('scoreNumber').textContent;
-            const tier = document.getElementById('tierLabel').textContent;
-            const shape = document.getElementById('faceShapeBadge').textContent;
-            const text =
-                `🔥 SIXHEN Rate V5 – Kết quả:\n📊 Appeal: ${score}\n🏷️ ${tier}\n${shape}\n#PSL #Looksmax #RateFace #AI`;
-            if (navigator.share) {
-                navigator.share({ title: 'Kết quả SIXHEN Rate V5', text });
-            } else {
-                navigator.clipboard.writeText(text).then(() => showToast('📋 Đã sao chép!', 'success'));
-            }
-        }
-
-        function copyResult() {
-            const score = document.getElementById('scoreNumber').textContent;
-            const tier = document.getElementById('tierLabel').textContent;
-            const shape = document.getElementById('faceShapeBadge').textContent;
-            const text = `🔥 SIXHEN Rate V5: ${score} – ${tier}\n${shape}`;
-            navigator.clipboard.writeText(text).then(() => showToast('📋 Đã sao chép!', 'success'));
-        }
-
-        // ============================================================
-        // INIT
-        // ============================================================
-        let app;
-        document.addEventListener('DOMContentLoaded', () => {
-            app = new App();
-            window.app = app;
-            console.log('🔥 SIXHEN Rate V5 - AI Beauty Predictor');
-            console.log('📊 AI Model 70% | Landmark 20% | Symmetry 10%');
-            console.log('📐 Features: PFL, ESR, Scleral Show, Canthal Tilt, Gonial Angle, Ramus Height, IPD, Lower Support');
-            console.log('🏷️ Tiers: Legendary 8.5+ | Chad 7.5+ | High Tier 6.8+ | Above Average 6.0+ | Average 5.0+ | Below Average 4.0+ | Low Tier 3.0+');
-            console.log('📸 Upload ảnh, nhấn Analyze để phân tích.');
-            console.log('⌨️  Ctrl+Enter: Analyze');
+        const imageBitmap = await createImageBitmap(blob);
+        await faceMesh.send({ image: imageBitmap });
+      } catch (err) {
+        console.warn('Scan error:', err);
+        alert('Không thể nhận diện khuôn mặt. Vui lòng thử lại.');
+        isScanning = false;
+        scanOverlay.classList.remove('active');
+      }
+    }
+
+    function onFaceMeshResults(results) {
+      scanOverlay.classList.remove('active');
+      isScanning = false;
+
+      if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
+        alert('Không tìm thấy khuôn mặt. Hãy thử ảnh khác hoặc căn chỉnh lại.');
+        return;
+      }
+
+      const landmarks = results.multiFaceLandmarks[0];
+      const symmetry = computeSymmetry(landmarks);
+      const jawline = clamp(6.5 + (symmetry - 5) * 0.4 + Math.random() * 1.2, 4, 9.8);
+      const eyes = clamp(6 + (symmetry - 4) * 0.3 + Math.random() * 1.5, 4, 9.9);
+      const nose = clamp(6.5 + (symmetry - 5) * 0.3 + Math.random() * 1.2, 4, 9.7);
+      const lips = clamp(6 + (symmetry - 4) * 0.3 + Math.random() * 1.4, 4, 9.6);
+      const skin = clamp(6.5 + (symmetry - 5) * 0.2 + Math.random() * 1.6, 4, 9.8);
+      const hair = clamp(7 + (symmetry - 5) * 0.3 + Math.random() * 1.8, 4, 9.9);
+      const angle = clamp(6 + (symmetry - 5) * 0.4 + Math.random() * 1.5, 3, 9.7);
+
+      const overall = clamp((symmetry + jawline + eyes + nose + lips + skin + hair + angle) / 8, 4, 9.9);
+
+      const strengths = [];
+      const improvements = [];
+      if (symmetry > 7.5) strengths.push('✓ Khuôn mặt cân đối');
+      else improvements.push('• Cải thiện độ đối xứng (góc chụp)');
+      if (eyes > 7.8) strengths.push('✓ Mắt rõ nét');
+      else improvements.push('• Mở mắt tự nhiên hơn');
+      if (hair > 8.0) strengths.push('✓ Tóc hợp phong cách');
+      else improvements.push('• Chọn kiểu tóc phù hợp');
+      if (jawline > 7.5) strengths.push('✓ Đường jawline sắc nét');
+      else improvements.push('• Góc chụp thấp hơn để làm nổi jawline');
+      if (skin > 7.8) strengths.push('✓ Da sáng mịn');
+      else improvements.push('• Tăng ánh sáng khi chụp');
+      if (strengths.length < 2) strengths.push('✓ Tổng thể hài hòa');
+      if (improvements.length < 2) {
+        improvements.push('• Cười nhẹ sẽ tăng điểm');
+        improvements.push('• Góc máy thấp hơn một chút');
+      }
+
+      overallScore.innerText = overall.toFixed(1);
+      symmetryEl.innerText = symmetry.toFixed(1);
+      jawlineEl.innerText = jawline.toFixed(1);
+      eyesEl.innerText = eyes.toFixed(1);
+      noseEl.innerText = nose.toFixed(1);
+      lipsEl.innerText = lips.toFixed(1);
+      skinEl.innerText = skin.toFixed(1);
+      hairEl.innerText = hair.toFixed(1);
+      angleEl.innerText = angle.toFixed(1);
+
+      strengthList.innerHTML = strengths.map(s => `<li><i class="fas fa-check-circle"></i> ${s.replace('✓ ','')}</li>`).join('');
+      improveList.innerHTML = improvements.map(s => `<li><i class="fas fa-arrow-right"></i> ${s.replace('• ','')}</li>`).join('');
+
+      resultCard.classList.add('active');
+
+      const entry = {
+        time: new Date().toLocaleTimeString(),
+        score: overall.toFixed(1),
+        symmetry: symmetry.toFixed(1),
+        jawline: jawline.toFixed(1),
+        eyes: eyes.toFixed(1),
+        nose: nose.toFixed(1),
+        lips: lips.toFixed(1),
+        skin: skin.toFixed(1),
+        hair: hair.toFixed(1),
+        angle: angle.toFixed(1)
+      };
+      history.unshift(entry);
+      if (history.length > 20) history.pop();
+      localStorage.setItem('looksmax_history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function computeSymmetry(landmarks) {
+      try {
+        const leftEye = landmarks[33];
+        const rightEye = landmarks[263];
+        const leftMouth = landmarks[61];
+        const rightMouth = landmarks[291];
+        const dxEye = Math.abs(leftEye.x - rightEye.x);
+        const dyEye = Math.abs(leftEye.y - rightEye.y);
+        const dxMouth = Math.abs(leftMouth.x - rightMouth.x);
+        const dyMouth = Math.abs(leftMouth.y - rightMouth.y);
+        const eyeSym = 1 - (dxEye + dyEye) * 0.8;
+        const mouthSym = 1 - (dxMouth + dyMouth) * 0.8;
+        let raw = (eyeSym + mouthSym) * 5 + 2;
+        return clamp(raw, 4, 9.9);
+      } catch (e) { return 7.5; }
+    }
+
+    function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+
+    function renderHistory() {
+      if (history.length === 0) {
+        historyList.innerHTML = '<span class="empty-history">Chưa có đánh giá nào</span>';
+        return;
+      }
+      historyList.innerHTML = history.map(item => `
+        <div class="history-item">
+          <i class="fas fa-face-smile"></i>
+          <span>${item.time}</span>
+          <span class="history-score">${item.score}</span>
+        </div>
+      `).join('');
+    }
+
+    function startCamera() {
+      if (cameraStream) { stopCamera(); }
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 400, height: 400 } })
+        .then(stream => {
+          cameraStream = stream;
+          video.srcObject = stream;
+          video.play();
+          cameraActive = true;
+          imagePreview.style.display = 'none';
+          video.style.display = 'block';
+        })
+        .catch(err => {
+          alert('Không thể truy cập camera: ' + err.message);
         });
-    </script>
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+      }
+      cameraActive = false;
+      video.srcObject = null;
+    }
+
+    function loadImageFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+        video.style.display = 'none';
+        stopCamera();
+        cameraActive = false;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    cameraBtn.addEventListener('click', () => {
+      if (cameraActive) { stopCamera(); cameraActive = false; return; }
+      startCamera();
+    });
+
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) loadImageFile(e.target.files[0]);
+    });
+
+    captureBtn.addEventListener('click', performScan);
+    clearHistoryBtn.addEventListener('click', () => {
+      history = [];
+      localStorage.removeItem('looksmax_history');
+      renderHistory();
+    });
+
+    initFaceMesh();
+    renderHistory();
+    startCamera();
+
+    window.addEventListener('beforeunload', () => {
+      stopCamera();
+    });
+  })();
+</script>
 </body>
 </html>
