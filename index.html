@@ -379,11 +379,31 @@
             transform: translateY(-1px);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            border-color: #4ade80;
+            color: white;
+            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: #ef4444;
+            color: white;
+        }
+
         .btn-sm {
             padding: 6px 14px;
             font-size: 12px;
             min-height: 34px;
             flex: 0 1 auto;
+        }
+
+        .btn-icon {
+            padding: 10px;
+            flex: 0 0 auto;
+            aspect-ratio: 1;
+            min-height: 42px;
         }
 
         #file-input {
@@ -631,6 +651,95 @@
             color: #8b7cf7;
         }
 
+        /* ===== HISTORY ===== */
+        .history-section {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-header .title {
+            font-size: 13px;
+            color: #8b9bb5;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-header .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .history-list {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 2px 8px;
+            scrollbar-width: thin;
+        }
+
+        .history-list::-webkit-scrollbar {
+            height: 3px;
+        }
+        .history-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .history-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            flex-shrink: 0;
+            font-size: 12px;
+            color: #b0bcca;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(139, 124, 247, 0.15);
+        }
+
+        .history-item .h-score {
+            font-weight: 700;
+            color: #e8ecf2;
+            background: rgba(139, 124, 247, 0.1);
+            padding: 0 10px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .history-item .h-time {
+            color: #6a7a8f;
+            font-size: 11px;
+        }
+
+        .empty-history {
+            color: #5f6b80;
+            font-size: 13px;
+            padding: 8px 0;
+            text-align: center;
+            width: 100%;
+        }
+
         /* ===== TOAST ===== */
         .toast {
             position: fixed;
@@ -728,7 +837,7 @@
             <!-- ===== CAMERA AREA ===== -->
             <div class="camera-area">
                 <video id="video" playsinline autoplay></video>
-                <img id="image-preview" alt="preview" />
+                <img id="image-preview" alt="Preview" />
                 <canvas id="overlay-canvas"></canvas>
 
                 <!-- Guidance Frame -->
@@ -876,16 +985,32 @@
                 </div>
             </div>
 
+            <!-- ===== HISTORY ===== -->
+            <div class="history-section">
+                <div class="history-header">
+                    <span class="title"><i class="fas fa-clock-rotate-left"></i> Lịch sử</span>
+                    <div class="actions">
+                        <button class="btn btn-sm btn-danger" id="clearHistoryBtn">
+                            <i class="fas fa-trash-can"></i> Xóa
+                        </button>
+                    </div>
+                </div>
+                <div class="history-list" id="historyList">
+                    <span class="empty-history">Chưa có đánh giá nào</span>
+                </div>
+            </div>
+
         </div><!-- /main-container -->
     </div><!-- /app-wrapper -->
 
     <!-- ===== SCRIPTS ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous">
+    </script>
     <script>
         /**
          * ================================================================
-         * LOOKSMAX AI PRO - PROFESSIONAL FACE ANALYSIS
-         * Version: 3.1 (Fixed)
+         * LOOKSMAX AI PRO - COMPLETE FACE ANALYSIS
+         * Version: 3.2 (Fully Fixed)
          * All calculations from real MediaPipe landmarks
          * No Math.random() - deterministic results
          * ================================================================
@@ -902,6 +1027,7 @@
         const uploadBtn = $('uploadBtn');
         const captureBtn = $('captureBtn');
         const overlayToggle = $('overlayToggle');
+        const clearHistoryBtn = $('clearHistoryBtn');
         const guidanceFrame = $('guidanceFrame');
         const laserScan = $('laserScan');
         const scanOverlay = $('scanOverlay');
@@ -927,6 +1053,7 @@
         const strengthList = $('strengthList');
         const improveList = $('improveList');
         const tipList = $('tipList');
+        const historyList = $('historyList');
 
         // ===== STATE =====
         let cameraStream = null;
@@ -956,7 +1083,8 @@
             if (!toast || !toastMessage) return;
             toastMessage.textContent = msg;
             toast.className = 'toast';
-            toast.querySelector('i').className = `fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}`;
+            toast.querySelector('i').className =
+                `fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}`;
             toast.classList.add('show');
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
@@ -979,7 +1107,7 @@
         function initFaceMesh() {
             if (faceMesh || !window.FaceMesh) {
                 if (!window.FaceMesh) {
-                    showToast('MediaPipe đang tải, vui lòng đợi...', 'info');
+                    showToast('⏳ Đang tải AI...', 'info');
                     setTimeout(initFaceMesh, 1000);
                 }
                 return;
@@ -1037,10 +1165,7 @@
 
         // ===== DRAW OVERLAY =====
         function drawOverlay() {
-            if (!canvas || !ctx || !currentLandmarks || !isFaceDetected) {
-                if (canvas) drawGuidanceOval();
-                return;
-            }
+            if (!canvas || !ctx) return;
 
             const rect = canvas.parentElement.getBoundingClientRect();
             const size = Math.min(rect.width, rect.height);
@@ -1053,6 +1178,11 @@
             ctx.scale(dpr, dpr);
 
             ctx.clearRect(0, 0, size, size);
+
+            if (!currentLandmarks || !isFaceDetected) {
+                drawGuidanceOval();
+                return;
+            }
 
             const lm = currentLandmarks;
             const scale = size;
@@ -1122,7 +1252,23 @@
             });
             ctx.setLineDash([]);
 
-            // === 9. Landmark dots ===
+            // === 9. Golden Ratio Spiral ===
+            const grX = (1 - lm[1].x) * scale;
+            const grY = lm[1].y * scale;
+            const grRadius = dist(lm[1], lm[152]) * scale * 0.2;
+
+            ctx.strokeStyle = 'rgba(161, 136, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 8; i++) {
+                const angle = i * Math.PI / 4;
+                ctx.beginPath();
+                ctx.arc(grX + Math.cos(angle) * grRadius * 0.2,
+                    grY + Math.sin(angle) * grRadius * 0.2,
+                    grRadius * (1 - i * 0.04), 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            // === 10. Landmark dots ===
             const keyPoints = [33, 263, 1, 152, 10, 234, 454, 61, 291];
             keyPoints.forEach(idx => {
                 const p = lm[idx];
@@ -1130,8 +1276,8 @@
                 const x = (1 - p.x) * scale;
                 const y = p.y * scale;
                 ctx.beginPath();
-                ctx.arc(x, y, 2, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(139, 124, 247, 0.2)';
+                ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(139, 124, 247, 0.25)';
                 ctx.fill();
             });
         }
@@ -1159,10 +1305,13 @@
             if (!canvas || !ctx) return;
             const rect = canvas.parentElement.getBoundingClientRect();
             const size = Math.min(rect.width, rect.height);
-            canvas.width = size;
-            canvas.height = size;
+            const dpr = window.devicePixelRatio || 1;
+
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
             canvas.style.width = size + 'px';
             canvas.style.height = size + 'px';
+            ctx.scale(dpr, dpr);
 
             ctx.clearRect(0, 0, size, size);
             const cx = size / 2;
@@ -1181,7 +1330,6 @@
 
         // ===== COMPUTE METRICS =====
         function computeMetrics(lm) {
-            // Safety: ensure landmarks exist
             if (!lm || !lm.length) {
                 return createDefaultMetrics();
             }
@@ -1217,10 +1365,13 @@
                     1 - Math.abs(eyeDistL - eyeDistR) / (Math.max(eyeDistL, eyeDistR) + 0.001) :
                     0.5;
 
-                const mouthL = dist(lMouth, { x: (lMouth.x + rMouth.x) / 2, y: (lMouth.y + rMouth.y) / 2, z: (lMouth.z +
-                        rMouth.z) / 2 });
-                const mouthR = dist(rMouth, { x: (lMouth.x + rMouth.x) / 2, y: (lMouth.y + rMouth.y) / 2, z: (lMouth.z +
-                        rMouth.z) / 2 });
+                const midMouth = {
+                    x: (lMouth.x + rMouth.x) / 2,
+                    y: (lMouth.y + rMouth.y) / 2,
+                    z: (lMouth.z + rMouth.z) / 2
+                };
+                const mouthL = dist(lMouth, midMouth);
+                const mouthR = dist(rMouth, midMouth);
                 const mouthSym = mouthL + mouthR > 0.001 ?
                     1 - Math.abs(mouthL - mouthR) / (Math.max(mouthL, mouthR) + 0.001) :
                     0.5;
@@ -1280,7 +1431,7 @@
                 );
 
                 return { symmetry, jawline, eyes, nose, lips, skin, hair, harmony, goldenRatio, faceShape: shape,
-                overall };
+                    overall };
 
             } catch (err) {
                 console.warn('Error computing metrics:', err);
@@ -1343,6 +1494,15 @@
             if (isScanning) return;
             if (!faceMeshReady) {
                 showToast('⏳ Đang tải AI, vui lòng đợi...', 'info');
+                return;
+            }
+
+            // Check if we have a source
+            const hasVideo = video && video.srcObject && video.readyState >= 2;
+            const hasImage = imagePreview && imagePreview.style.display !== 'none' && imagePreview.src;
+
+            if (!hasVideo && !hasImage) {
+                showToast('📸 Vui lòng bật camera hoặc tải ảnh', 'error');
                 return;
             }
 
@@ -1590,6 +1750,55 @@
             } catch (e) {
                 // LocalStorage full or disabled - ignore
             }
+            renderHistory();
+        }
+
+        // ===== RENDER HISTORY =====
+        function renderHistory() {
+            if (!historyList) return;
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<span class="empty-history">Chưa có đánh giá nào</span>';
+                return;
+            }
+
+            historyList.innerHTML = history.map((item) => `
+                    <div class="history-item" onclick="loadHistory(${history.indexOf(item)})">
+                        <span class="h-time">${item.time}</span>
+                        <span class="h-score">${item.score}</span>
+                    </div>
+                `).join('');
+        }
+
+        // ===== LOAD HISTORY =====
+        window.loadHistory = function(index) {
+            const item = history[index];
+            if (!item) return;
+
+            if (overallScore) overallScore.textContent = item.score;
+            if (faceShapeText) faceShapeText.textContent = item.faceShape || '--';
+
+            // Show result card
+            if (resultCard) resultCard.classList.add('active');
+
+            showToast(`📊 Đã tải kết quả lúc ${item.time}`, 'success');
+        };
+
+        // ===== CLEAR HISTORY =====
+        function clearHistory() {
+            if (history.length === 0) {
+                showToast('Không có dữ liệu để xóa', 'info');
+                return;
+            }
+
+            if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử?')) {
+                history = [];
+                try {
+                    localStorage.removeItem('looksmax_history');
+                } catch (e) { /* ignore */ }
+                renderHistory();
+                showToast('🗑️ Đã xóa lịch sử', 'success');
+            }
         }
 
         // ===== CAMERA =====
@@ -1725,7 +1934,7 @@
             });
         }
 
-        // Capture
+        // Capture - NÚT CHỤP ẢNH QUAN TRỌNG
         if (captureBtn) {
             captureBtn.addEventListener('click', performScan);
         }
@@ -1736,7 +1945,13 @@
                 showOverlay = !showOverlay;
                 if (canvas) canvas.style.display = showOverlay ? 'block' : 'none';
                 showToast(showOverlay ? 'Bật Overlay' : 'Tắt Overlay', 'success');
+                if (showOverlay) drawOverlay();
             });
+        }
+
+        // Clear history
+        if (clearHistoryBtn) {
+            clearHistoryBtn.addEventListener('click', clearHistory);
         }
 
         // Resize
@@ -1752,7 +1967,7 @@
         });
 
         // ===== INIT =====
-        console.log('🚀 Looksmax AI Pro v3.1 (Fixed)');
+        console.log('🚀 Looksmax AI Pro v3.2 (Fully Fixed)');
 
         // Init FaceMesh with retry
         if (window.FaceMesh) {
@@ -1775,6 +1990,9 @@
             }, 10000);
         }
 
+        // Render history
+        renderHistory();
+
         // Start camera automatically
         setTimeout(startCamera, 500);
 
@@ -1795,6 +2013,7 @@
 
         console.log('✅ All systems ready');
         console.log(`📊 History: ${history.length} entries`);
+        console.log('📸 Press "Quét" button or Space/Enter to analyze');
     </script>
 </body>
 </html>
