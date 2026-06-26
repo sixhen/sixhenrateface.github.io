@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Looksmax AI Pro · Professional Face Analysis</title>
+    <title>Looksmax AI Pro · Face Analysis</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', sans-serif;
         }
-
         body {
             background: #0a0c10;
             min-height: 100vh;
@@ -23,27 +21,19 @@
             align-items: center;
             padding: 12px;
         }
-
         .app-wrapper {
             max-width: 500px;
             width: 100%;
             position: relative;
         }
-
-        /* ===== MAIN CONTAINER ===== */
         .main-container {
             background: rgba(16, 18, 24, 0.92);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            backdrop-filter: blur(24px);
             border-radius: 40px;
             padding: 20px 18px 24px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.03);
-            position: relative;
-            overflow: hidden;
         }
-
-        /* ===== HEADER ===== */
         .header {
             display: flex;
             align-items: center;
@@ -52,7 +42,6 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             margin-bottom: 16px;
         }
-
         .header .logo {
             color: #8b7cf7;
             font-size: 22px;
@@ -60,14 +49,11 @@
             padding: 8px;
             border-radius: 14px;
         }
-
         .header h1 {
             font-size: 20px;
             font-weight: 700;
             color: #f0f2f5;
-            letter-spacing: -0.5px;
         }
-
         .header .badge {
             margin-left: auto;
             font-size: 10px;
@@ -76,18 +62,7 @@
             background: rgba(255, 255, 255, 0.04);
             padding: 4px 12px;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
-
-        .header .badge i {
-            color: #8b7cf7;
-            font-size: 8px;
-        }
-
-        /* ===== CAMERA AREA ===== */
         .camera-area {
             position: relative;
             border-radius: 24px;
@@ -95,9 +70,7 @@
             background: #0c0e12;
             aspect-ratio: 1/1;
             border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7);
         }
-
         #video {
             width: 100%;
             height: 100%;
@@ -105,14 +78,12 @@
             display: block;
             transform: scaleX(-1);
         }
-
         #image-preview {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: none;
         }
-
         #overlay-canvas {
             position: absolute;
             top: 0;
@@ -122,8 +93,6 @@
             pointer-events: none;
             z-index: 5;
         }
-
-        /* ===== GUIDANCE FRAME ===== */
         .guidance-frame {
             position: absolute;
             top: 50%;
@@ -131,35 +100,28 @@
             transform: translate(-50%, -50%);
             width: 60%;
             height: 80%;
-            border: 2px dashed rgba(139, 124, 247, 0.15);
+            border: 2px dashed rgba(139, 124, 247, 0.2);
             border-radius: 50%;
             pointer-events: none;
             z-index: 2;
             transition: all 0.5s ease;
-            opacity: 0.6;
         }
-
         .guidance-frame.face-detected {
             border-color: rgba(74, 222, 128, 0.2);
-            opacity: 0.2;
+            opacity: 0.3;
         }
-
         .guidance-text {
             position: absolute;
-            bottom: 20%;
+            bottom: 18%;
             left: 50%;
             transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.25);
             font-size: 12px;
-            font-weight: 400;
             letter-spacing: 1px;
-            text-align: center;
             pointer-events: none;
             z-index: 2;
             white-space: nowrap;
         }
-
-        /* ===== LASER SCAN ===== */
         .laser-scan {
             position: absolute;
             top: 0;
@@ -173,11 +135,9 @@
             transition: opacity 0.5s ease;
             border-radius: 24px;
         }
-
         .laser-scan.active {
             opacity: 1;
         }
-
         .laser-line {
             position: absolute;
             top: -2px;
@@ -185,10 +145,9 @@
             width: 100%;
             height: 2px;
             background: linear-gradient(90deg, transparent, #8b7cf7, #a188ff, #8b7cf7, transparent);
-            box-shadow: 0 0 30px rgba(139, 124, 247, 0.4), 0 0 60px rgba(139, 124, 247, 0.2);
+            box-shadow: 0 0 30px rgba(139, 124, 247, 0.4);
             animation: laserMove 2.5s ease-in-out infinite;
         }
-
         @keyframes laserMove {
             0% {
                 top: -2px;
@@ -205,18 +164,6 @@
                 opacity: 0;
             }
         }
-
-        .laser-glow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at center, rgba(139, 124, 247, 0.03), transparent 70%);
-            pointer-events: none;
-        }
-
-        /* ===== SCAN OVERLAY ===== */
         .scan-overlay {
             position: absolute;
             inset: 0;
@@ -228,32 +175,17 @@
             align-items: center;
             z-index: 10;
             border-radius: 24px;
-            animation: fadeInOverlay 0.4s ease;
         }
-
         .scan-overlay.active {
             display: flex;
         }
-
-        @keyframes fadeInOverlay {
-            from {
-                opacity: 0;
-                transform: scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
         .scan-steps {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             width: 80%;
-            max-width: 300px;
+            max-width: 280px;
         }
-
         .scan-step {
             display: flex;
             align-items: center;
@@ -265,19 +197,15 @@
             transition: all 0.4s ease;
             opacity: 0.3;
         }
-
         .scan-step.active {
             opacity: 1;
             background: rgba(139, 124, 247, 0.08);
             border-color: rgba(139, 124, 247, 0.15);
-            box-shadow: 0 0 20px rgba(139, 124, 247, 0.05);
         }
-
         .scan-step.done {
             opacity: 0.7;
             border-color: rgba(74, 222, 128, 0.15);
         }
-
         .scan-step .step-icon {
             width: 28px;
             height: 28px;
@@ -289,50 +217,34 @@
             background: rgba(255, 255, 255, 0.05);
             color: #8b9bb5;
             flex-shrink: 0;
-            transition: all 0.4s ease;
         }
-
         .scan-step.active .step-icon {
             background: rgba(139, 124, 247, 0.2);
             color: #8b7cf7;
-            box-shadow: 0 0 20px rgba(139, 124, 247, 0.1);
         }
-
         .scan-step.done .step-icon {
             background: rgba(74, 222, 128, 0.15);
             color: #4ade80;
         }
-
         .scan-step .step-text {
             font-size: 13px;
             font-weight: 500;
             color: #b0bcca;
-            transition: all 0.4s ease;
         }
-
         .scan-step.active .step-text {
             color: #e8ecf2;
         }
-
-        .scan-step.done .step-text {
-            color: #8b9bb5;
-        }
-
         .scan-step .step-status {
             margin-left: auto;
             font-size: 12px;
             color: #5f6b80;
         }
-
         .scan-step.active .step-status {
             color: #8b7cf7;
         }
-
         .scan-step.done .step-status {
             color: #4ade80;
         }
-
-        /* ===== CONTROLS ===== */
         .controls {
             display: flex;
             gap: 8px;
@@ -340,7 +252,6 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .btn {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -358,56 +269,35 @@
             justify-content: center;
             min-height: 42px;
             user-select: none;
-            position: relative;
-            overflow: hidden;
         }
-
         .btn:active {
             transform: scale(0.95);
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #8b7cf7, #7c6cf0);
             border-color: #8b7cf7;
             color: white;
             box-shadow: 0 4px 20px rgba(139, 124, 247, 0.25);
         }
-
-        .btn-primary:hover {
-            box-shadow: 0 6px 30px rgba(139, 124, 247, 0.35);
-            transform: translateY(-1px);
-        }
-
         .btn-success {
             background: linear-gradient(135deg, #4ade80, #22c55e);
             border-color: #4ade80;
             color: white;
-            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.2);
         }
-
-        .btn-success:hover {
-            box-shadow: 0 6px 30px rgba(74, 222, 128, 0.3);
-            transform: translateY(-1px);
-        }
-
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             border-color: #ef4444;
             color: white;
         }
-
         .btn-sm {
             padding: 6px 14px;
             font-size: 12px;
             min-height: 34px;
             flex: 0 1 auto;
         }
-
         #file-input {
             display: none;
         }
-
-        /* ===== RESULT CARD ===== */
         .result-card {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 24px;
@@ -415,24 +305,21 @@
             margin-top: 16px;
             border: 1px solid rgba(255, 255, 255, 0.04);
             display: none;
-            animation: slideUpResult 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideUp 0.6s ease;
         }
-
         .result-card.active {
             display: block;
         }
-
-        @keyframes slideUpResult {
-            0% {
+        @keyframes slideUp {
+            from {
                 opacity: 0;
                 transform: translateY(20px);
             }
-            100% {
+            to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
         .result-header {
             display: flex;
             align-items: center;
@@ -443,18 +330,15 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             margin-bottom: 14px;
         }
-
         .score-main {
             display: flex;
             align-items: baseline;
             gap: 6px;
         }
-
         .score-main .label {
             font-size: 14px;
             color: #8b9bb5;
         }
-
         .score-main .number {
             font-size: 42px;
             font-weight: 800;
@@ -464,28 +348,23 @@
             background-clip: text;
             letter-spacing: -2px;
         }
-
         .score-main .max {
             font-size: 16px;
             font-weight: 300;
             color: #5f6b80;
         }
-
         .score-badges {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .badge-shape {
             font-size: 12px;
             color: #a188ff;
             background: rgba(161, 136, 255, 0.08);
             padding: 4px 14px;
             border-radius: 16px;
-            border: 1px solid rgba(161, 136, 255, 0.08);
         }
-
         .badge-rating {
             font-size: 13px;
             font-weight: 500;
@@ -493,24 +372,19 @@
             background: rgba(251, 191, 36, 0.08);
             padding: 4px 14px;
             border-radius: 16px;
-            border: 1px solid rgba(251, 191, 36, 0.08);
         }
-
-        /* ===== METRICS ===== */
         .metrics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
             gap: 4px 12px;
             margin: 12px 0;
         }
-
         .metric-item {
             display: flex;
             flex-direction: column;
             padding: 6px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
-
         .metric-item .label {
             font-size: 11px;
             color: #6a7a8f;
@@ -518,20 +392,15 @@
             align-items: center;
             gap: 4px;
         }
-
         .metric-item .label i {
             font-size: 10px;
-            color: #6a7a8f;
         }
-
         .metric-item .value {
             font-size: 16px;
             font-weight: 700;
             color: #e8ecf2;
             margin-top: 2px;
         }
-
-        /* ===== GOLDEN RATIO ===== */
         .gr-display {
             display: flex;
             align-items: center;
@@ -542,19 +411,16 @@
             border: 1px solid rgba(139, 124, 247, 0.06);
             margin: 10px 0;
         }
-
         .gr-display .label {
             font-size: 13px;
             color: #8b9bb5;
         }
-
         .gr-display .value {
             font-size: 22px;
             font-weight: 700;
             color: #a188ff;
             min-width: 60px;
         }
-
         .gr-display .bar {
             flex: 1;
             height: 4px;
@@ -562,19 +428,12 @@
             border-radius: 4px;
             overflow: hidden;
         }
-
         .gr-display .bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #8b7cf7, #a188ff);
             border-radius: 4px;
             transition: width 1.2s ease;
         }
-
-        /* ===== FEEDBACK ===== */
-        .feedback-section {
-            margin-top: 12px;
-        }
-
         .feedback-block {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 16px;
@@ -582,7 +441,6 @@
             margin-bottom: 8px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
-
         .feedback-block .title {
             font-size: 12px;
             font-weight: 600;
@@ -594,19 +452,16 @@
             align-items: center;
             gap: 6px;
         }
-
         .feedback-block .title i {
             font-size: 12px;
             color: #8b7cf7;
         }
-
         .feedback-list {
             list-style: none;
             display: flex;
             flex-wrap: wrap;
             gap: 4px 16px;
         }
-
         .feedback-list li {
             font-size: 13px;
             color: #c8d0dc;
@@ -614,30 +469,7 @@
             align-items: center;
             gap: 6px;
             padding: 2px 0;
-            animation: fadeItem 0.3s ease forwards;
-            opacity: 0;
         }
-
-        .feedback-list li:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-        .feedback-list li:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        .feedback-list li:nth-child(3) {
-            animation-delay: 0.15s;
-        }
-
-        @keyframes fadeItem {
-            to {
-                opacity: 1;
-            }
-        }
-
-        .feedback-list li i {
-            font-size: 12px;
-        }
-
         .feedback-list .strength i {
             color: #4ade80;
         }
@@ -647,21 +479,17 @@
         .feedback-list .tip i {
             color: #8b7cf7;
         }
-
-        /* ===== HISTORY ===== */
         .history-section {
             margin-top: 16px;
             padding-top: 14px;
             border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
-
         .history-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-
         .history-header .title {
             font-size: 13px;
             color: #8b9bb5;
@@ -669,31 +497,12 @@
             align-items: center;
             gap: 8px;
         }
-
-        .history-header .actions {
-            display: flex;
-            gap: 6px;
-        }
-
         .history-list {
             display: flex;
             gap: 8px;
             overflow-x: auto;
             padding: 4px 2px 8px;
-            scrollbar-width: thin;
         }
-
-        .history-list::-webkit-scrollbar {
-            height: 3px;
-        }
-        .history-list::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .history-list::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-
         .history-item {
             background: rgba(255, 255, 255, 0.04);
             border-radius: 14px;
@@ -707,14 +516,10 @@
             font-size: 12px;
             color: #b0bcca;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
-
         .history-item:hover {
             background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(139, 124, 247, 0.15);
         }
-
         .history-item .h-score {
             font-weight: 700;
             color: #e8ecf2;
@@ -723,12 +528,10 @@
             border-radius: 10px;
             font-size: 13px;
         }
-
         .history-item .h-time {
             color: #6a7a8f;
             font-size: 11px;
         }
-
         .empty-history {
             color: #5f6b80;
             font-size: 13px;
@@ -736,8 +539,6 @@
             text-align: center;
             width: 100%;
         }
-
-        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -752,7 +553,7 @@
             color: #e8ecf2;
             font-size: 14px;
             z-index: 1000;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s ease;
             opacity: 0;
             pointer-events: none;
             display: flex;
@@ -760,29 +561,19 @@
             gap: 10px;
             max-width: 90%;
         }
-
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
             pointer-events: auto;
         }
-
         .toast i {
             font-size: 16px;
             color: #8b7cf7;
         }
-
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 420px) {
-            .app-wrapper {
-                padding: 0;
-            }
             .main-container {
                 padding: 14px 12px 18px;
                 border-radius: 28px;
-            }
-            .header h1 {
-                font-size: 17px;
             }
             .score-main .number {
                 font-size: 32px;
@@ -795,24 +586,6 @@
                 padding: 8px 12px;
                 min-height: 36px;
             }
-            .scan-step .step-text {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .metrics-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 2px 8px;
-            }
-            .metric-item .value {
-                font-size: 14px;
-            }
-            .controls .btn {
-                font-size: 11px;
-                padding: 6px 10px;
-                min-height: 32px;
-            }
         }
     </style>
 </head>
@@ -820,40 +593,32 @@
 
     <div class="app-wrapper">
 
-        <!-- ===== TOAST ===== -->
         <div class="toast" id="toast">
             <i class="fas fa-check-circle"></i>
             <span id="toastMessage">Thông báo</span>
         </div>
 
-        <!-- ===== MAIN ===== -->
         <div class="main-container">
 
-            <!-- ===== HEADER ===== -->
             <div class="header">
                 <i class="fas fa-wand-magic-sparkles logo"></i>
                 <h1>Looksmax AI</h1>
                 <span class="badge"><i class="fas fa-bolt"></i> Pro</span>
             </div>
 
-            <!-- ===== CAMERA AREA ===== -->
             <div class="camera-area">
                 <video id="video" playsinline autoplay></video>
                 <img id="image-preview" alt="Preview" />
                 <canvas id="overlay-canvas"></canvas>
 
-                <!-- Guidance Frame -->
                 <div class="guidance-frame" id="guidanceFrame">
-                    <div class="guidance-text">Đặt khuôn mặt vào khung</div>
+                    <div class="guidance-text">📸 Đặt khuôn mặt vào khung</div>
                 </div>
 
-                <!-- Laser Scan -->
                 <div class="laser-scan" id="laserScan">
                     <div class="laser-line"></div>
-                    <div class="laser-glow"></div>
                 </div>
 
-                <!-- Scan Overlay -->
                 <div class="scan-overlay" id="scanOverlay">
                     <div class="scan-steps" id="scanSteps">
                         <div class="scan-step" data-step="0">
@@ -889,7 +654,6 @@
                     </div>
                 </div>
 
-                <!-- ===== CONTROLS ===== -->
                 <div class="controls">
                     <button class="btn btn-sm" id="cameraBtn">
                         <i class="fas fa-camera"></i> Cam
@@ -910,7 +674,6 @@
                 <input type="file" id="file-input" accept="image/*">
             </div>
 
-            <!-- ===== RESULT CARD ===== -->
             <div class="result-card" id="resultCard">
                 <div class="result-header">
                     <div class="score-main">
@@ -919,20 +682,18 @@
                         <span class="max">/10</span>
                     </div>
                     <div class="score-badges">
-                        <span class="badge-shape" id="faceShapeBadge"><i class="fas fa-face-smile"></i> <span id="faceShapeText">--</span></span>
-                        <span class="badge-rating" id="ratingBadge"><i class="fas fa-star"></i> <span id="ratingText">--</span></span>
+                        <span class="badge-shape"><i class="fas fa-face-smile"></i> <span id="faceShapeText">--</span></span>
+                        <span class="badge-rating"><i class="fas fa-star"></i> <span id="ratingText">--</span></span>
                     </div>
                 </div>
 
-                <!-- Golden Ratio -->
                 <div class="gr-display">
                     <span class="label">Tỷ lệ vàng</span>
                     <span class="value" id="grValue">0%</span>
                     <div class="bar"><div class="bar-fill" id="grBar" style="width:0%"></div></div>
                 </div>
 
-                <!-- Metrics -->
-                <div class="metrics-grid" id="metricsGrid">
+                <div class="metrics-grid">
                     <div class="metric-item">
                         <span class="label"><i class="fas fa-arrows-left-right"></i> Đối xứng</span>
                         <span class="value" id="symmetry">0.0</span>
@@ -967,60 +728,44 @@
                     </div>
                 </div>
 
-                <!-- Feedback -->
-                <div class="feedback-section">
-                    <div class="feedback-block">
-                        <div class="title"><i class="fas fa-star"></i> Điểm mạnh</div>
-                        <ul class="feedback-list" id="strengthList">
-                            <li class="strength"><i class="fas fa-check-circle"></i> Chưa có dữ liệu</li>
-                        </ul>
-                    </div>
-                    <div class="feedback-block">
-                        <div class="title"><i class="fas fa-lightbulb"></i> Cải thiện</div>
-                        <ul class="feedback-list" id="improveList">
-                            <li class="improve"><i class="fas fa-arrow-right"></i> Chưa có dữ liệu</li>
-                        </ul>
-                    </div>
-                    <div class="feedback-block">
-                        <div class="title"><i class="fas fa-wand-sparkles"></i> Gợi ý</div>
-                        <ul class="feedback-list" id="tipList">
-                            <li class="tip"><i class="fas fa-lightbulb"></i> Chưa có dữ liệu</li>
-                        </ul>
-                    </div>
+                <div class="feedback-block">
+                    <div class="title"><i class="fas fa-star"></i> Điểm mạnh</div>
+                    <ul class="feedback-list" id="strengthList">
+                        <li class="strength"><i class="fas fa-check-circle"></i> Chưa có dữ liệu</li>
+                    </ul>
+                </div>
+                <div class="feedback-block">
+                    <div class="title"><i class="fas fa-lightbulb"></i> Cải thiện</div>
+                    <ul class="feedback-list" id="improveList">
+                        <li class="improve"><i class="fas fa-arrow-right"></i> Chưa có dữ liệu</li>
+                    </ul>
+                </div>
+                <div class="feedback-block">
+                    <div class="title"><i class="fas fa-wand-sparkles"></i> Gợi ý</div>
+                    <ul class="feedback-list" id="tipList">
+                        <li class="tip"><i class="fas fa-lightbulb"></i> Chưa có dữ liệu</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- ===== HISTORY ===== -->
             <div class="history-section">
                 <div class="history-header">
                     <span class="title"><i class="fas fa-clock-rotate-left"></i> Lịch sử</span>
-                    <div class="actions">
-                        <button class="btn btn-sm btn-danger" id="clearHistoryBtn">
-                            <i class="fas fa-trash-can"></i> Xóa
-                        </button>
-                    </div>
+                    <button class="btn btn-sm btn-danger" id="clearHistoryBtn">
+                        <i class="fas fa-trash-can"></i> Xóa
+                    </button>
                 </div>
                 <div class="history-list" id="historyList">
                     <span class="empty-history">Chưa có đánh giá nào</span>
                 </div>
             </div>
 
-        </div><!-- /main-container -->
-    </div><!-- /app-wrapper -->
+        </div>
+    </div>
 
-    <!-- ===== SCRIPTS ===== -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous">
     </script>
     <script>
-        /**
-         * ================================================================
-         * LOOKSMAX AI PRO - COMPLETE FACE ANALYSIS
-         * Version: 3.3 (Fully Fixed with Snapshot)
-         * All calculations from real MediaPipe landmarks
-         * No Math.random() - deterministic results
-         * ================================================================
-         */
-
         // ===== DOM REFS =====
         const $ = (id) => document.getElementById(id);
         const video = $('video');
@@ -1042,7 +787,6 @@
         const toast = $('toast');
         const toastMessage = $('toastMessage');
 
-        // Result elements
         const overallScore = $('overallScore');
         const ratingText = $('ratingText');
         const faceShapeText = $('faceShapeText');
@@ -1074,7 +818,7 @@
         let isPageVisible = true;
         let history = [];
 
-        // ===== SAFE LOAD FROM LOCALSTORAGE =====
+        // ===== LOAD HISTORY =====
         try {
             const saved = localStorage.getItem('looksmax_history');
             history = saved ? JSON.parse(saved) : [];
@@ -1082,24 +826,24 @@
             history = [];
         }
 
-        // ===== TOAST SYSTEM =====
+        // ===== TOAST =====
         function showToast(msg, type = 'success') {
             if (!toast || !toastMessage) return;
             toastMessage.textContent = msg;
             toast.className = 'toast';
-            const iconMap = {
+            const icons = {
                 success: 'fa-check-circle',
                 error: 'fa-exclamation-circle',
                 info: 'fa-info-circle',
                 warning: 'fa-exclamation-triangle'
             };
-            toast.querySelector('i').className = `fas ${iconMap[type] || iconMap.success}`;
+            toast.querySelector('i').className = `fas ${icons[type] || icons.success}`;
             toast.classList.add('show');
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // ===== UTILITY FUNCTIONS =====
+        // ===== UTILITY =====
         function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
 
         function dist(p1, p2) {
@@ -1141,6 +885,7 @@
 
                 faceMesh.initialize().then(() => {
                     console.log('✅ FaceMesh initialized');
+                    showToast('✅ AI đã sẵn sàng', 'success');
                 }).catch((err) => {
                     console.error('FaceMesh init error:', err);
                     showToast('⚠️ Lỗi tải AI, thử refresh', 'error');
@@ -1306,7 +1051,6 @@
             ctx.stroke();
         }
 
-        // ===== DRAW GUIDANCE OVAL =====
         function drawGuidanceOval() {
             if (!canvas || !ctx) return;
             const rect = canvas.parentElement.getBoundingClientRect();
@@ -1461,7 +1205,6 @@
             };
         }
 
-        // ===== DETECT FACE SHAPE =====
         function detectFaceShape(lm) {
             try {
                 const forehead = getLM(lm, 10);
@@ -1495,7 +1238,7 @@
             }
         }
 
-        // ===== SNAPSHOT (CHỤP ẢNH) =====
+        // ===== SNAPSHOT =====
         function takeSnapshot() {
             if (!video || !video.srcObject || video.readyState < 2) {
                 showToast('📸 Vui lòng bật camera trước', 'error');
@@ -1509,23 +1252,19 @@
                 snapCanvas.width = size;
                 snapCanvas.height = size;
 
-                // Draw from video (mirrored)
                 snapCtx.save();
                 snapCtx.scale(-1, 1);
                 snapCtx.drawImage(video, -size, 0, size, size);
                 snapCtx.restore();
 
-                // Convert to image
                 const dataUrl = snapCanvas.toDataURL('image/jpeg', 0.95);
 
-                // Show preview
                 if (imagePreview) {
                     imagePreview.src = dataUrl;
                     imagePreview.style.display = 'block';
                     video.style.display = 'none';
                 }
 
-                // Stop camera
                 stopCamera();
 
                 showToast('📸 Đã chụp ảnh! Nhấn "Quét" để phân tích', 'success');
@@ -1561,7 +1300,6 @@
                 s.querySelector('.step-status').textContent = '...'; });
 
             try {
-                // Step 1
                 if (steps.length > 0) {
                     steps[0].classList.add('active');
                     steps[0].querySelector('.step-status').textContent = '⏳';
@@ -1963,12 +1701,10 @@
             });
         }
 
-        // ===== SNAPSHOT BUTTON =====
         if (snapshotBtn) {
             snapshotBtn.addEventListener('click', takeSnapshot);
         }
 
-        // ===== CAPTURE/SCAN BUTTON =====
         if (captureBtn) {
             captureBtn.addEventListener('click', performScan);
         }
@@ -1998,7 +1734,7 @@
         });
 
         // ===== INIT =====
-        console.log('🚀 Looksmax AI Pro v3.3 (Fully Fixed with Snapshot)');
+        console.log('🚀 Looksmax AI Pro v3.3');
 
         if (window.FaceMesh) {
             initFaceMesh();
@@ -2035,7 +1771,6 @@
 
         console.log('✅ All systems ready');
         console.log(`📊 History: ${history.length} entries`);
-        console.log('📸 Buttons: Cam → Chụp → Quét');
     </script>
 </body>
 </html>
