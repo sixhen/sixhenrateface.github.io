@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Looksmax AI Pro v6.0 · Premium AI Analysis</title>
+    <title>Looksmax AI v7.0 · Real-time Face Analysis</title>
     <link rel="manifest" href="data:application/json,{}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -11,33 +11,29 @@
     </script>
     <style>
         /* ============================================================
-           CSS VARIABLES - Premium Theme
+           CSS VARIABLES
            ============================================================ */
         :root {
             --primary: #6c5ce7;
             --primary-light: #a29bfe;
             --primary-dark: #5a4bd1;
-            --primary-glow: rgba(108, 92, 231, 0.35);
+            --primary-glow: rgba(108, 92, 231, 0.3);
             --secondary: #fd79a8;
             --accent: #00b894;
             --gold: #fdcb6e;
             --bg-primary: #080a0e;
             --bg-card: rgba(16, 18, 28, 0.94);
-            --bg-glass: rgba(255, 255, 255, 0.03);
             --text-primary: #f0f2f5;
             --text-secondary: #a0a7b5;
             --text-muted: #5f687b;
             --border-color: rgba(255, 255, 255, 0.05);
-            --border-glow: rgba(108, 92, 231, 0.15);
             --success: #00b894;
             --warning: #fdcb6e;
             --danger: #e17055;
             --radius: 28px;
-            --radius-sm: 16px;
-            --radius-xs: 10px;
+            --radius-sm: 14px;
             --shadow: 0 25px 70px rgba(0, 0, 0, 0.8);
-            --shadow-glow: 0 0 60px rgba(108, 92, 231, 0.05);
-            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --font: 'Inter', sans-serif;
         }
 
@@ -59,9 +55,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ============================================================
-           APP SHELL
-           ============================================================ */
         #app {
             display: flex;
             flex-direction: column;
@@ -72,7 +65,7 @@
             background: var(--bg-card);
             backdrop-filter: blur(40px) saturate(180%);
             -webkit-backdrop-filter: blur(40px) saturate(180%);
-            box-shadow: var(--shadow), var(--shadow-glow);
+            box-shadow: var(--shadow);
             border-left: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
             position: relative;
@@ -80,13 +73,13 @@
         }
 
         /* ============================================================
-           HEADER - Premium
+           HEADER
            ============================================================ */
         .app-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 16px 8px;
+            gap: 10px;
+            padding: 8px 14px 6px;
             border-bottom: 1px solid var(--border-color);
             flex-shrink: 0;
             background: rgba(0, 0, 0, 0.3);
@@ -94,125 +87,65 @@
             z-index: 10;
         }
 
-        .app-header .logo-wrap {
-            position: relative;
-            width: 36px;
-            height: 36px;
-        }
-
-        .app-header .logo-wrap .logo-bg {
-            position: absolute;
-            inset: 0;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            opacity: 0.15;
-        }
-
-        .app-header .logo-wrap .logo-icon {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
+        .app-header .logo {
             color: var(--primary-light);
-        }
-
-        .app-header .logo-wrap .logo-pulse {
-            position: absolute;
-            inset: -4px;
-            border-radius: 16px;
-            border: 1px solid var(--primary-glow);
-            animation: logoPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes logoPulse {
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.3;
-            }
-            50% {
-                transform: scale(1.15);
-                opacity: 0.8;
-            }
+            font-size: 18px;
+            background: rgba(108, 92, 231, 0.08);
+            padding: 6px 8px;
+            border-radius: 10px;
         }
 
         .app-header h1 {
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 17px;
+            font-weight: 700;
             background: linear-gradient(135deg, #ffffff, var(--primary-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -0.5px;
         }
 
-        .app-header .badge-wrap {
+        .app-header .status-badge {
             margin-left: auto;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 3px 12px 3px 8px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 6px;
-            background: rgba(108, 92, 231, 0.08);
-            padding: 3px 12px 3px 8px;
-            border-radius: 30px;
-            border: 1px solid rgba(108, 92, 231, 0.1);
         }
 
-        .app-header .badge-wrap .dot {
+        .app-header .status-badge .dot {
             width: 6px;
             height: 6px;
             border-radius: 50%;
             background: var(--success);
-            animation: dotPulse 1.5s ease-in-out infinite;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
-        @keyframes dotPulse {
+        @keyframes pulse {
             0%,
             100% {
                 opacity: 1;
                 transform: scale(1);
             }
             50% {
-                opacity: 0.4;
+                opacity: 0.3;
                 transform: scale(0.8);
             }
         }
 
-        .app-header .badge-wrap span {
-            font-size: 8px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            letter-spacing: 0.5px;
-        }
-
         /* ============================================================
-           MAIN CONTENT
-           ============================================================ */
-        .main-content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* ============================================================
-           CAMERA SECTION - Premium Fullscreen
+           CAMERA SECTION
            ============================================================ */
         .camera-section {
             position: relative;
-            width: 100%;
-            height: 100%;
+            flex: 1;
             background: #06080c;
             overflow: hidden;
-        }
-
-        .camera-section::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
-            pointer-events: none;
-            z-index: 1;
         }
 
         #video {
@@ -221,13 +154,6 @@
             object-fit: cover;
             display: block;
             transform: scaleX(-1);
-        }
-
-        #image-preview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
         }
 
         #overlay-canvas {
@@ -241,220 +167,107 @@
         }
 
         /* ============================================================
-           GLASS GUIDANCE - Premium
+           LIVE METRICS OVERLAY - Real-time display
            ============================================================ */
-        .guidance-glass {
+        .live-metrics {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 62%;
-            height: 78%;
-            z-index: 3;
-            pointer-events: none;
-        }
-
-        .guidance-glass .oval {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 1.5px solid rgba(108, 92, 231, 0.12);
-            transition: all 0.8s ease;
-        }
-
-        .guidance-glass .oval.glow {
-            border-color: rgba(108, 92, 231, 0.2);
-            box-shadow: 0 0 60px rgba(108, 92, 231, 0.02), inset 0 0 60px rgba(108, 92, 231, 0.02);
-        }
-
-        .guidance-glass .oval.face-detected {
-            border-color: rgba(0, 184, 148, 0.15);
-            opacity: 0.3;
-        }
-
-        .guidance-glass .oval.quality-ok {
-            border-color: rgba(0, 184, 148, 0.2);
-            box-shadow: 0 0 80px rgba(0, 184, 148, 0.02), inset 0 0 80px rgba(0, 184, 148, 0.02);
-        }
-
-        .guidance-glass .ring-inner {
-            position: absolute;
-            inset: 12%;
-            border-radius: 50%;
-            border: 1px dashed rgba(108, 92, 231, 0.04);
-        }
-
-        .guidance-glass .ring-dots {
-            position: absolute;
-            inset: 24%;
-            border-radius: 50%;
-            border: 1px dotted rgba(108, 92, 231, 0.03);
-        }
-
-        .guidance-glass .text {
-            position: absolute;
-            bottom: 8%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.15);
-            font-size: 11px;
-            font-weight: 400;
-            letter-spacing: 1.5px;
-            text-align: center;
-            transition: all 0.6s ease;
-            white-space: nowrap;
-        }
-
-        .guidance-glass .text.face-detected {
-            color: rgba(0, 184, 148, 0.2);
-        }
-
-        .guidance-glass .corner {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border-color: rgba(108, 92, 231, 0.06);
-            border-style: solid;
-            border-width: 0;
-        }
-
-        .guidance-glass .corner.tl {
-            top: 0;
-            left: 0;
-            border-top-width: 1.5px;
-            border-left-width: 1.5px;
-        }
-        .guidance-glass .corner.tr {
-            top: 0;
-            right: 0;
-            border-top-width: 1.5px;
-            border-right-width: 1.5px;
-        }
-        .guidance-glass .corner.bl {
-            bottom: 0;
-            left: 0;
-            border-bottom-width: 1.5px;
-            border-left-width: 1.5px;
-        }
-        .guidance-glass .corner.br {
-            bottom: 0;
-            right: 0;
-            border-bottom-width: 1.5px;
-            border-right-width: 1.5px;
-        }
-
-        /* ============================================================
-           QUALITY INDICATORS - Premium
-           ============================================================ */
-        .quality-panel {
-            position: absolute;
-            top: 16px;
-            left: 16px;
+            top: 12px;
+            right: 12px;
             z-index: 7;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             pointer-events: none;
+            max-width: 140px;
         }
 
-        .quality-item {
+        .live-metric {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(12px);
-            padding: 4px 12px 4px 8px;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
             font-size: 8px;
             font-weight: 500;
-            color: var(--text-muted);
-            transition: all var(--transition);
-        }
-
-        .quality-item .q-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--text-muted);
-            transition: all var(--transition);
-        }
-
-        .quality-item .q-dot.good {
-            background: var(--success);
-            box-shadow: 0 0 12px rgba(0, 184, 148, 0.3);
-        }
-
-        .quality-item .q-dot.warning {
-            background: var(--warning);
-            box-shadow: 0 0 12px rgba(253, 203, 110, 0.3);
-        }
-
-        .quality-item .q-dot.error {
-            background: var(--danger);
-            box-shadow: 0 0 12px rgba(225, 112, 85, 0.3);
-        }
-
-        .quality-item .q-label {
             color: var(--text-secondary);
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateX(20px);
         }
 
-        .quality-item .q-value {
+        .live-metric.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .live-metric .label {
+            color: var(--text-muted);
+        }
+
+        .live-metric .value {
             color: var(--text-primary);
+            font-weight: 700;
+            font-size: 9px;
+            margin-left: 8px;
+        }
+
+        .live-metric .value.good {
+            color: var(--success);
+        }
+        .live-metric .value.warning {
+            color: var(--warning);
+        }
+        .live-metric .value.error {
+            color: var(--danger);
         }
 
         /* ============================================================
-           STATUS WARNING - Premium
+           STATUS OVERLAY
            ============================================================ */
-        .status-glass {
+        .status-overlay {
             position: absolute;
-            bottom: 100px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(225, 112, 85, 0.08);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(16px);
-            padding: 8px 20px;
+            padding: 6px 18px;
             border-radius: 30px;
-            border: 1px solid rgba(225, 112, 85, 0.12);
-            color: var(--danger);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
             font-size: 10px;
             font-weight: 500;
-            display: none;
             z-index: 7;
-            text-align: center;
-            max-width: 85%;
             pointer-events: none;
+            transition: all 0.5s ease;
+            opacity: 0;
+            white-space: nowrap;
         }
 
-        .status-glass.show {
-            display: block;
-            animation: fadeSlideUp 0.4s ease;
+        .status-overlay.show {
+            opacity: 1;
         }
 
-        @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateX(-50%) translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0);
-            }
+        .status-overlay .highlight {
+            color: var(--primary-light);
         }
 
         /* ============================================================
-           CAMERA CONTROLS - Premium
+           BOTTOM CONTROLS
            ============================================================ */
-        .camera-controls {
+        .bottom-controls {
             position: absolute;
-            bottom: 28px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             z-index: 6;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding: 6px 16px 6px 12px;
@@ -467,20 +280,16 @@
             background: rgba(255, 255, 255, 0.03);
             border: none;
             color: #c8d0dc;
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all var(--transition);
             position: relative;
-        }
-
-        .cam-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
         }
 
         .cam-btn:active {
@@ -489,7 +298,7 @@
 
         .cam-btn .tooltip {
             position: absolute;
-            bottom: -24px;
+            bottom: -22px;
             left: 50%;
             transform: translateX(-50%);
             font-size: 7px;
@@ -506,15 +315,10 @@
         .cam-btn.primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            box-shadow: 0 4px 30px rgba(108, 92, 231, 0.35);
-            width: 56px;
-            height: 56px;
-            font-size: 20px;
-        }
-
-        .cam-btn.primary:hover {
-            box-shadow: 0 6px 40px rgba(108, 92, 231, 0.45);
-            transform: scale(1.02);
+            box-shadow: 0 4px 30px rgba(108, 92, 231, 0.3);
+            width: 52px;
+            height: 52px;
+            font-size: 18px;
         }
 
         .cam-btn.primary:active {
@@ -525,12 +329,8 @@
             position: absolute;
             inset: -4px;
             border-radius: 50%;
-            border: 2px solid rgba(108, 92, 231, 0.12);
+            border: 2px solid rgba(108, 92, 231, 0.1);
             animation: ripple 2s ease-out infinite;
-        }
-
-        .cam-btn.primary .ripple:nth-child(2) {
-            animation-delay: 0.6s;
         }
 
         @keyframes ripple {
@@ -544,699 +344,161 @@
             }
         }
 
-        .cam-btn .count-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: var(--primary);
-            color: white;
-            font-size: 8px;
-            font-weight: 700;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--bg-card);
-        }
-
         #file-input {
             display: none;
         }
 
         /* ============================================================
-           LASER SCAN - Premium
+           ANALYZING PROGRESS BAR
            ============================================================ */
-        .laser-scan {
+        .analyzing-bar {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 4;
-            overflow: hidden;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-        }
-
-        .laser-scan.active {
-            opacity: 1;
-        }
-
-        .laser-line {
-            position: absolute;
-            top: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), var(--primary-light), var(--primary), transparent);
-            box-shadow: 0 0 80px rgba(108, 92, 231, 0.2);
-            animation: laserMove 3s ease-in-out infinite;
-        }
-
-        @keyframes laserMove {
-            0% {
-                top: -2px;
-                opacity: 0;
-            }
-            5% {
-                opacity: 1;
-            }
-            95% {
-                opacity: 1;
-            }
-            100% {
-                top: 100%;
-                opacity: 0;
-            }
-        }
-
-        .laser-glow {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at center, rgba(108, 92, 231, 0.015), transparent 70%);
-        }
-
-        .laser-particles {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-        }
-
-        .laser-particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--primary-light);
-            border-radius: 50%;
-            opacity: 0;
-            animation: particleFloat 4s ease-in-out infinite;
-        }
-
-        @keyframes particleFloat {
-            0% {
-                opacity: 0;
-                transform: translateY(100%) scale(0);
-            }
-            20% {
-                opacity: 0.6;
-            }
-            80% {
-                opacity: 0.6;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-100%) scale(1);
-            }
-        }
-
-        /* ============================================================
-           SCAN OVERLAY - Premium
-           ============================================================ */
-        .scan-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 20;
-            animation: fadeInOverlay 0.6s ease;
-        }
-
-        .scan-overlay.active {
-            display: flex;
-        }
-
-        @keyframes fadeInOverlay {
-            from {
-                opacity: 0;
-                transform: scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .scan-animation {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 24px;
-        }
-
-        .scan-ring {
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            animation: ringSpin 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-
-        .scan-ring:nth-child(1) {
-            border-top-color: var(--primary);
-            animation-delay: 0s;
-        }
-
-        .scan-ring:nth-child(2) {
-            border-right-color: var(--primary-light);
-            animation-delay: 0.4s;
-            inset: 14px;
-        }
-
-        .scan-ring:nth-child(3) {
-            border-bottom-color: var(--secondary);
-            animation-delay: 0.8s;
-            inset: 28px;
-        }
-
-        @keyframes ringSpin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .scan-center-icon {
-            position: absolute;
-            top: 50%;
+            bottom: 100px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 32px;
-            color: var(--primary-light);
-            animation: pulseIcon 1.8s ease-in-out infinite;
-        }
-
-        @keyframes pulseIcon {
-            0%,
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.12);
-                opacity: 0.6;
-            }
-        }
-
-        .scan-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .scan-subtitle {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .scan-steps-row {
-            display: flex;
-            gap: 14px;
-            margin: 12px 0 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .scan-step-pill {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 14px 4px 10px;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 9px;
-            font-weight: 500;
-            color: var(--text-muted);
-            transition: all 0.6s ease;
-            opacity: 0.3;
-        }
-
-        .scan-step-pill .pill-icon {
-            font-size: 10px;
-        }
-
-        .scan-step-pill.active {
-            opacity: 1;
-            background: rgba(108, 92, 231, 0.08);
-            border-color: rgba(108, 92, 231, 0.1);
-            color: var(--text-primary);
-        }
-
-        .scan-step-pill.done {
-            opacity: 0.6;
-            border-color: rgba(0, 184, 148, 0.1);
-            color: var(--success);
-        }
-
-        .scan-progress-wrap {
-            width: 240px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(-50%);
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 4px;
             overflow: hidden;
-            margin-top: 4px;
+            z-index: 7;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
-        .scan-progress-fill {
+        .analyzing-bar.active {
+            opacity: 1;
+        }
+
+        .analyzing-bar .fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--secondary));
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
             border-radius: 4px;
-            transition: width 0.5s ease;
             width: 0%;
+            transition: width 0.3s ease;
         }
 
         /* ============================================================
-           RESULTS SHEET - Premium Slide-up
+           RESULTS OVERLAY
            ============================================================ */
-        .results-sheet {
+        .results-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            max-height: 78%;
-            background: rgba(8, 10, 14, 0.96);
+            max-height: 55%;
+            background: rgba(8, 10, 14, 0.95);
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
             border-top-left-radius: var(--radius);
             border-top-right-radius: var(--radius);
             border: 1px solid var(--border-color);
             border-bottom: none;
-            padding: 14px 16px 90px;
+            padding: 12px 14px 80px;
             transform: translateY(100%);
-            transition: transform 0.7s cubic-bezier(0.32, 0.72, 0, 1);
+            transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
             z-index: 15;
             overflow-y: auto;
-            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
         }
 
-        .results-sheet.active {
+        .results-overlay.active {
             transform: translateY(0);
         }
 
-        .results-sheet::-webkit-scrollbar {
+        .results-overlay::-webkit-scrollbar {
             width: 3px;
         }
-        .results-sheet::-webkit-scrollbar-track {
+        .results-overlay::-webkit-scrollbar-track {
             background: transparent;
         }
-        .results-sheet::-webkit-scrollbar-thumb {
+        .results-overlay::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.06);
             border-radius: 10px;
         }
 
         .results-handle {
-            width: 44px;
+            width: 40px;
             height: 4px;
             background: rgba(255, 255, 255, 0.06);
             border-radius: 4px;
-            margin: 0 auto 14px;
-            cursor: pointer;
-            transition: all var(--transition);
+            margin: 0 auto 10px;
         }
 
-        .results-handle:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* ============================================================
-           SCORE HEADER - Premium
-           ============================================================ */
-        .score-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, rgba(108, 92, 231, 0.04), rgba(162, 155, 254, 0.02));
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(108, 92, 231, 0.04);
-            margin-bottom: 10px;
-        }
-
-        .score-left {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-        }
-
-        .score-left .label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .score-number {
-            font-size: 38px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff, var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -1px;
-        }
-
-        .score-max {
-            font-size: 14px;
-            font-weight: 300;
-            color: var(--text-muted);
-        }
-
-        .score-right {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .score-badge {
-            font-size: 9px;
-            font-weight: 500;
-            padding: 3px 12px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            backdrop-filter: blur(4px);
-        }
-
-        .score-badge.shape {
-            color: var(--primary-light);
-            background: rgba(162, 155, 254, 0.06);
-            border: 1px solid rgba(162, 155, 254, 0.06);
-        }
-
-        .score-badge.rating {
-            color: var(--gold);
-            background: rgba(253, 203, 110, 0.06);
-            border: 1px solid rgba(253, 203, 110, 0.06);
-        }
-
-        .score-badge.confidence {
-            color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-        }
-
-        .overall-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 4px 0 10px;
-        }
-
-        .overall-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--secondary));
-            border-radius: 4px;
-            transition: width 1.4s ease;
-            width: 0%;
-        }
-
-        /* ============================================================
-           GOLDEN RATIO - Premium
-           ============================================================ */
-        .gr-card {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 14px;
-            background: rgba(162, 155, 254, 0.03);
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(162, 155, 254, 0.04);
-            margin: 4px 0 10px;
-        }
-
-        .gr-card .gr-icon {
-            font-size: 16px;
-            color: var(--primary-light);
-        }
-
-        .gr-card .label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .gr-card .value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary-light);
-            min-width: 48px;
-        }
-
-        .gr-card .bar {
-            flex: 1;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .gr-card .bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            border-radius: 4px;
-            transition: width 1.4s ease;
-        }
-
-        /* ============================================================
-           METRICS GRID - Premium
-           ============================================================ */
-        .metrics-grid {
+        .results-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 5px;
-            margin: 6px 0 10px;
+            gap: 4px;
+            margin: 6px 0;
         }
 
-        .metric-card {
+        .result-item {
             background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius-sm);
-            padding: 8px 10px;
+            padding: 6px 8px;
             border: 1px solid var(--border-color);
-            transition: all var(--transition);
         }
 
-        .metric-card:hover {
-            border-color: rgba(108, 92, 231, 0.06);
-        }
-
-        .metric-card .label {
+        .result-item .label {
             font-size: 7px;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.4px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            letter-spacing: 0.3px;
         }
 
-        .metric-card .label i {
-            font-size: 7px;
-            color: var(--primary);
-        }
-
-        .metric-card .value {
-            font-size: 16px;
+        .result-item .value {
+            font-size: 14px;
             font-weight: 700;
             color: var(--text-primary);
             margin-top: 1px;
         }
 
-        .metric-card .bar-mini {
+        .result-item .bar {
             width: 100%;
             height: 2px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 4px;
-            margin-top: 3px;
+            margin-top: 2px;
             overflow: hidden;
         }
 
-        .metric-card .bar-mini-fill {
+        .result-item .bar-fill {
             height: 100%;
             border-radius: 4px;
             transition: width 1s ease;
         }
 
-        /* ============================================================
-           RADAR CHART - Premium
-           ============================================================ */
-        .chart-container {
-            background: rgba(255, 255, 255, 0.01);
-            border-radius: var(--radius-sm);
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            margin: 6px 0 10px;
-        }
-
-        .chart-container .title {
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
+        .score-big {
             text-align: center;
-            margin-bottom: 4px;
+            padding: 8px;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.04), rgba(162, 155, 254, 0.02));
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(108, 92, 231, 0.04);
+            margin-bottom: 8px;
         }
 
-        #radarChart {
-            width: 100%;
-            max-height: 140px;
-            display: block;
-            margin: 0 auto;
+        .score-big .number {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        /* ============================================================
-           RECOMMENDATIONS - Premium
-           ============================================================ */
-        .rec-section {
-            margin: 8px 0;
-        }
-
-        .rec-section .title {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .rec-section .title i {
-            font-size: 10px;
-            color: var(--primary);
-        }
-
-        .rec-section .title .line {
-            flex: 1;
-            height: 1px;
-            background: var(--border-color);
-        }
-
-        .rec-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 10px;
-        }
-
-        .rec-item {
+        .score-big .label {
             font-size: 11px;
-            color: #c8d0dc;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 0;
-            transition: all var(--transition);
-        }
-
-        .rec-item:hover {
-            color: var(--text-primary);
-        }
-
-        .rec-item .rec-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            background: rgba(108, 92, 231, 0.06);
-            color: var(--primary-light);
-            flex-shrink: 0;
-        }
-
-        .rec-item .rec-text {
-            font-size: 11px;
-        }
-
-        .rec-item .rec-badge {
-            font-size: 8px;
-            font-weight: 600;
-            color: var(--success);
-            background: rgba(0, 184, 148, 0.06);
-            padding: 1px 8px;
-            border-radius: 20px;
-            margin-left: auto;
-        }
-
-        /* ============================================================
-           SHARE ROW - Premium
-           ============================================================ */
-        .share-row {
-            display: flex;
-            gap: 6px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            padding: 7px 16px;
-            border-radius: 30px;
-            color: var(--text-primary);
+            color: var(--text-secondary);
             font-weight: 500;
+        }
+
+        .score-big .sub {
             font-size: 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all var(--transition);
-            cursor: pointer;
-            flex: 1;
-            min-height: 34px;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-color: var(--primary);
-            color: white;
-            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.15);
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 6px 30px rgba(108, 92, 231, 0.25);
-            transform: translateY(-1px);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #00a381);
-            border-color: var(--success);
-            color: white;
-        }
-
-        .btn-glass {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: var(--border-color);
-        }
-
-        .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-muted);
         }
 
         /* ============================================================
-           BOTTOM NAV - Premium
+           BOTTOM NAV
            ============================================================ */
         .bottom-nav {
             position: absolute;
@@ -1245,21 +507,19 @@
             right: 0;
             display: flex;
             justify-content: space-around;
-            padding: 6px 12px 10px;
+            padding: 4px 12px 8px;
             background: rgba(8, 10, 14, 0.92);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border-top: 1px solid var(--border-color);
             z-index: 50;
-            max-width: 480px;
-            margin: 0 auto;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 1px;
             background: none;
             border: none;
             color: var(--text-muted);
@@ -1267,71 +527,29 @@
             font-weight: 500;
             cursor: pointer;
             transition: all var(--transition);
-            padding: 4px 12px;
-            border-radius: 12px;
-            position: relative;
+            padding: 2px 10px;
+            border-radius: 10px;
         }
 
-        .nav-item .nav-icon {
-            position: relative;
-            font-size: 18px;
+        .nav-item i {
+            font-size: 16px;
             transition: all var(--transition);
-        }
-
-        .nav-item .nav-icon .nav-badge {
-            position: absolute;
-            top: -4px;
-            right: -8px;
-            width: 6px;
-            height: 6px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: none;
-        }
-
-        .nav-item .nav-icon .nav-badge.show {
-            display: block;
-        }
-
-        .nav-item .nav-label {
-            font-size: 7px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
         }
 
         .nav-item.active {
             color: var(--primary-light);
         }
 
-        .nav-item.active .nav-icon {
+        .nav-item.active i {
             transform: translateY(-2px);
         }
 
-        .nav-item .nav-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-glow);
-            opacity: 0;
-            transition: all var(--transition);
-            pointer-events: none;
-        }
-
-        .nav-item.active .nav-glow {
-            opacity: 0.08;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
         /* ============================================================
-           HISTORY PAGE - Premium
+           PAGES
            ============================================================ */
         .page {
             display: none;
-            animation: fadePage 0.4s ease;
+            animation: fadePage 0.3s ease;
             padding: 10px 12px 80px;
             flex: 1;
             overflow-y: auto;
@@ -1345,7 +563,7 @@
         @keyframes fadePage {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(8px);
             }
             to {
                 opacity: 1;
@@ -1363,29 +581,19 @@
         .page-header h2 {
             font-size: 16px;
             font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .page-header .count {
-            font-size: 11px;
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.03);
-            padding: 2px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
         }
 
         .history-list {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .history-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             background: rgba(255, 255, 255, 0.01);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
@@ -1395,70 +603,37 @@
 
         .history-item:hover {
             background: rgba(255, 255, 255, 0.03);
-            border-color: rgba(108, 92, 231, 0.06);
-        }
-
-        .history-item .left {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
         }
 
         .history-item .left .date {
             font-size: 9px;
             color: var(--text-muted);
         }
-
         .history-item .left .score-small {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .history-item .right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .history-item .right .shape-tag {
-            font-size: 8px;
-            color: var(--primary-light);
-            background: rgba(162, 155, 254, 0.06);
-            padding: 2px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(162, 155, 254, 0.04);
-        }
-
-        .history-item .right .arrow {
-            color: var(--text-muted);
-            font-size: 10px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 16px;
             color: var(--text-muted);
         }
 
         .empty-state i {
-            font-size: 36px;
-            margin-bottom: 10px;
+            font-size: 30px;
+            margin-bottom: 8px;
             opacity: 0.2;
         }
 
-        .empty-state p {
-            font-size: 13px;
-        }
-
         /* ============================================================
-           SETTINGS - Premium
+           SETTINGS
            ============================================================ */
         .settings-group {
             display: flex;
             flex-direction: column;
             gap: 4px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .settings-group .group-title {
@@ -1466,7 +641,7 @@
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.5px;
             padding-left: 4px;
         }
 
@@ -1474,15 +649,10 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             background: rgba(255, 255, 255, 0.01);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
-            transition: all var(--transition);
-        }
-
-        .settings-item:hover {
-            border-color: rgba(108, 92, 231, 0.06);
         }
 
         .settings-item .label {
@@ -1490,7 +660,7 @@
             color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .settings-item .label i {
@@ -1500,14 +670,13 @@
         }
 
         .toggle {
-            width: 38px;
-            height: 22px;
+            width: 36px;
+            height: 20px;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 12px;
             position: relative;
             cursor: pointer;
             transition: all var(--transition);
-            flex-shrink: 0;
         }
 
         .toggle.active {
@@ -1515,15 +684,14 @@
         }
 
         .toggle .knob {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             background: white;
             border-radius: 50%;
             position: absolute;
             top: 3px;
             left: 3px;
             transition: all var(--transition);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .toggle.active .knob {
@@ -1531,39 +699,36 @@
         }
 
         /* ============================================================
-           TOAST - Premium
+           TOAST
            ============================================================ */
         .toast {
             position: fixed;
-            bottom: 90px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: rgba(8, 10, 14, 0.95);
             backdrop-filter: blur(24px);
-            padding: 10px 24px;
-            border-radius: 16px;
+            padding: 8px 20px;
+            border-radius: 14px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
             color: var(--text-primary);
             font-size: 12px;
             z-index: 1000;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s ease;
             opacity: 0;
             pointer-events: none;
             display: flex;
             align-items: center;
-            gap: 8px;
-            max-width: 90%;
+            gap: 6px;
         }
 
         .toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
-            pointer-events: auto;
         }
 
         .toast i {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--primary-light);
         }
 
@@ -1571,150 +736,75 @@
            RESPONSIVE
            ============================================================ */
         @media (max-width: 480px) {
-            .guidance-glass {
-                width: 68%;
-                height: 74%;
+            .live-metrics {
+                max-width: 110px;
+                top: 8px;
+                right: 8px;
             }
-
-            .guidance-glass .text {
-                font-size: 10px;
-                bottom: 6%;
+            .live-metric {
+                font-size: 7px;
+                padding: 2px 8px;
             }
-
-            .camera-controls {
-                gap: 8px;
+            .live-metric .value {
+                font-size: 8px;
+            }
+            .bottom-controls {
                 padding: 4px 12px 4px 8px;
-                bottom: 20px;
+                gap: 8px;
+                bottom: 18px;
             }
-
             .cam-btn {
-                width: 34px;
-                height: 34px;
+                width: 32px;
+                height: 32px;
+                font-size: 11px;
+            }
+            .cam-btn.primary {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+            .results-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 3px;
+            }
+            .result-item {
+                padding: 4px 6px;
+            }
+            .result-item .value {
                 font-size: 12px;
             }
-
-            .cam-btn.primary {
-                width: 48px;
-                height: 48px;
-                font-size: 18px;
+            .score-big .number {
+                font-size: 28px;
             }
-
-            .metrics-grid {
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 4px;
+            .status-overlay {
+                font-size: 9px;
+                padding: 4px 14px;
+                bottom: 70px;
             }
-
-            .metric-card {
-                padding: 6px 8px;
-            }
-
-            .metric-card .value {
-                font-size: 14px;
-            }
-
-            .score-number {
-                font-size: 30px;
-            }
-
-            .results-sheet {
-                padding: 12px 12px 80px;
-                max-height: 72%;
-            }
-
-            .scan-animation {
-                width: 90px;
-                height: 90px;
-            }
-
-            .scan-center-icon {
-                font-size: 26px;
-            }
-
-            .rec-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 2px 8px;
-            }
-
-            .rec-item .rec-text {
-                font-size: 10px;
-            }
-
-            .scan-steps-row {
-                gap: 8px;
-            }
-
-            .scan-step-pill {
-                font-size: 8px;
-                padding: 3px 10px 3px 8px;
+            .analyzing-bar {
+                width: 160px;
+                bottom: 88px;
             }
         }
 
         @media (max-width: 380px) {
-            .metrics-grid {
+            .live-metrics {
+                max-width: 90px;
+            }
+            .live-metric {
+                font-size: 6px;
+                padding: 2px 6px;
+            }
+            .live-metric .value {
+                font-size: 7px;
+            }
+            .results-grid {
                 grid-template-columns: 1fr 1fr;
             }
-
-            .guidance-glass {
-                width: 72%;
-                height: 70%;
-            }
-
-            .cam-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 10px;
-            }
-
             .cam-btn.primary {
-                width: 42px;
-                height: 42px;
-                font-size: 16px;
-            }
-
-            .score-number {
-                font-size: 26px;
-            }
-
-            .rec-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .results-sheet {
-                padding: 10px 10px 70px;
-            }
-
-            .scan-animation {
-                width: 70px;
-                height: 70px;
-            }
-
-            .scan-center-icon {
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 340px) {
-            .metrics-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 3px;
-            }
-
-            .metric-card {
-                padding: 4px 6px;
-            }
-
-            .metric-card .value {
-                font-size: 12px;
-            }
-
-            .btn {
-                font-size: 9px;
-                padding: 5px 10px;
-                min-height: 28px;
-            }
-
-            .score-number {
-                font-size: 22px;
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
             }
         }
     </style>
@@ -1725,20 +815,16 @@
 
         <!-- ===== HEADER ===== -->
         <header class="app-header">
-            <div class="logo-wrap">
-                <div class="logo-bg"></div>
-                <div class="logo-pulse"></div>
-                <div class="logo-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-            </div>
+            <span class="logo"><i class="fas fa-wand-magic-sparkles"></i></span>
             <h1>Looksmax AI</h1>
-            <div class="badge-wrap">
+            <span class="status-badge">
                 <span class="dot"></span>
-                <span>PRO v6.0</span>
-            </div>
+                <span id="fpsDisplay">30 FPS</span>
+            </span>
         </header>
 
-        <!-- ===== MAIN CONTENT ===== -->
-        <div class="main-content">
+        <!-- ===== MAIN ===== -->
+        <div style="flex:1;position:relative;overflow:hidden;">
 
             <!-- ====== HOME ====== -->
             <div class="page active" id="page-home" style="padding:0;display:flex;flex-direction:column;">
@@ -1746,215 +832,115 @@
                 <!-- Camera -->
                 <div class="camera-section">
                     <video id="video" playsinline autoplay></video>
-                    <img id="image-preview" alt="Preview" />
                     <canvas id="overlay-canvas"></canvas>
 
-                    <!-- Guidance Glass -->
-                    <div class="guidance-glass">
-                        <div class="oval" id="guidanceOval">
-                            <div class="ring-inner"></div>
-                            <div class="ring-dots"></div>
-                            <div class="text" id="guidanceText">📸 Đặt khuôn mặt vào khung</div>
+                    <!-- Live Metrics -->
+                    <div class="live-metrics" id="liveMetrics">
+                        <div class="live-metric" id="mCanthal">
+                            <span class="label">Canthal Tilt</span>
+                            <span class="value" id="vCanthal">--°</span>
                         </div>
-                        <div class="corner tl"></div>
-                        <div class="corner tr"></div>
-                        <div class="corner bl"></div>
-                        <div class="corner br"></div>
-                    </div>
-
-                    <!-- Quality Panel -->
-                    <div class="quality-panel" id="qualityPanel">
-                        <div class="quality-item">
-                            <span class="q-dot" id="qDot"></span>
-                            <span class="q-label" id="qLabel">Đang khởi tạo...</span>
+                        <div class="live-metric" id="mSymmetry">
+                            <span class="label">Symmetry</span>
+                            <span class="value" id="vSymmetry">--%</span>
+                        </div>
+                        <div class="live-metric" id="mJawline">
+                            <span class="label">Jawline</span>
+                            <span class="value" id="vJawline">--</span>
+                        </div>
+                        <div class="live-metric" id="mGolden">
+                            <span class="label">Golden Ratio</span>
+                            <span class="value" id="vGolden">--%</span>
+                        </div>
+                        <div class="live-metric" id="mFaceshape">
+                            <span class="label">Face Shape</span>
+                            <span class="value" id="vFaceshape">--</span>
                         </div>
                     </div>
 
-                    <!-- Status Glass -->
-                    <div class="status-glass" id="statusGlass"></div>
-
-                    <!-- Laser Scan -->
-                    <div class="laser-scan" id="laserScan">
-                        <div class="laser-line"></div>
-                        <div class="laser-glow"></div>
-                        <div class="laser-particles" id="laserParticles"></div>
+                    <!-- Status -->
+                    <div class="status-overlay" id="statusOverlay">
+                        <span id="statusText">📸 Đặt khuôn mặt vào khung</span>
                     </div>
 
-                    <!-- Camera Controls -->
-                    <div class="camera-controls">
-                        <button class="cam-btn" id="cameraSwitchBtn" title="Đổi camera">
+                    <!-- Analyzing Bar -->
+                    <div class="analyzing-bar" id="analyzingBar">
+                        <div class="fill" id="analyzingFill"></div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="bottom-controls">
+                        <button class="cam-btn" id="cameraSwitchBtn">
                             <i class="fas fa-rotate"></i>
                             <span class="tooltip">Đổi cam</span>
                         </button>
-                        <button class="cam-btn" id="uploadBtn" title="Tải ảnh">
+                        <button class="cam-btn" id="uploadBtn">
                             <i class="fas fa-image"></i>
                             <span class="tooltip">Tải ảnh</span>
                         </button>
-                        <button class="cam-btn primary" id="captureBtn" title="Phân tích AI">
+                        <button class="cam-btn primary" id="captureBtn">
                             <span class="ripple"></span>
-                            <span class="ripple"></span>
-                            <i class="fas fa-brain"></i>
-                            <span class="tooltip">Phân tích</span>
+                            <i class="fas fa-camera"></i>
+                            <span class="tooltip">Chụp & phân tích</span>
                         </button>
                     </div>
                     <input type="file" id="file-input" accept="image/*">
                 </div>
 
-                <!-- ===== AI SCAN OVERLAY ===== -->
-                <div class="scan-overlay" id="scanOverlay">
-                    <div class="scan-animation">
-                        <div class="scan-ring"></div>
-                        <div class="scan-ring"></div>
-                        <div class="scan-ring"></div>
-                        <div class="scan-center-icon"><i class="fas fa-brain"></i></div>
-                    </div>
-                    <div class="scan-title" id="scanTitle">🔬 Đang phân tích</div>
-                    <div class="scan-subtitle" id="scanSubtitle">AI đang đánh giá cấu trúc gương mặt</div>
-
-                    <div class="scan-steps-row" id="scanSteps">
-                        <span class="scan-step-pill" data-step="0"><span class="pill-icon">📸</span> Ảnh</span>
-                        <span class="scan-step-pill" data-step="1"><span class="pill-icon">👤</span> Khuôn mặt</span>
-                        <span class="scan-step-pill" data-step="2"><span class="pill-icon">📐</span> Cấu trúc</span>
-                        <span class="scan-step-pill" data-step="3"><span class="pill-icon">📊</span> Tỷ lệ</span>
-                        <span class="scan-step-pill" data-step="4"><span class="pill-icon">🎯</span> Điểm số</span>
-                    </div>
-
-                    <div class="scan-progress-wrap">
-                        <div class="scan-progress-fill" id="scanProgress"></div>
-                    </div>
-                </div>
-
-                <!-- ===== RESULTS SHEET ===== -->
-                <div class="results-sheet" id="resultsSheet">
+                <!-- ===== RESULTS OVERLAY ===== -->
+                <div class="results-overlay" id="resultsOverlay">
                     <div class="results-handle" id="resultsHandle"></div>
 
-                    <!-- Score -->
-                    <div class="score-header">
-                        <div class="score-left">
-                            <span class="label">Tổng điểm</span>
-                            <span class="score-number" id="overallScore">--</span>
-                            <span class="score-max">/10</span>
+                    <div class="score-big">
+                        <span class="label">Overall Score</span>
+                        <div class="number" id="overallScore">--</div>
+                        <span class="sub">/ 10</span>
+                    </div>
+
+                    <div class="results-grid" id="resultsGrid">
+                        <div class="result-item">
+                            <div class="label">Jawline</div>
+                            <div class="value" id="rJawline">--</div>
+                            <div class="bar"><div class="bar-fill" id="rJawlineBar" style="width:0%;background:linear-gradient(90deg,#6c5ce7,#a29bfe)"></div></div>
                         </div>
-                        <div class="score-right">
-                            <span class="score-badge shape" id="faceShapeBadge">
-                                <i class="fas fa-face-smile"></i> <span id="faceShapeText">--</span>
-                            </span>
-                            <span class="score-badge rating" id="ratingBadge">
-                                <i class="fas fa-star"></i> <span id="ratingText">--</span>
-                            </span>
-                            <span class="score-badge confidence" id="confidenceBadge">
-                                <i class="fas fa-circle"></i> <span id="confidenceText">--%</span>
-                            </span>
+                        <div class="result-item">
+                            <div class="label">Eyes</div>
+                            <div class="value" id="rEyes">--</div>
+                            <div class="bar"><div class="bar-fill" id="rEyesBar" style="width:0%;background:linear-gradient(90deg,#fdcb6e,#f39c12)"></div></div>
+                        </div>
+                        <div class="result-item">
+                            <div class="label">Symmetry</div>
+                            <div class="value" id="rSymmetry">--</div>
+                            <div class="bar"><div class="bar-fill" id="rSymmetryBar" style="width:0%;background:linear-gradient(90deg,#00b894,#00a381)"></div></div>
+                        </div>
+                        <div class="result-item">
+                            <div class="label">Nose</div>
+                            <div class="value" id="rNose">--</div>
+                            <div class="bar"><div class="bar-fill" id="rNoseBar" style="width:0%;background:linear-gradient(90deg,#00b894,#00a381)"></div></div>
+                        </div>
+                        <div class="result-item">
+                            <div class="label">Lips</div>
+                            <div class="value" id="rLips">--</div>
+                            <div class="bar"><div class="bar-fill" id="rLipsBar" style="width:0%;background:linear-gradient(90deg,#fd79a8,#e84393)"></div></div>
+                        </div>
+                        <div class="result-item">
+                            <div class="label">Harmony</div>
+                            <div class="value" id="rHarmony">--</div>
+                            <div class="bar"><div class="bar-fill" id="rHarmonyBar" style="width:0%;background:linear-gradient(90deg,#a29bfe,#6c5ce7)"></div></div>
                         </div>
                     </div>
 
-                    <div class="overall-bar">
-                        <div class="overall-bar-fill" id="overallBar"></div>
-                    </div>
-
-                    <!-- Golden Ratio -->
-                    <div class="gr-card">
-                        <span class="gr-icon">📐</span>
-                        <span class="label">Tỷ lệ vàng</span>
-                        <span class="value" id="grValue">--%</span>
-                        <div class="bar"><div class="bar-fill" id="grBar" style="width:0%"></div></div>
-                    </div>
-
-                    <!-- Metrics -->
-                    <div class="metrics-grid" id="metricsGrid">
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-grip-lines"></i> Jawline</div>
-                            <div class="value" id="jawline">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="jawlineBar" style="width:0%;background:linear-gradient(90deg,#6c5ce7,#a29bfe)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-eye"></i> Eyes</div>
-                            <div class="value" id="eyes">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="eyesBar" style="width:0%;background:linear-gradient(90deg,#fdcb6e,#f39c12)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-arrows-up-down"></i> Eyebrows</div>
-                            <div class="value" id="eyebrows">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="eyebrowsBar" style="width:0%;background:linear-gradient(90deg,#fd79a8,#e84393)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-nose"></i> Nose</div>
-                            <div class="value" id="nose">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="noseBar" style="width:0%;background:linear-gradient(90deg,#00b894,#00a381)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-mouth"></i> Lips</div>
-                            <div class="value" id="lips">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="lipsBar" style="width:0%;background:linear-gradient(90deg,#fd79a8,#e84393)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-arrows-left-right"></i> Symmetry</div>
-                            <div class="value" id="symmetry">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="symmetryBar" style="width:0%;background:linear-gradient(90deg,#00b894,#00a381)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-gem"></i> Harmony</div>
-                            <div class="value" id="harmony">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="harmonyBar" style="width:0%;background:linear-gradient(90deg,#a29bfe,#6c5ce7)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-circle"></i> Skin</div>
-                            <div class="value" id="skin">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="skinBar" style="width:0%;background:linear-gradient(90deg,#a29bfe,#6c5ce7)"></div></div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="label"><i class="fas fa-cut"></i> Hair</div>
-                            <div class="value" id="hair">--</div>
-                            <div class="bar-mini"><div class="bar-mini-fill" id="hairBar" style="width:0%;background:linear-gradient(90deg,#fdcb6e,#f39c12)"></div></div>
-                        </div>
-                    </div>
-
-                    <!-- Radar Chart -->
-                    <div class="chart-container">
-                        <div class="title">📊 Phân tích tổng hợp</div>
-                        <canvas id="radarChart"></canvas>
-                    </div>
-
-                    <!-- Recommendations -->
-                    <div class="rec-section">
-                        <div class="title">
-                            <i class="fas fa-lightbulb"></i> Gợi ý cải thiện
-                            <span class="line"></span>
-                        </div>
-                        <div class="rec-grid" id="recGrid">
-                            <div class="rec-item">
-                                <span class="rec-icon"><i class="fas fa-cut"></i></span>
-                                <span class="rec-text" id="recHair">--</span>
-                            </div>
-                            <div class="rec-item">
-                                <span class="rec-icon"><i class="fas fa-camera"></i></span>
-                                <span class="rec-text" id="recAngle">--</span>
-                            </div>
-                            <div class="rec-item">
-                                <span class="rec-icon"><i class="fas fa-spa"></i></span>
-                                <span class="rec-text" id="recSkincare">--</span>
-                            </div>
-                            <div class="rec-item">
-                                <span class="rec-icon"><i class="fas fa-dumbbell"></i></span>
-                                <span class="rec-text" id="recGym">--</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Share -->
-                    <div class="share-row">
-                        <button class="btn btn-primary" id="shareBtn"><i class="fas fa-share-alt"></i> Chia sẻ</button>
-                        <button class="btn btn-success" id="exportBtn"><i class="fas fa-download"></i> Xuất</button>
-                        <button class="btn btn-glass" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
+                    <div style="text-align:center;font-size:10px;color:var(--text-muted);margin-top:4px;">
+                        <span id="resultTime">--</span>
                     </div>
                 </div>
             </div>
 
-            <!-- ====== HISTORY PAGE ====== -->
+            <!-- ====== HISTORY ====== -->
             <div class="page" id="page-history">
                 <div class="page-header">
                     <h2>📊 Lịch sử</h2>
-                    <span class="count" id="historyCount">0 mục</span>
+                    <span class="count" id="historyCount" style="font-size:11px;color:var(--text-muted);">0 mục</span>
                 </div>
                 <div class="history-list" id="historyList">
                     <div class="empty-state">
@@ -1962,12 +948,12 @@
                         <p>Chưa có đánh giá nào</p>
                     </div>
                 </div>
-                <button class="btn btn-glass" id="clearHistoryBtn" style="margin-top:8px;width:100%;">
+                <button class="btn" id="clearHistoryBtn" style="margin-top:8px;width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border-color);padding:8px;border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;">
                     <i class="fas fa-trash-can"></i> Xóa tất cả
                 </button>
             </div>
 
-            <!-- ====== SETTINGS PAGE ====== -->
+            <!-- ====== SETTINGS ====== -->
             <div class="page" id="page-settings">
                 <div class="page-header">
                     <h2>⚙️ Cài đặt</h2>
@@ -2005,15 +991,15 @@
                     <div class="group-title">Thông tin</div>
                     <div class="settings-item">
                         <span class="label"><i class="fas fa-code"></i> Version</span>
-                        <span style="font-size:10px;color:var(--text-muted);">v6.0 Premium</span>
+                        <span style="font-size:10px;color:var(--text-muted);">v7.0 Real-time</span>
                     </div>
                     <div class="settings-item">
                         <span class="label"><i class="fas fa-face-smile"></i> AI Engine</span>
                         <span style="font-size:10px;color:var(--text-muted);">MediaPipe 468</span>
                     </div>
                     <div class="settings-item">
-                        <span class="label"><i class="fas fa-bolt"></i> Analysis</span>
-                        <span style="font-size:10px;color:var(--text-muted);">Multi-frame + Median</span>
+                        <span class="label"><i class="fas fa-bolt"></i> Mode</span>
+                        <span style="font-size:10px;color:var(--text-muted);">Real-time 30 FPS</span>
                     </div>
                 </div>
             </div>
@@ -2023,22 +1009,16 @@
         <!-- ===== BOTTOM NAV ===== -->
         <nav class="bottom-nav">
             <button class="nav-item active" data-page="page-home">
-                <span class="nav-glow"></span>
-                <span class="nav-icon"><i class="fas fa-home"></i></span>
-                <span class="nav-label">Trang chủ</span>
+                <i class="fas fa-home"></i>
+                <span>Trang chủ</span>
             </button>
             <button class="nav-item" data-page="page-history">
-                <span class="nav-glow"></span>
-                <span class="nav-icon">
-                    <i class="fas fa-clock-rotate-left"></i>
-                    <span class="nav-badge" id="historyDot"></span>
-                </span>
-                <span class="nav-label">Lịch sử</span>
+                <i class="fas fa-clock-rotate-left"></i>
+                <span>Lịch sử</span>
             </button>
             <button class="nav-item" data-page="page-settings">
-                <span class="nav-glow"></span>
-                <span class="nav-icon"><i class="fas fa-sliders"></i></span>
-                <span class="nav-label">Cài đặt</span>
+                <i class="fas fa-sliders"></i>
+                <span>Cài đặt</span>
             </button>
         </nav>
 
@@ -2056,208 +1036,99 @@
     <script>
         /**
          * ============================================================
-         * LOOKSMAX AI PRO v6.0 - Premium UI + Complete AI
+         * LOOKSMAX AI v7.0 - Real-time Face Analysis
+         * Live analysis 30 FPS, no capture needed
          * ============================================================
          */
 
         // ===== DOM REFS =====
         const DOM = {
             video: document.getElementById('video'),
-            imagePreview: document.getElementById('image-preview'),
             canvas: document.getElementById('overlay-canvas'),
             ctx: document.getElementById('overlay-canvas')?.getContext('2d'),
             fileInput: document.getElementById('file-input'),
             captureBtn: document.getElementById('captureBtn'),
             uploadBtn: document.getElementById('uploadBtn'),
             cameraSwitchBtn: document.getElementById('cameraSwitchBtn'),
-            guidanceOval: document.getElementById('guidanceOval'),
-            guidanceText: document.getElementById('guidanceText'),
-            qDot: document.getElementById('qDot'),
-            qLabel: document.getElementById('qLabel'),
-            statusGlass: document.getElementById('statusGlass'),
-            laserScan: document.getElementById('laserScan'),
-            laserParticles: document.getElementById('laserParticles'),
-            scanOverlay: document.getElementById('scanOverlay'),
-            scanProgress: document.getElementById('scanProgress'),
-            scanTitle: document.getElementById('scanTitle'),
-            scanSubtitle: document.getElementById('scanSubtitle'),
-            scanSteps: document.getElementById('scanSteps'),
-            resultsSheet: document.getElementById('resultsSheet'),
+            statusOverlay: document.getElementById('statusOverlay'),
+            statusText: document.getElementById('statusText'),
+            analyzingBar: document.getElementById('analyzingBar'),
+            analyzingFill: document.getElementById('analyzingFill'),
+            resultsOverlay: document.getElementById('resultsOverlay'),
             resultsHandle: document.getElementById('resultsHandle'),
             overallScore: document.getElementById('overallScore'),
-            overallBar: document.getElementById('overallBar'),
-            ratingText: document.getElementById('ratingText'),
-            faceShapeText: document.getElementById('faceShapeText'),
-            confidenceText: document.getElementById('confidenceText'),
-            grValue: document.getElementById('grValue'),
-            grBar: document.getElementById('grBar'),
+            resultTime: document.getElementById('resultTime'),
+            fpsDisplay: document.getElementById('fpsDisplay'),
             historyList: document.getElementById('historyList'),
             historyCount: document.getElementById('historyCount'),
-            historyDot: document.getElementById('historyDot'),
             clearHistoryBtn: document.getElementById('clearHistoryBtn'),
             toast: document.getElementById('toast'),
             toastMessage: document.getElementById('toastMessage'),
-            shareBtn: document.getElementById('shareBtn'),
-            exportBtn: document.getElementById('exportBtn'),
-            copyBtn: document.getElementById('copyBtn'),
             darkToggle: document.getElementById('darkToggle'),
             animToggle: document.getElementById('animToggle'),
             overlayToggle: document.getElementById('overlayToggle'),
             historyToggle: document.getElementById('historyToggle'),
             exportDataBtn: document.getElementById('exportDataBtn'),
-            radarChart: document.getElementById('radarChart'),
-            recHair: document.getElementById('recHair'),
-            recAngle: document.getElementById('recAngle'),
-            recSkincare: document.getElementById('recSkincare'),
-            recGym: document.getElementById('recGym'),
+            // Live metrics
+            vCanthal: document.getElementById('vCanthal'),
+            vSymmetry: document.getElementById('vSymmetry'),
+            vJawline: document.getElementById('vJawline'),
+            vGolden: document.getElementById('vGolden'),
+            vFaceshape: document.getElementById('vFaceshape'),
+            // Result items
+            rJawline: document.getElementById('rJawline'),
+            rJawlineBar: document.getElementById('rJawlineBar'),
+            rEyes: document.getElementById('rEyes'),
+            rEyesBar: document.getElementById('rEyesBar'),
+            rSymmetry: document.getElementById('rSymmetry'),
+            rSymmetryBar: document.getElementById('rSymmetryBar'),
+            rNose: document.getElementById('rNose'),
+            rNoseBar: document.getElementById('rNoseBar'),
+            rLips: document.getElementById('rLips'),
+            rLipsBar: document.getElementById('rLipsBar'),
+            rHarmony: document.getElementById('rHarmony'),
+            rHarmonyBar: document.getElementById('rHarmonyBar'),
         };
 
-        const METRIC_ELS = {
-            jawline: { el: document.getElementById('jawline'), bar: document.getElementById('jawlineBar') },
-            eyes: { el: document.getElementById('eyes'), bar: document.getElementById('eyesBar') },
-            eyebrows: { el: document.getElementById('eyebrows'), bar: document.getElementById('eyebrowsBar') },
-            nose: { el: document.getElementById('nose'), bar: document.getElementById('noseBar') },
-            lips: { el: document.getElementById('lips'), bar: document.getElementById('lipsBar') },
-            symmetry: { el: document.getElementById('symmetry'), bar: document.getElementById('symmetryBar') },
-            harmony: { el: document.getElementById('harmony'), bar: document.getElementById('harmonyBar') },
-            skin: { el: document.getElementById('skin'), bar: document.getElementById('skinBar') },
-            hair: { el: document.getElementById('hair'), bar: document.getElementById('hairBar') },
-        };
-
-        // ============================================================
-        // STATE
-        // ============================================================
+        // ===== STATE =====
         const STATE = {
             cameraStream: null,
             cameraActive: false,
             cameraFacing: 'user',
             faceMesh: null,
             faceMeshReady: false,
-            isScanning: false,
-            showOverlay: true,
             currentLandmarks: null,
             isFaceDetected: false,
             animationFrameId: null,
             isPageVisible: true,
-            useAnimation: true,
+            showOverlay: true,
             history: [],
+            frameCount: 0,
+            lastFpsUpdate: 0,
+            fps: 0,
+            analyzing: false,
             currentResults: null,
-            qualityOk: false,
-            frameBuffer: [],
             isImageMode: false,
-            qualityIssues: [],
         };
 
-        // ============================================================
-        // HISTORY
-        // ============================================================
+        // ===== LOAD HISTORY =====
         function loadHistory() {
             try {
-                const saved = localStorage.getItem('looksmax_history_v6');
+                const saved = localStorage.getItem('looksmax_history_v7');
                 STATE.history = saved ? JSON.parse(saved) : [];
             } catch (e) { STATE.history = []; }
         }
         loadHistory();
 
-        function saveHistoryEntry(result, imageData) {
-            if (!DOM.historyToggle?.classList.contains('active')) return;
-            const entry = {
-                id: Date.now(),
-                time: new Date().toLocaleTimeString(),
-                date: new Date().toLocaleDateString(),
-                score: result.overall.toFixed(1),
-                faceShape: result.faceShape,
-                goldenRatio: result.goldenRatio.toFixed(0),
-                confidence: result.confidence.toFixed(0),
-                image: imageData || null,
-                metrics: {
-                    jawline: result.jawline.toFixed(1),
-                    eyes: result.eyes.toFixed(1),
-                    eyebrows: result.eyebrows.toFixed(1),
-                    nose: result.nose.toFixed(1),
-                    lips: result.lips.toFixed(1),
-                    symmetry: result.symmetry.toFixed(1),
-                    harmony: result.harmony.toFixed(1),
-                    skin: result.skin.toFixed(1),
-                    hair: result.hair.toFixed(1),
-                }
-            };
-            STATE.history.unshift(entry);
-            if (STATE.history.length > 50) STATE.history.pop();
-            try { localStorage.setItem('looksmax_history_v6', JSON.stringify(STATE.history)); } catch (e) {}
-            renderHistory();
-        }
-
-        function renderHistory() {
-            if (!DOM.historyList) return;
-            if (STATE.history.length === 0) {
-                DOM.historyList.innerHTML =
-                    `<div class="empty-state"><i class="fas fa-clock-rotate-left"></i><p>Chưa có đánh giá nào</p></div>`;
-                DOM.historyCount.textContent = '0 mục';
-                DOM.historyDot?.classList.remove('show');
-                return;
-            }
-            DOM.historyList.innerHTML = STATE.history.map((item, index) => `
-                    <div class="history-item" onclick="loadHistory(${index})">
-                        <div class="left">
-                            <span class="score-small">${item.score}/10</span>
-                            <span class="date">${item.date} · ${item.time}</span>
-                        </div>
-                        <div class="right">
-                            <span class="shape-tag">${item.faceShape || '--'}</span>
-                            <i class="fas fa-chevron-right arrow"></i>
-                        </div>
-                    </div>
-                `).join('');
-            DOM.historyCount.textContent = STATE.history.length + ' mục';
-            DOM.historyDot?.classList.add('show');
-        }
-
-        window.loadHistory = function(index) {
-            const item = STATE.history[index];
-            if (!item) return;
-            navigateTo('page-home');
-            if (item.image && DOM.imagePreview) {
-                DOM.imagePreview.src = item.image;
-                DOM.imagePreview.style.display = 'block';
-                DOM.video.style.display = 'none';
-                STATE.isImageMode = true;
-            }
-            const result = {
-                overall: parseFloat(item.score),
-                faceShape: item.faceShape,
-                goldenRatio: parseFloat(item.goldenRatio || 50),
-                confidence: parseFloat(item.confidence || 85),
-                jawline: parseFloat(item.metrics?.jawline || 5),
-                eyes: parseFloat(item.metrics?.eyes || 5),
-                eyebrows: parseFloat(item.metrics?.eyebrows || 5),
-                nose: parseFloat(item.metrics?.nose || 5),
-                lips: parseFloat(item.metrics?.lips || 5),
-                symmetry: parseFloat(item.metrics?.symmetry || 5),
-                harmony: parseFloat(item.metrics?.harmony || 5),
-                skin: parseFloat(item.metrics?.skin || 5),
-                hair: parseFloat(item.metrics?.hair || 5),
-                valid: true
-            };
-            STATE.currentResults = result;
-            displayResults(result);
-            generateRecommendations(result);
-            showToast(`📊 Đã tải kết quả lúc ${item.time}`, 'success');
-        };
-
         // ============================================================
         // TOAST
         // ============================================================
-        function showToast(msg, type = 'success') {
+        function showToast(msg) {
             if (!DOM.toast || !DOM.toastMessage) return;
             DOM.toastMessage.textContent = msg;
-            DOM.toast.className = 'toast';
-            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle',
-                warning: 'fa-exclamation-triangle' };
-            DOM.toast.querySelector('i').className = `fas ${icons[type] || icons.success}`;
             DOM.toast.classList.add('show');
             clearTimeout(DOM.toast._timeout);
-            DOM.toast._timeout = setTimeout(() => DOM.toast.classList.remove('show'), 3000);
+            DOM.toast._timeout = setTimeout(() => DOM.toast.classList.remove('show'), 2500);
         }
 
         // ============================================================
@@ -2273,32 +1144,11 @@
             return (lm && lm[idx]) ? lm[idx] : { x: 0, y: 0, z: 0 };
         }
 
-        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-        function median(arr) {
-            const sorted = [...arr].sort((a, b) => a - b);
-            const mid = Math.floor(sorted.length / 2);
-            return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-        }
-
-        function medianLandmarks(landmarksArray) {
-            if (!landmarksArray || landmarksArray.length === 0) return null;
-            const numLandmarks = landmarksArray[0].length;
-            const result = [];
-            for (let i = 0; i < numLandmarks; i++) {
-                const xValues = landmarksArray.map(lm => lm[i].x);
-                const yValues = landmarksArray.map(lm => lm[i].y);
-                const zValues = landmarksArray.map(lm => lm[i].z);
-                result.push({ x: median(xValues), y: median(yValues), z: median(zValues) });
-            }
-            return result;
-        }
-
         function angleBetween(p1, p2, p3) {
             const a = dist(p2, p3);
             const b = dist(p1, p3);
             const c = dist(p1, p2);
-            if (a < 0.001 || b < 0.001 || c < 0.001) return 90;
+            if (a < 0.001 || b < 0.001 || c < 0.001) return 0;
             const cosA = (b * b + c * c - a * a) / (2 * b * c);
             return Math.acos(clamp(cosA, -1, 1)) * (180 / Math.PI);
         }
@@ -2336,64 +1186,9 @@
         }
 
         // ============================================================
-        // QUALITY CHECK
+        // COMPUTE METRICS
         // ============================================================
-        function checkQuality(landmarks) {
-            const issues = [];
-            let qualityScore = 100;
-            if (!landmarks || landmarks.length === 0) {
-                return { ok: false, issues: ['Không tìm thấy khuôn mặt'], score: 0 };
-            }
-            const nose = getLM(landmarks, 1);
-            const lEye = getLM(landmarks, 33);
-            const rEye = getLM(landmarks, 263);
-            const chin = getLM(landmarks, 152);
-            const faceSize = dist(lEye, rEye);
-            if (faceSize < 0.04) { issues.push('Khuôn mặt quá nhỏ');
-                qualityScore -= 30; }
-            const eyeCenter = { x: (lEye.x + rEye.x) / 2, y: (lEye.y + rEye.y) / 2 };
-            const yaw = (nose.x - eyeCenter.x) * 120;
-            if (Math.abs(yaw) > 12) { issues.push('Nhìn thẳng vào camera');
-                qualityScore -= 25; }
-            const pitch = (nose.y - chin.y) * 60;
-            if (Math.abs(pitch) > 8) { issues.push('Điều chỉnh góc mặt');
-                qualityScore -= 20; }
-            const lEyeTop = getLM(landmarks, 159);
-            const lEyeBottom = getLM(landmarks, 145);
-            const eyeOpen = dist(lEyeTop, lEyeBottom);
-            if (eyeOpen < 0.008) { issues.push('Mở mắt');
-                qualityScore -= 30; }
-            const cx = (lEye.x + rEye.x + chin.x + nose.x) / 4;
-            if (Math.abs(cx - 0.5) > 0.12) { issues.push('Đặt mặt vào giữa khung');
-                qualityScore -= 15; }
-            const ok = qualityScore >= 70 && issues.length === 0;
-            return { ok, issues, score: clamp(qualityScore, 0, 100) };
-        }
-
-        function updateQualityStatus(qc) {
-            if (!DOM.qDot || !DOM.qLabel) return;
-            if (qc.ok) {
-                DOM.qDot.className = 'q-dot good';
-                DOM.qLabel.textContent = 'Chất lượng tốt';
-                DOM.statusGlass?.classList.remove('show');
-                DOM.guidanceOval?.classList.add('quality-ok');
-                DOM.guidanceOval?.classList.remove('face-detected');
-            } else {
-                DOM.qDot.className = 'q-dot error';
-                const issue = qc.issues?.[0] || 'Chất lượng kém';
-                DOM.qLabel.textContent = issue;
-                if (qc.issues && qc.issues.length > 0) {
-                    DOM.statusGlass.textContent = '⚠️ ' + qc.issues[0];
-                    DOM.statusGlass?.classList.add('show');
-                }
-                DOM.guidanceOval?.classList.remove('quality-ok');
-            }
-        }
-
-        // ============================================================
-        // MEASUREMENTS
-        // ============================================================
-        function computeMeasurements(lm) {
+        function computeMetrics(lm) {
             if (!lm || lm.length === 0) return null;
 
             const lEye = getLM(lm, 33);
@@ -2424,32 +1219,35 @@
             const rJawEnd = getLM(lm, 366);
 
             const eyeDist = dist(lEye, rEye);
+            const faceHeight = dist(forehead, chin);
+            const faceWidth = dist(lCheek, rCheek);
 
-            // Symmetry
+            // === Canthal Tilt ===
+            const canthalTilt = Math.atan2(rEye.y - lEye.y, rEye.x - lEye.x) * (180 / Math.PI);
+            const canthalScore = clamp(10 - Math.abs(canthalTilt) * 0.6, 0, 10);
+
+            // === Symmetry ===
             const eyeDistL = dist(lEye, lEyeOuter);
             const eyeDistR = dist(rEye, rEyeOuter);
             const eyeSym = eyeDistL + eyeDistR > 0.001 ? 1 - Math.abs(eyeDistL - eyeDistR) / (Math.max(eyeDistL,
                 eyeDistR) + 0.001) : 0.5;
-
             const midMouth = { x: (lMouth.x + rMouth.x) / 2, y: (lMouth.y + rMouth.y) / 2, z: (lMouth.z + rMouth.z) / 2 };
             const mouthL = dist(lMouth, midMouth);
             const mouthR = dist(rMouth, midMouth);
             const mouthSym = mouthL + mouthR > 0.001 ? 1 - Math.abs(mouthL - mouthR) / (Math.max(mouthL, mouthR) +
                 0.001) : 0.5;
-
             const symmetry = clamp((eyeSym * 0.5 + mouthSym * 0.3 + 0.2) * 10, 0, 10);
 
-            // Jawline
+            // === Jawline ===
             const jawWidth = dist(lJaw, rJaw);
-            const faceHeight = dist(forehead, chin);
             const jawRatio = faceHeight > 0.001 ? jawWidth / faceHeight : 0.65;
             const jawline = clamp((1 - Math.abs(jawRatio - 0.62) * 2.8) * 10, 0, 10);
 
-            // Jaw Angle
+            // === Jaw Angle ===
             const jawAngle = angleBetween(lJawEnd, lJaw, rJaw);
             const jawAngleScore = clamp((1 - Math.abs(jawAngle - 120) / 30) * 10, 0, 10);
 
-            // Eyes
+            // === Eyes ===
             const eyeWidthL = dist(lEyeOuter, lEyeInner);
             const eyeWidthR = dist(rEyeOuter, rEyeInner);
             const eyeHeightL = dist(lEyeTop, lEyeBottom);
@@ -2459,85 +1257,75 @@
                 3.0;
             const eyes = clamp((1 - Math.abs(eyeAspect - 3.0) * 0.5) * 10, 0, 10);
 
-            // Canthal Tilt
-            const canthalTilt = Math.atan2(rEye.y - lEye.y, rEye.x - lEye.x) * (180 / Math.PI);
-            const canthalScore = clamp(10 - Math.abs(canthalTilt) * 0.6, 0, 10);
-
-            // Eye Spacing
+            // === Eye Spacing ===
             const eyeSpacing = dist(lEyeInner, rEyeInner);
             const eyeSpacingRatio = eyeSpacing / (eyeDist + 0.001);
             const eyeSpacingScore = clamp((1 - Math.abs(eyeSpacingRatio - 0.5) * 2) * 10, 0, 10);
 
-            // Eyebrows
+            // === Eyebrows ===
             const browDist = dist(lBrow, rBrow);
             const browRatio = faceHeight > 0.001 ? browDist / faceHeight : 0.3;
             const eyebrows = clamp((1 - Math.abs(browRatio - 0.3) * 3) * 10, 0, 10);
 
-            // Nose
+            // === Nose ===
             const noseWidth = dist(getLM(lm, 64), getLM(lm, 294));
             const noseLength = dist(noseTip, noseBridge);
             const noseRatio = noseLength > 0.001 ? noseWidth / noseLength : 0.5;
             const nose = clamp((1 - Math.abs(noseRatio - 0.45) * 2.5) * 10, 0, 10);
 
-            // Lips
+            // === Lips ===
             const lipWidth = dist(lMouth, rMouth);
             const lipHeight = dist(upperLip, lowerLip);
             const lipRatio = lipWidth > 0.001 ? lipHeight / lipWidth : 0.35;
             const lips = clamp((1 - Math.abs(lipRatio - 0.35) * 2.5) * 10, 0, 10);
 
-            // Chin Projection
+            // === Philtrum ===
+            const philtrum = dist(noseTip, upperLip);
+            const philtrumRatio = faceHeight > 0.001 ? philtrum / faceHeight : 0.1;
+            const philtrumScore = clamp((1 - Math.abs(philtrumRatio - 0.1) * 3) * 10, 0, 10);
+
+            // === Chin Projection ===
             const chinProjection = dist(chin, { x: (lEye.x + rEye.x) / 2, y: (lEye.y + rEye.y) / 2, z: (lEye.z + rEye.z) /
                 2 });
             const chinRatio = faceHeight > 0.001 ? chinProjection / faceHeight : 0.3;
             const chinScore = clamp((1 - Math.abs(chinRatio - 0.3) * 2.5) * 10, 0, 10);
 
-            // Face Shape
+            // === Face Shape ===
             const shape = detectFaceShape(lm);
 
-            // fWHR
-            const faceWidth = dist(lCheek, rCheek);
+            // === fWHR ===
             const fwhr = faceHeight > 0.001 ? faceWidth / faceHeight : 0.8;
             const fwhrScore = clamp((1 - Math.abs(fwhr - 0.78) * 2) * 10, 0, 10);
 
-            // Harmony
-            const harmony = clamp((symmetry + jawline + eyes + nose + lips + fwhrScore) / 6 * 1.15, 0, 10);
-
-            // Golden Ratio
+            // === Golden Ratio ===
             const gr = faceHeight > 0.001 ? faceWidth / faceHeight : 0.618;
             const goldenRatio = clamp((1 - Math.abs(gr - 0.618) * 3.5) * 100, 0, 100);
 
-            // Skin (proxy)
-            const skin = clamp(symmetry * 0.6 + 0.5 + (eyes > 6 ? 0.3 : 0), 0, 10);
+            // === Harmony ===
+            const harmony = clamp((symmetry + jawline + eyes + nose + lips + fwhrScore) / 6 * 1.15, 0, 10);
 
-            // Hair
-            const hairline = getLM(lm, 10);
-            const hair = clamp((1 - Math.abs(hairline.y - 0.15) * 3) * 10, 0, 10);
-
-            // Overall
+            // === Overall ===
             const overall = clamp(
                 symmetry * 0.13 + jawline * 0.13 + eyes * 0.10 + eyebrows * 0.08 +
-                nose * 0.09 + lips * 0.09 + harmony * 0.15 + skin * 0.06 +
-                hair * 0.06 + chinScore * 0.06 + fwhrScore * 0.05, 0, 10
+                nose * 0.09 + lips * 0.09 + harmony * 0.15 + chinScore * 0.06 + fwhrScore * 0.05, 0, 10
             );
 
             return {
                 symmetry,
-                jawline,
-                eyes,
+                jawline: (jawline + jawAngleScore) / 2,
+                eyes: (eyes + eyeSpacingScore) / 2,
                 eyebrows,
                 nose,
                 lips,
-                skin,
-                hair,
                 harmony,
                 goldenRatio,
                 faceShape: shape,
                 overall,
                 canthalTilt: canthalScore,
-                eyeSpacing: eyeSpacingScore,
                 chinProjection: chinScore,
                 fwhr: fwhrScore,
-                jawAngle: jawAngleScore,
+                philtrum: philtrumScore,
+                canthalAngle: canthalTilt,
                 measurements: { jawRatio, eyeAspect, noseRatio, lipRatio, gr, fwhr, canthalTilt, chinRatio }
             };
         }
@@ -2574,64 +1362,148 @@
             } catch (e) { return 'Unknown'; }
         }
 
-        function calculateConfidence(metrics) {
-            let score = 100;
-            const keys = ['symmetry', 'jawline', 'eyes', 'eyebrows', 'nose', 'lips', 'skin', 'hair', 'harmony'];
-            for (const key of keys) {
-                if (metrics[key] === undefined || metrics[key] === null || isNaN(metrics[key])) score -= 8;
-                if (metrics[key] < 0 || metrics[key] > 10) score -= 5;
-            }
-            if (metrics.goldenRatio === undefined || metrics.goldenRatio < 0) score -= 10;
-            return clamp(score, 0, 100);
-        }
-
-        function calculateScore(metrics) {
-            if (!metrics) return null;
-            const confidence = calculateConfidence(metrics);
-            const valid = confidence >= 65;
-            return { ...metrics, confidence, valid };
-        }
-
         // ============================================================
-        // ON FACEMESH RESULTS
+        // ON FACEMESH RESULTS - REAL TIME
         // ============================================================
+        let lastAnalysisTime = 0;
+        let analysisFrameCount = 0;
+        let metricsBuffer = [];
+        const BUFFER_SIZE = 5;
+
         function onFaceMeshResults(results) {
             const hasFace = results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0;
 
             if (hasFace) {
                 STATE.currentLandmarks = results.multiFaceLandmarks[0];
                 STATE.isFaceDetected = true;
-                DOM.guidanceOval?.classList.add('face-detected');
-                DOM.guidanceText?.classList.add('face-detected');
-                if (DOM.guidanceText) DOM.guidanceText.textContent = '✅ Đã nhận diện';
+                updateStatus('face', true);
 
-                const qc = checkQuality(STATE.currentLandmarks);
-                STATE.qualityOk = qc.ok;
-                STATE.qualityIssues = qc.issues || [];
-                updateQualityStatus(qc);
+                // Compute metrics every few frames for smoothness
+                analysisFrameCount++;
+                if (analysisFrameCount % 3 === 0) {
+                    const metrics = computeMetrics(STATE.currentLandmarks);
+                    if (metrics) {
+                        metricsBuffer.push(metrics);
+                        if (metricsBuffer.length > BUFFER_SIZE) metricsBuffer.shift();
 
-                if (qc.ok && STATE.frameBuffer.length < 30 && !STATE.isImageMode) {
-                    STATE.frameBuffer.push(JSON.parse(JSON.stringify(STATE.currentLandmarks)));
+                        // Average metrics for stability
+                        const avgMetrics = averageMetrics(metricsBuffer);
+                        STATE.currentResults = avgMetrics;
+
+                        // Update live display
+                        updateLiveMetrics(avgMetrics);
+                        drawOverlay(avgMetrics);
+                    }
                 }
-
-                if (STATE.showOverlay) drawOverlay();
-
             } else {
                 STATE.isFaceDetected = false;
-                STATE.qualityOk = false;
-                DOM.guidanceOval?.classList.remove('face-detected');
-                DOM.guidanceText?.classList.remove('face-detected');
-                if (DOM.guidanceText) DOM.guidanceText.textContent = '📸 Đặt khuôn mặt vào khung';
-                updateQualityStatus({ ok: false, issues: ['Đang tìm khuôn mặt...'], score: 0 });
-                if (STATE.showOverlay) drawGuidanceOval();
+                updateStatus('face', false);
+                metricsBuffer = [];
+            }
+
+            // Update FPS
+            STATE.frameCount++;
+            const now = performance.now();
+            if (now - STATE.lastFpsUpdate > 1000) {
+                STATE.fps = STATE.frameCount;
+                STATE.frameCount = 0;
+                STATE.lastFpsUpdate = now;
+                DOM.fpsDisplay.textContent = STATE.fps + ' FPS';
             }
         }
 
         // ============================================================
-        // DRAW OVERLAY
+        // AVERAGE METRICS
         // ============================================================
-        function drawOverlay() {
+        function averageMetrics(buffer) {
+            if (buffer.length === 0) return null;
+            const keys = ['symmetry', 'jawline', 'eyes', 'eyebrows', 'nose', 'lips', 'harmony', 'goldenRatio', 'overall',
+                'canthalTilt', 'chinProjection', 'fwhr', 'philtrum', 'faceShape'
+            ];
+            const result = {};
+            keys.forEach(key => {
+                if (key === 'faceShape') {
+                    // Most common face shape
+                    const shapes = buffer.map(m => m.faceShape).filter(s => s && s !== 'Unknown');
+                    if (shapes.length > 0) {
+                        const counts = {};
+                        shapes.forEach(s => counts[s] = (counts[s] || 0) + 1);
+                        result[key] = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+                    } else {
+                        result[key] = 'Unknown';
+                    }
+                } else {
+                    const vals = buffer.map(m => m[key]).filter(v => v !== undefined && !isNaN(v));
+                    if (vals.length > 0) {
+                        result[key] = vals.reduce((a, b) => a + b, 0) / vals.length;
+                    } else {
+                        result[key] = 0;
+                    }
+                }
+            });
+            return result;
+        }
+
+        // ============================================================
+        // UPDATE STATUS
+        // ============================================================
+        function updateStatus(type, ok) {
+            if (type === 'face') {
+                if (ok) {
+                    DOM.statusText.textContent = '✅ Khuôn mặt đã nhận diện';
+                    DOM.statusOverlay.classList.add('show');
+                } else {
+                    DOM.statusText.textContent = '📸 Đặt khuôn mặt vào khung';
+                    DOM.statusOverlay.classList.add('show');
+                }
+            }
+        }
+
+        // ============================================================
+        // UPDATE LIVE METRICS
+        // ============================================================
+        function updateLiveMetrics(m) {
+            if (!m) return;
+
+            // Canthal Tilt
+            const canthal = m.canthalTilt || 0;
+            DOM.vCanthal.textContent = canthal.toFixed(1) + '°';
+            DOM.vCanthal.className = 'value ' + (canthal > 6 ? 'good' : canthal > 4 ? 'warning' : 'error');
+            DOM.mCanthal.classList.add('show');
+
+            // Symmetry
+            const sym = m.symmetry || 0;
+            DOM.vSymmetry.textContent = (sym * 10).toFixed(0) + '%';
+            DOM.vSymmetry.className = 'value ' + (sym > 7 ? 'good' : sym > 5 ? 'warning' : 'error');
+            DOM.mSymmetry.classList.add('show');
+
+            // Jawline
+            const jaw = m.jawline || 0;
+            DOM.vJawline.textContent = jaw.toFixed(1);
+            DOM.vJawline.className = 'value ' + (jaw > 7 ? 'good' : jaw > 5 ? 'warning' : 'error');
+            DOM.mJawline.classList.add('show');
+
+            // Golden Ratio
+            const gr = m.goldenRatio || 0;
+            DOM.vGolden.textContent = gr.toFixed(0) + '%';
+            DOM.vGolden.className = 'value ' + (gr > 70 ? 'good' : gr > 50 ? 'warning' : 'error');
+            DOM.mGolden.classList.add('show');
+
+            // Face Shape
+            DOM.vFaceshape.textContent = m.faceShape || '--';
+            DOM.mFaceshape.classList.add('show');
+        }
+
+        // ============================================================
+        // DRAW OVERLAY - With measurements
+        // ============================================================
+        function drawOverlay(metrics) {
             if (!DOM.canvas || !DOM.ctx) return;
+            if (!STATE.currentLandmarks || !STATE.isFaceDetected) {
+                drawGuidanceOval();
+                return;
+            }
+
             const rect = DOM.canvas.parentElement.getBoundingClientRect();
             const size = Math.min(rect.width, rect.height);
             const dpr = window.devicePixelRatio || 1;
@@ -2642,45 +1514,61 @@
             DOM.ctx.scale(dpr, dpr);
             DOM.ctx.clearRect(0, 0, size, size);
 
-            if (!STATE.currentLandmarks || !STATE.isFaceDetected) {
-                drawGuidanceOval();
-                return;
-            }
-
             const lm = STATE.currentLandmarks;
             const scale = size;
 
-            // Face Outline
+            // === Face Outline ===
             const faceIndices = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152,
                 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
             ];
-            drawLine(faceIndices, lm, scale, 'rgba(108,92,231,0.25)', 1.2, true);
+            drawLine(faceIndices, lm, scale, 'rgba(108,92,231,0.2)', 1.2, true);
 
-            // Jawline
+            // === Jawline ===
             const jawIndices = [172, 150, 149, 176, 148, 152];
-            drawLine(jawIndices, lm, scale, 'rgba(162,155,254,0.2)', 1.0, false);
+            drawLine(jawIndices, lm, scale, 'rgba(162,155,254,0.25)', 1.2, false);
 
-            // Eyes
+            // === Eyes ===
             const eyeLeft = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7];
             const eyeRight = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249];
-            drawLine(eyeLeft, lm, scale, 'rgba(253,203,110,0.3)', 1.0, true);
-            drawLine(eyeRight, lm, scale, 'rgba(253,203,110,0.3)', 1.0, true);
+            drawLine(eyeLeft, lm, scale, 'rgba(253,203,110,0.35)', 1.2, true);
+            drawLine(eyeRight, lm, scale, 'rgba(253,203,110,0.35)', 1.2, true);
 
-            // Eyebrows
+            // === Canthal Tilt Line ===
+            const lEye = getLM(lm, 33);
+            const rEye = getLM(lm, 263);
+            DOM.ctx.beginPath();
+            DOM.ctx.strokeStyle = 'rgba(108,92,231,0.4)';
+            DOM.ctx.lineWidth = 1.5;
+            DOM.ctx.setLineDash([4, 4]);
+            DOM.ctx.moveTo((1 - lEye.x) * scale, lEye.y * scale);
+            DOM.ctx.lineTo((1 - rEye.x) * scale, rEye.y * scale);
+            DOM.ctx.stroke();
+            DOM.ctx.setLineDash([]);
+
+            // Canthal angle label
+            const canthalAngle = metrics?.canthalTilt || 0;
+            DOM.ctx.fillStyle = 'rgba(108,92,231,0.6)';
+            DOM.ctx.font = '8px Inter, sans-serif';
+            DOM.ctx.textAlign = 'center';
+            const midX = ((1 - lEye.x) + (1 - rEye.x)) / 2 * scale;
+            const midY = (lEye.y + rEye.y) / 2 * scale - 18;
+            DOM.ctx.fillText('Canthal: ' + canthalAngle.toFixed(1) + '°', midX, midY);
+
+            // === Eyebrows ===
             const browLeft = [46, 53, 52, 65, 55];
             const browRight = [276, 283, 282, 295, 285];
             drawLine(browLeft, lm, scale, 'rgba(253,121,168,0.2)', 1.0, true);
             drawLine(browRight, lm, scale, 'rgba(253,121,168,0.2)', 1.0, true);
 
-            // Nose
+            // === Nose ===
             const noseIndices = [1, 2, 98, 327, 326, 325, 294, 64];
-            drawLine(noseIndices, lm, scale, 'rgba(162,155,254,0.15)', 1.0, true);
+            drawLine(noseIndices, lm, scale, 'rgba(162,155,254,0.2)', 1.0, true);
 
-            // Mouth
+            // === Mouth ===
             const mouthIndices = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185];
-            drawLine(mouthIndices, lm, scale, 'rgba(253,203,110,0.2)', 1.0, true);
+            drawLine(mouthIndices, lm, scale, 'rgba(253,203,110,0.25)', 1.0, true);
 
-            // Midline
+            // === Midline ===
             const top = lm[10];
             const bottom = lm[152];
             DOM.ctx.beginPath();
@@ -2692,7 +1580,42 @@
             DOM.ctx.stroke();
             DOM.ctx.setLineDash([]);
 
-            // Landmark dots
+            // === Facial Thirds ===
+            const yTop = lm[10].y * scale;
+            const yBottom = lm[152].y * scale;
+            const yThird1 = (yTop * 2 + yBottom) / 3;
+            const yThird2 = (yTop + yBottom * 2) / 3;
+
+            DOM.ctx.strokeStyle = 'rgba(108,92,231,0.05)';
+            DOM.ctx.lineWidth = 1;
+            DOM.ctx.setLineDash([3, 5]);
+            [yThird1, yThird2].forEach(y => {
+                DOM.ctx.beginPath();
+                DOM.ctx.moveTo(10, y);
+                DOM.ctx.lineTo(scale - 10, y);
+                DOM.ctx.stroke();
+            });
+            DOM.ctx.setLineDash([]);
+
+            // === Golden Ratio Spiral ===
+            if (metrics) {
+                const grX = (1 - lm[1].x) * scale;
+                const grY = lm[1].y * scale;
+                const grRadius = dist(lm[1], lm[152]) * scale * 0.15;
+
+                DOM.ctx.strokeStyle = 'rgba(162,155,254,0.05)';
+                DOM.ctx.lineWidth = 1;
+                for (let i = 0; i < 12; i++) {
+                    const angle = i * Math.PI / 6;
+                    DOM.ctx.beginPath();
+                    DOM.ctx.arc(grX + Math.cos(angle) * grRadius * 0.2,
+                        grY + Math.sin(angle) * grRadius * 0.2,
+                        grRadius * (1 - i * 0.025), 0, Math.PI * 2);
+                    DOM.ctx.stroke();
+                }
+            }
+
+            // === Landmark dots ===
             const keyPoints = [33, 263, 1, 152, 10, 234, 454, 61, 291];
             keyPoints.forEach(idx => {
                 const p = lm[idx];
@@ -2700,10 +1623,21 @@
                 const x = (1 - p.x) * scale;
                 const y = p.y * scale;
                 DOM.ctx.beginPath();
-                DOM.ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+                DOM.ctx.arc(x, y, 2, 0, Math.PI * 2);
                 DOM.ctx.fillStyle = 'rgba(108,92,231,0.15)';
                 DOM.ctx.fill();
             });
+
+            // === Jaw Angle Label ===
+            if (metrics) {
+                const jawScore = metrics.jawline || 0;
+                DOM.ctx.fillStyle = 'rgba(162,155,254,0.4)';
+                DOM.ctx.font = '8px Inter, sans-serif';
+                DOM.ctx.textAlign = 'left';
+                const jx = (1 - lm[152].x) * scale + 20;
+                const jy = lm[152].y * scale + 10;
+                DOM.ctx.fillText('Jaw: ' + jawScore.toFixed(1) + '/10', jx, jy);
+            }
         }
 
         function drawLine(indices, lm, scale, color, width, closed) {
@@ -2748,323 +1682,176 @@
         }
 
         // ============================================================
-        // ANALYZE
+        // CAPTURE & ANALYZE (for history)
         // ============================================================
-        function analyzeFromLandmarks(landmarks) {
-            if (!landmarks || landmarks.length === 0) {
-                return { error: 'Không có landmark' };
+        function performCapture() {
+            if (!STATE.currentResults || !STATE.isFaceDetected) {
+                showToast('⚠️ Chưa có khuôn mặt để phân tích');
+                return;
             }
-            const metrics = computeMeasurements(landmarks);
-            if (!metrics) {
-                return { error: 'Lỗi tính toán' };
-            }
-            const result = calculateScore(metrics);
-            if (!result) {
-                return { error: 'Lỗi chấm điểm' };
-            }
-            return { result, landmarks };
+
+            const m = STATE.currentResults;
+            const score = m.overall || 0;
+
+            // Show analyzing animation
+            DOM.analyzingBar.classList.add('active');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                DOM.analyzingFill.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    DOM.analyzingBar.classList.remove('active');
+                    DOM.analyzingFill.style.width = '0%';
+                    showResults(m);
+                }
+            }, 40);
+
+            // Save to history
+            saveHistory(m);
         }
 
         // ============================================================
-        // SCAN ANIMATION
+        // SHOW RESULTS
         // ============================================================
-        async function runScanAnimation() {
-            const steps = DOM.scanSteps.querySelectorAll('.scan-step-pill');
-            const totalSteps = steps.length;
-            const texts = ['📸 Xử lý ảnh', '👤 Nhận diện khuôn mặt', '📐 Phân tích cấu trúc', '📊 Tính toán tỷ lệ',
-                '🎯 Tạo báo cáo'
+        function showResults(m) {
+            // Overall score
+            DOM.overallScore.textContent = (m.overall || 0).toFixed(1);
+
+            // Individual scores
+            const items = [
+                { el: DOM.rJawline, bar: DOM.rJawlineBar, val: m.jawline || 0 },
+                { el: DOM.rEyes, bar: DOM.rEyesBar, val: m.eyes || 0 },
+                { el: DOM.rSymmetry, bar: DOM.rSymmetryBar, val: m.symmetry || 0 },
+                { el: DOM.rNose, bar: DOM.rNoseBar, val: m.nose || 0 },
+                { el: DOM.rLips, bar: DOM.rLipsBar, val: m.lips || 0 },
+                { el: DOM.rHarmony, bar: DOM.rHarmonyBar, val: m.harmony || 0 },
             ];
 
-            for (let i = 0; i < totalSteps; i++) {
-                steps.forEach(s => s.classList.remove('active', 'done'));
-                for (let j = 0; j <= i; j++) {
-                    if (j < i) steps[j].classList.add('done');
-                    else steps[j].classList.add('active');
-                }
-                const progress = ((i + 1) / totalSteps) * 100;
-                DOM.scanProgress.style.width = progress + '%';
-                DOM.scanTitle.textContent = '🔬 ' + texts[i];
-                DOM.scanSubtitle.textContent = `Đang xử lý ${Math.round(progress)}%...`;
-                await sleep(400 + Math.random() * 300);
-            }
-
-            DOM.scanProgress.style.width = '100%';
-            DOM.scanTitle.textContent = '✅ Phân tích hoàn tất!';
-            DOM.scanSubtitle.textContent = 'AI đã đánh giá thành công';
-            steps.forEach(s => { s.classList.remove('active');
-                s.classList.add('done'); });
-            await sleep(400);
-        }
-
-        // ============================================================
-        // PERFORM ANALYSIS
-        // ============================================================
-        async function performAnalysis() {
-            if (STATE.isScanning) return;
-            if (!STATE.faceMeshReady) {
-                showToast('⏳ Đang tải AI, vui lòng đợi...', 'info');
-                return;
-            }
-
-            const hasVideo = DOM.video && DOM.video.srcObject && DOM.video.readyState >= 2;
-            const hasImage = DOM.imagePreview && DOM.imagePreview.style.display !== 'none' && DOM.imagePreview.src;
-
-            if (!hasVideo && !hasImage) {
-                showToast('📸 Vui lòng bật camera hoặc tải ảnh', 'error');
-                return;
-            }
-
-            if (!STATE.qualityOk && !STATE.isImageMode) {
-                showToast('⏳ Đang đợi chất lượng khuôn mặt tốt...', 'info');
-                return;
-            }
-
-            let analysisResult;
-
-            if (STATE.isImageMode && STATE.currentLandmarks) {
-                analysisResult = analyzeFromLandmarks(STATE.currentLandmarks);
-            } else if (STATE.frameBuffer.length >= 8) {
-                const medianLm = medianLandmarks(STATE.frameBuffer);
-                if (medianLm) {
-                    analysisResult = analyzeFromLandmarks(medianLm);
-                }
-            } else if (STATE.currentLandmarks) {
-                analysisResult = analyzeFromLandmarks(STATE.currentLandmarks);
-            } else {
-                showToast('📸 Chưa có khuôn mặt chất lượng tốt', 'error');
-                return;
-            }
-
-            if (!analysisResult || analysisResult.error) {
-                showToast(analysisResult?.error || '⚠️ Lỗi phân tích', 'error');
-                return;
-            }
-
-            const { result } = analysisResult;
-
-            STATE.isScanning = true;
-            DOM.scanOverlay.classList.add('active');
-            DOM.laserScan?.classList.add('active');
-            DOM.resultsSheet?.classList.remove('active');
-            DOM.scanProgress.style.width = '0%';
-
-            try {
-                await runScanAnimation();
-                STATE.currentResults = result;
-                displayResults(result);
-                await sleep(300);
-                DOM.scanOverlay.classList.remove('active');
-                DOM.laserScan?.classList.remove('active');
-                showToast('✅ Phân tích hoàn tất!', 'success');
-            } catch (err) {
-                console.error('Analysis error:', err);
-                DOM.scanOverlay.classList.remove('active');
-                DOM.laserScan?.classList.remove('active');
-                showToast(err.message || '⚠️ Lỗi phân tích', 'error');
-            }
-
-            STATE.isScanning = false;
-            STATE.frameBuffer = [];
-        }
-
-        // ============================================================
-        // DISPLAY RESULTS
-        // ============================================================
-        function displayResults(result) {
-            if (!result || !result.valid) {
-                DOM.overallScore.textContent = '--';
-                DOM.overallBar.style.width = '0%';
-                return;
-            }
-
-            const o = result.overall;
-            DOM.overallScore.textContent = o.toFixed(1);
-            DOM.overallBar.style.width = (o * 10) + '%';
-
-            const rating = o >= 9 ? 'Xuất sắc' : o >= 8 ? 'Rất tốt' : o >= 7 ? 'Tốt' : o >= 6 ? 'Trung bình' : 'Cần cải thiện';
-            DOM.ratingText.textContent = rating;
-            DOM.faceShapeText.textContent = result.faceShape || '--';
-            DOM.confidenceText.textContent = result.confidence.toFixed(0) + '%';
-            DOM.grValue.textContent = result.goldenRatio.toFixed(0) + '%';
-            DOM.grBar.style.width = result.goldenRatio + '%';
-
-            const metricKeys = ['jawline', 'eyes', 'eyebrows', 'nose', 'lips', 'symmetry', 'harmony', 'skin', 'hair'];
-            metricKeys.forEach(key => {
-                const val = result[key];
-                if (val !== undefined) {
-                    const el = METRIC_ELS[key]?.el;
-                    if (el) { el.textContent = val.toFixed(1);
-                        animateNumber(el, 0, val, 600); }
-                    const bar = METRIC_ELS[key]?.bar;
-                    if (bar) { bar.style.width = (val * 10) + '%'; }
-                }
+            items.forEach(item => {
+                item.el.textContent = item.val.toFixed(1);
+                item.bar.style.width = (item.val * 10) + '%';
             });
 
-            drawRadarChart(result);
-            generateRecommendations(result);
-            DOM.resultsSheet?.classList.add('active');
+            // Time
+            DOM.resultTime.textContent = '📸 ' + new Date().toLocaleTimeString();
 
-            let imageData = null;
-            if (STATE.isImageMode && DOM.imagePreview?.src) {
-                imageData = DOM.imagePreview.src;
-            } else if (DOM.video && DOM.video.srcObject) {
-                try {
-                    const c = document.createElement('canvas');
-                    const ctx2 = c.getContext('2d');
-                    const size = 200;
-                    c.width = size;
-                    c.height = size;
-                    ctx2.drawImage(DOM.video, 0, 0, size, size);
-                    imageData = c.toDataURL('image/jpeg', 0.7);
-                } catch (e) {}
-            }
-            saveHistoryEntry(result, imageData);
+            // Show results
+            DOM.resultsOverlay.classList.add('active');
+            showToast('✅ Phân tích hoàn tất!');
         }
 
         // ============================================================
-        // ANIMATE NUMBER
+        // SAVE HISTORY
         // ============================================================
-        function animateNumber(el, start, end, duration) {
-            if (!el) return;
-            const startTime = performance.now();
+        function saveHistory(m) {
+            if (!DOM.historyToggle?.classList.contains('active')) return;
 
-            function update(time) {
-                const progress = Math.min((time - startTime) / duration, 1);
-                const eased = 1 - Math.pow(1 - progress, 3);
-                const current = start + (end - start) * eased;
-                el.textContent = current.toFixed(1);
-                if (progress < 1) requestAnimationFrame(update);
-                else el.textContent = end.toFixed(1);
-            }
-            requestAnimationFrame(update);
-        }
-
-        // ============================================================
-        // RADAR CHART
-        // ============================================================
-        function drawRadarChart(result) {
-            const canvas = DOM.radarChart;
-            if (!canvas) return;
-            const rect = canvas.parentElement.getBoundingClientRect();
-            const size = Math.min(rect.width - 20, 160);
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = size * dpr;
-            canvas.height = size * dpr;
-            canvas.style.width = size + 'px';
-            canvas.style.height = size + 'px';
-            const ctx2 = canvas.getContext('2d');
-            ctx2.scale(dpr, dpr);
-
-            const labels = ['Jaw', 'Eyes', 'Nose', 'Lips', 'Sym', 'Harm'];
-            const values = [
-                clamp(result.jawline / 10, 0, 1),
-                clamp(result.eyes / 10, 0, 1),
-                clamp(result.nose / 10, 0, 1),
-                clamp(result.lips / 10, 0, 1),
-                clamp(result.symmetry / 10, 0, 1),
-                clamp(result.harmony / 10, 0, 1)
-            ];
-
-            const cx = size / 2;
-            const cy = size / 2;
-            const radius = Math.min(cx, cy) * 0.7;
-
-            ctx2.clearRect(0, 0, size, size);
-
-            // Grid
-            for (let r = 0.25; r <= 1; r += 0.25) {
-                ctx2.beginPath();
-                for (let i = 0; i < labels.length; i++) {
-                    const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
-                    const x = cx + radius * r * Math.cos(angle);
-                    const y = cy + radius * r * Math.sin(angle);
-                    if (i === 0) ctx2.moveTo(x, y);
-                    else ctx2.lineTo(x, y);
+            const entry = {
+                time: new Date().toLocaleTimeString(),
+                date: new Date().toLocaleDateString(),
+                score: (m.overall || 0).toFixed(1),
+                faceShape: m.faceShape || 'Unknown',
+                goldenRatio: (m.goldenRatio || 0).toFixed(0),
+                metrics: {
+                    jawline: (m.jawline || 0).toFixed(1),
+                    eyes: (m.eyes || 0).toFixed(1),
+                    symmetry: (m.symmetry || 0).toFixed(1),
+                    nose: (m.nose || 0).toFixed(1),
+                    lips: (m.lips || 0).toFixed(1),
+                    harmony: (m.harmony || 0).toFixed(1),
                 }
-                ctx2.closePath();
-                ctx2.strokeStyle = 'rgba(255,255,255,0.03)';
-                ctx2.lineWidth = 0.5;
-                ctx2.stroke();
-            }
+            };
 
-            // Data
-            ctx2.beginPath();
-            for (let i = 0; i < labels.length; i++) {
-                const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
-                const val = Math.min(values[i] || 0, 1);
-                const x = cx + radius * val * Math.cos(angle);
-                const y = cy + radius * val * Math.sin(angle);
-                if (i === 0) ctx2.moveTo(x, y);
-                else ctx2.lineTo(x, y);
-            }
-            ctx2.closePath();
-            ctx2.fillStyle = 'rgba(108,92,231,0.08)';
-            ctx2.fill();
-            ctx2.strokeStyle = 'rgba(108,92,231,0.3)';
-            ctx2.lineWidth = 1.5;
-            ctx2.stroke();
+            STATE.history.unshift(entry);
+            if (STATE.history.length > 50) STATE.history.pop();
 
-            // Labels
-            ctx2.fillStyle = 'rgba(255,255,255,0.15)';
-            ctx2.font = '6px Inter, sans-serif';
-            ctx2.textAlign = 'center';
-            ctx2.textBaseline = 'middle';
-            for (let i = 0; i < labels.length; i++) {
-                const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
-                const x = cx + (radius + 12) * Math.cos(angle);
-                const y = cy + (radius + 12) * Math.sin(angle);
-                ctx2.fillText(labels[i], x, y);
-            }
+            try {
+                localStorage.setItem('looksmax_history_v7', JSON.stringify(STATE.history));
+            } catch (e) {}
+
+            renderHistory();
         }
 
         // ============================================================
-        // RECOMMENDATIONS
+        // RENDER HISTORY
         // ============================================================
-        function generateRecommendations(result) {
-            if (!result || !result.valid) {
-                DOM.recHair.textContent = '--';
-                DOM.recAngle.textContent = '--';
-                DOM.recSkincare.textContent = '--';
-                DOM.recGym.textContent = '--';
+        function renderHistory() {
+            if (STATE.history.length === 0) {
+                DOM.historyList.innerHTML =
+                    `<div class="empty-state"><i class="fas fa-clock-rotate-left"></i><p>Chưa có đánh giá nào</p></div>`;
+                DOM.historyCount.textContent = '0 mục';
                 return;
             }
 
-            const shape = result.faceShape || 'Oval';
+            DOM.historyList.innerHTML = STATE.history.map((item, index) => `
+                    <div class="history-item" onclick="loadHistory(${index})">
+                        <div class="left">
+                            <div class="score-small">${item.score}/10</div>
+                            <div class="date">${item.date} · ${item.time}</div>
+                        </div>
+                        <div class="right">
+                            <span style="font-size:9px;color:var(--text-muted);">${item.faceShape}</span>
+                            <i class="fas fa-chevron-right" style="color:var(--text-muted);font-size:10px;"></i>
+                        </div>
+                    </div>
+                `).join('');
 
-            const hairRecs = {
-                'Oval': 'Hầu hết kiểu tóc đều hợp',
-                'Round': 'Tóc layer, vuốt cao',
-                'Square': 'Tóc ngắn gọn, side part',
-                'Rectangle': 'Tóc dài, fringe',
-                'Diamond': 'Tóc mái, layer nhẹ',
-                'Heart': 'Tóc bob, side sweep',
-                'Triangle': 'Tóc phồng trên đỉnh',
-                'Oblong': 'Tóc vuốt sang ngang',
+            DOM.historyCount.textContent = STATE.history.length + ' mục';
+        }
+
+        // ============================================================
+        // LOAD HISTORY
+        // ============================================================
+        window.loadHistory = function(index) {
+            const item = STATE.history[index];
+            if (!item) return;
+
+            // Close results
+            DOM.resultsOverlay.classList.remove('active');
+
+            const m = {
+                overall: parseFloat(item.score),
+                faceShape: item.faceShape,
+                goldenRatio: parseFloat(item.goldenRatio || 50),
+                jawline: parseFloat(item.metrics?.jawline || 5),
+                eyes: parseFloat(item.metrics?.eyes || 5),
+                symmetry: parseFloat(item.metrics?.symmetry || 5),
+                nose: parseFloat(item.metrics?.nose || 5),
+                lips: parseFloat(item.metrics?.lips || 5),
+                harmony: parseFloat(item.metrics?.harmony || 5),
             };
-            DOM.recHair.textContent = hairRecs[shape] || 'Thử kiểu tóc layer';
 
-            if (result.jawline < 6) {
-                DOM.recAngle.textContent = 'Chụp góc thấp 15°';
-            } else if (result.symmetry < 6) {
-                DOM.recAngle.textContent = 'Chính diện nhẹ 10°';
-            } else {
-                DOM.recAngle.textContent = 'Chính diện + hơi ngửa';
-            }
+            // Show in results
+            DOM.overallScore.textContent = m.overall.toFixed(1);
+            const items = [
+                { el: DOM.rJawline, bar: DOM.rJawlineBar, val: m.jawline },
+                { el: DOM.rEyes, bar: DOM.rEyesBar, val: m.eyes },
+                { el: DOM.rSymmetry, bar: DOM.rSymmetryBar, val: m.symmetry },
+                { el: DOM.rNose, bar: DOM.rNoseBar, val: m.nose },
+                { el: DOM.rLips, bar: DOM.rLipsBar, val: m.lips },
+                { el: DOM.rHarmony, bar: DOM.rHarmonyBar, val: m.harmony },
+            ];
+            items.forEach(item => {
+                item.el.textContent = item.val.toFixed(1);
+                item.bar.style.width = (item.val * 10) + '%';
+            });
+            DOM.resultTime.textContent = '📊 ' + item.date + ' · ' + item.time;
 
-            if (result.skin < 6) {
-                DOM.recSkincare.textContent = 'Serum Vitamin C + SPF';
-            } else if (result.skin < 8) {
-                DOM.recSkincare.textContent = 'Duy trì skincare cơ bản';
-            } else {
-                DOM.recSkincare.textContent = 'Skincare tốt, duy trì';
-            }
+            DOM.resultsOverlay.classList.add('active');
+            showToast('📊 Đã tải kết quả lúc ' + item.time);
+        };
 
-            if (result.jawline < 5) {
-                DOM.recGym.textContent = 'Tập gym + giảm mỡ mặt';
-            } else if (result.jawline < 7) {
-                DOM.recGym.textContent = 'Tập trung vào jawline';
-            } else {
-                DOM.recGym.textContent = 'Duy trì tập luyện';
+        // ============================================================
+        // CLEAR HISTORY
+        // ============================================================
+        function clearHistory() {
+            if (STATE.history.length === 0) return;
+            if (confirm('Xóa toàn bộ lịch sử?')) {
+                STATE.history = [];
+                try { localStorage.removeItem('looksmax_history_v7'); } catch (e) {}
+                renderHistory();
+                showToast('🗑️ Đã xóa lịch sử');
             }
         }
 
@@ -3082,13 +1869,10 @@
                     DOM.video.play().catch(e => console.warn('Video play error:', e));
                     STATE.cameraActive = true;
                     STATE.isImageMode = false;
-                    DOM.imagePreview.style.display = 'none';
-                    DOM.video.style.display = 'block';
-                    updateQualityStatus({ ok: true, issues: [] });
                 })
                 .catch(err => {
                     console.error('Camera error:', err);
-                    showToast('⚠️ Không thể truy cập camera. Hãy tải ảnh lên.', 'error');
+                    showToast('⚠️ Không thể truy cập camera');
                     DOM.uploadBtn.click();
                 });
         }
@@ -3100,13 +1884,11 @@
             }
             STATE.cameraActive = false;
             DOM.video.srcObject = null;
-            DOM.video.style.display = 'none';
         }
 
         function switchCamera() {
             STATE.cameraFacing = STATE.cameraFacing === 'user' ? 'environment' : 'user';
             startCamera(STATE.cameraFacing);
-            showToast(`🔄 Đã chuyển sang camera ${STATE.cameraFacing === 'user' ? 'trước' : 'sau'}`, 'info');
         }
 
         // ============================================================
@@ -3116,50 +1898,38 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
-                DOM.imagePreview.src = e.target.result;
-                DOM.imagePreview.style.display = 'block';
-                DOM.video.style.display = 'none';
-                STATE.isImageMode = true;
-                stopCamera();
-
                 const img = new Image();
                 img.onload = () => {
                     if (STATE.faceMesh && STATE.faceMeshReady) {
+                        STATE.isImageMode = true;
+                        stopCamera();
                         STATE.faceMesh.send({ image: img });
                         setTimeout(() => {
                             if (STATE.currentLandmarks) {
-                                performAnalysis();
+                                const metrics = computeMetrics(STATE.currentLandmarks);
+                                if (metrics) {
+                                    STATE.currentResults = metrics;
+                                    updateLiveMetrics(metrics);
+                                    drawOverlay(metrics);
+                                    performCapture();
+                                }
                             } else {
-                                showToast('⚠️ Không tìm thấy khuôn mặt trong ảnh', 'error');
+                                showToast('⚠️ Không tìm thấy khuôn mặt');
                             }
-                        }, 1200);
+                        }, 1000);
                     }
                 };
-                img.onerror = () => { showToast('⚠️ Lỗi đọc ảnh', 'error'); };
-                img.src = DOM.imagePreview.src;
-                showToast('📷 Đã tải ảnh!', 'success');
+                img.src = e.target.result;
+                showToast('📷 Đã tải ảnh!');
             };
-            reader.onerror = () => { showToast('⚠️ Lỗi đọc ảnh', 'error'); };
             reader.readAsDataURL(file);
         }
 
         // ============================================================
-        // SHARE & EXPORT
+        // EXPORT DATA
         // ============================================================
-        function shareResult() {
-            if (!STATE.currentResults) { showToast('Không có kết quả', 'error'); return; }
-            const r = STATE.currentResults;
-            const text =
-                `🔥 Looksmax AI Pro v6.0\nĐiểm: ${r.overall.toFixed(1)}/10\nKhuôn mặt: ${r.faceShape}\nTỷ lệ vàng: ${r.goldenRatio.toFixed(0)}%\nĐộ tin cậy: ${r.confidence.toFixed(0)}%\n\n🤖 Phân tích bởi Looksmax AI Pro`;
-            if (navigator.share) {
-                navigator.share({ title: 'Looksmax AI Pro', text }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(text).then(() => { showToast('📋 Đã sao chép!', 'success'); });
-            }
-        }
-
         function exportData() {
-            if (STATE.history.length === 0) { showToast('Không có dữ liệu', 'error'); return; }
+            if (STATE.history.length === 0) { showToast('Không có dữ liệu'); return; }
             const data = { exportedAt: new Date().toISOString(), total: STATE.history.length, history: STATE.history };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -3168,7 +1938,7 @@
             link.href = url;
             link.click();
             URL.revokeObjectURL(url);
-            showToast('✅ Đã xuất dữ liệu!', 'success');
+            showToast('✅ Đã xuất dữ liệu!');
         }
 
         // ============================================================
@@ -3176,13 +1946,11 @@
         // ============================================================
         function navigateTo(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const page = document.getElementById(pageId);
-            if (page) page.classList.add('active');
+            document.getElementById(pageId)?.classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
-            // Close results sheet when navigating
             if (pageId !== 'page-home') {
-                DOM.resultsSheet?.classList.remove('active');
+                DOM.resultsOverlay?.classList.remove('active');
             }
         }
 
@@ -3202,25 +1970,6 @@
         }
 
         // ============================================================
-        // LASER PARTICLES
-        // ============================================================
-        function createLaserParticles() {
-            const container = DOM.laserParticles;
-            if (!container) return;
-            container.innerHTML = '';
-            for (let i = 0; i < 20; i++) {
-                const p = document.createElement('div');
-                p.className = 'laser-particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 4 + 's';
-                p.style.animationDuration = (3 + Math.random() * 2) + 's';
-                p.style.width = (1 + Math.random() * 2) + 'px';
-                p.style.height = p.style.width;
-                container.appendChild(p);
-            }
-        }
-
-        // ============================================================
         // EVENT LISTENERS
         // ============================================================
 
@@ -3228,7 +1977,7 @@
             item.addEventListener('click', () => { navigateTo(item.dataset.page); });
         });
 
-        DOM.captureBtn.addEventListener('click', performAnalysis);
+        DOM.captureBtn.addEventListener('click', performCapture);
         DOM.uploadBtn.addEventListener('click', () => DOM.fileInput.click());
 
         DOM.fileInput.addEventListener('change', (e) => {
@@ -3240,48 +1989,29 @@
 
         DOM.cameraSwitchBtn.addEventListener('click', switchCamera);
 
-        // Results handle - close sheet
         DOM.resultsHandle?.addEventListener('click', () => {
-            DOM.resultsSheet?.classList.remove('active');
+            DOM.resultsOverlay?.classList.remove('active');
         });
 
-        DOM.shareBtn.addEventListener('click', shareResult);
-        DOM.exportBtn.addEventListener('click', () => { showToast('📸 Xuất PNG đang phát triển', 'info'); });
-        DOM.copyBtn.addEventListener('click', shareResult);
-
-        DOM.clearHistoryBtn.addEventListener('click', () => {
-            if (STATE.history.length === 0) { showToast('Không có dữ liệu', 'info'); return; }
-            if (confirm('Xóa toàn bộ lịch sử?')) {
-                STATE.history = [];
-                try { localStorage.removeItem('looksmax_history_v6'); } catch (e) {}
-                renderHistory();
-                showToast('🗑️ Đã xóa lịch sử', 'success');
-            }
-        });
+        DOM.clearHistoryBtn.addEventListener('click', clearHistory);
 
         DOM.darkToggle.addEventListener('click', function() {
             this.classList.toggle('active');
             document.body.style.background = this.classList.contains('active') ? '#080a0e' : '#f0f2f5';
-            showToast(this.classList.contains('active') ? '🌙 Dark Mode' : '☀️ Light Mode', 'info');
         });
 
         DOM.animToggle.addEventListener('click', function() {
             this.classList.toggle('active');
-            STATE.useAnimation = this.classList.contains('active');
-            showToast(STATE.useAnimation ? '✅ Animation bật' : '⏸️ Animation tắt', 'info');
         });
 
         DOM.overlayToggle.addEventListener('click', function() {
             this.classList.toggle('active');
             STATE.showOverlay = this.classList.contains('active');
             if (DOM.canvas) DOM.canvas.style.display = STATE.showOverlay ? 'block' : 'none';
-            showToast(STATE.showOverlay ? '✅ Face Overlay bật' : '❌ Face Overlay tắt', 'info');
-            if (STATE.showOverlay) drawOverlay();
         });
 
         DOM.historyToggle.addEventListener('click', function() {
             this.classList.toggle('active');
-            showToast(this.classList.contains('active') ? '✅ Lưu lịch sử bật' : '❌ Lưu lịch sử tắt', 'info');
         });
 
         DOM.exportDataBtn.addEventListener('click', exportData);
@@ -3289,7 +2019,7 @@
         document.addEventListener('keydown', (e) => {
             if ((e.key === 'Enter' || e.key === ' ') && !e.target.matches('input, button, textarea')) {
                 e.preventDefault();
-                performAnalysis();
+                performCapture();
             }
         });
 
@@ -3304,18 +2034,19 @@
         });
 
         window.addEventListener('resize', () => {
-            if (STATE.showOverlay && STATE.isFaceDetected) { drawOverlay(); } else { drawGuidanceOval(); }
+            if (STATE.showOverlay && STATE.isFaceDetected) {
+                drawOverlay(STATE.currentResults);
+            } else {
+                drawGuidanceOval();
+            }
         });
 
         // ============================================================
         // INIT
         // ============================================================
 
-        console.log('🚀 Looksmax AI Pro v6.0 - Premium UI + Complete AI');
-        console.log('📐 Features: 30+ Metrics | Radar Chart | Recommendations');
-
-        // Create laser particles
-        createLaserParticles();
+        console.log('🚀 Looksmax AI v7.0 - Real-time Face Analysis');
+        console.log('📐 Live: Canthal Tilt | Symmetry | Jawline | Golden Ratio | Face Shape');
 
         if (window.FaceMesh) {
             initFaceMesh();
@@ -3327,7 +2058,7 @@
             setTimeout(() => {
                 clearInterval(checkCDN);
                 if (!STATE.faceMeshReady) {
-                    showToast('⚠️ Không tải được AI, thử refresh', 'error');
+                    showToast('⚠️ Không tải được AI, thử refresh');
                 }
             }, 10000);
         }
@@ -3358,10 +2089,9 @@
             };
         }
 
-        console.log('✅ All systems ready');
-        console.log(`📊 History: ${STATE.history.length} entries`);
-        console.log('📸 Press capture button or Space/Enter to analyze');
-        console.log('🎨 Premium UI v6.0 loaded');
+        console.log('✅ All systems ready - 30 FPS real-time analysis');
+        console.log('📊 Live metrics updating automatically');
+        console.log('📸 Press capture button to save results');
     </script>
 </body>
 </html>
