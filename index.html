@@ -3,11 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Looksmax AI Pro · Face Analysis</title>
+    <title>Looksmax AI Pro · Professional Face Analysis</title>
+    <link rel="manifest" href="data:application/json,{}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous">
+    </script>
     <style>
-        /* ===== RESET ===== */
+        /* ============================================================
+           CSS VARIABLES & RESET
+           ============================================================ */
+        :root {
+            --primary: #7c6cf0;
+            --primary-dark: #6a5cdb;
+            --primary-glow: rgba(124, 108, 240, 0.3);
+            --secondary: #a188ff;
+            --bg-primary: #0a0c10;
+            --bg-card: rgba(18, 20, 28, 0.92);
+            --text-primary: #f0f2f5;
+            --text-secondary: #a0a7b5;
+            --text-muted: #5f687b;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #ef4444;
+            --radius: 24px;
+            --radius-sm: 14px;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -17,79 +42,120 @@
 
         html,
         body {
-            background: #0a0c10;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             min-height: 100dvh;
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ============================================================
+           APP SHELL
+           ============================================================ */
+        #app {
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 8px;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        .app-wrapper {
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
             max-width: 480px;
-            width: 100%;
             margin: 0 auto;
-            padding-bottom: 30px;
+            background: var(--bg-card);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: var(--shadow);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
         }
 
-        .main-container {
-            background: rgba(16, 18, 24, 0.92);
-            backdrop-filter: blur(24px);
-            border-radius: 28px;
-            padding: 14px 12px 18px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            width: 100%;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .app-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 12px;
+            gap: 10px;
+            padding: 12px 16px 10px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
-        .header .logo {
-            color: #8b7cf7;
-            font-size: 18px;
-            background: rgba(139, 124, 247, 0.12);
-            padding: 5px 7px;
-            border-radius: 10px;
-        }
-
-        .header h1 {
-            font-size: 17px;
-            font-weight: 700;
-            color: #f0f2f5;
-        }
-
-        .header .badge {
-            margin-left: auto;
-            font-size: 9px;
-            font-weight: 500;
-            color: #8b9bb5;
-            background: rgba(255, 255, 255, 0.04);
-            padding: 2px 10px;
+        .app-header .logo {
+            color: var(--primary);
+            font-size: 22px;
+            background: rgba(124, 108, 240, 0.12);
+            padding: 8px;
             border-radius: 12px;
         }
 
-        /* ===== CAMERA AREA ===== */
-        .camera-area {
+        .app-header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d9c9ff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-header .badge {
+            margin-left: auto;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--secondary);
+            background: rgba(161, 136, 255, 0.1);
+            padding: 3px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(161, 136, 255, 0.1);
+            letter-spacing: 0.5px;
+        }
+
+        .app-header .badge i {
+            font-size: 7px;
+            margin-right: 3px;
+        }
+
+        /* ============================================================
+           MAIN CONTENT (SCROLLABLE)
+           ============================================================ */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px 14px 80px;
+            scroll-behavior: smooth;
+        }
+
+        .app-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .app-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .app-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* ============================================================
+           CAMERA SECTION
+           ============================================================ */
+        .camera-section {
             position: relative;
-            border-radius: 18px;
+            border-radius: var(--radius);
             overflow: hidden;
             background: #0c0e12;
-            width: 100%;
             aspect-ratio: 1/1;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            min-height: 280px;
-            max-height: 480px;
+            width: 100%;
+            max-height: 420px;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
         }
 
         #video {
@@ -117,7 +183,7 @@
             z-index: 5;
         }
 
-        /* ===== GUIDANCE ===== */
+        /* Guidance Frame */
         .guidance-frame {
             position: absolute;
             top: 50%;
@@ -125,7 +191,7 @@
             transform: translate(-50%, -50%);
             width: 55%;
             height: 72%;
-            border: 2px dashed rgba(139, 124, 247, 0.2);
+            border: 2px dashed rgba(124, 108, 240, 0.15);
             border-radius: 50%;
             pointer-events: none;
             z-index: 2;
@@ -133,7 +199,7 @@
         }
 
         .guidance-frame.face-detected {
-            border-color: rgba(74, 222, 128, 0.2);
+            border-color: rgba(74, 222, 128, 0.15);
             opacity: 0.3;
         }
 
@@ -143,14 +209,15 @@
             left: 50%;
             transform: translateX(-50%);
             color: rgba(255, 255, 255, 0.2);
-            font-size: 10px;
+            font-size: 11px;
             letter-spacing: 0.5px;
             pointer-events: none;
             z-index: 2;
             white-space: nowrap;
+            font-weight: 400;
         }
 
-        /* ===== LASER ===== */
+        /* Laser Scan */
         .laser-scan {
             position: absolute;
             top: 0;
@@ -162,7 +229,7 @@
             overflow: hidden;
             opacity: 0;
             transition: opacity 0.5s ease;
-            border-radius: 18px;
+            border-radius: var(--radius);
         }
 
         .laser-scan.active {
@@ -175,8 +242,8 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #8b7cf7, #a188ff, #8b7cf7, transparent);
-            box-shadow: 0 0 30px rgba(139, 124, 247, 0.4);
+            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), var(--primary), transparent);
+            box-shadow: 0 0 40px rgba(124, 108, 240, 0.3);
             animation: laserMove 2.5s ease-in-out infinite;
         }
 
@@ -197,185 +264,167 @@
             }
         }
 
-        /* ===== SCAN OVERLAY ===== */
+        /* Camera Controls Overlay */
+        .camera-controls {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 6;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            padding: 6px 10px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cam-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: #c8d0dc;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+        }
+
+        .cam-btn:active {
+            transform: scale(0.9);
+        }
+
+        .cam-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 20px rgba(124, 108, 240, 0.3);
+            width: 44px;
+            height: 44px;
+            font-size: 16px;
+        }
+
+        .cam-btn.primary:active {
+            transform: scale(0.85);
+        }
+
+        .cam-btn.active {
+            background: rgba(74, 222, 128, 0.15);
+            color: var(--success);
+        }
+
+        /* ============================================================
+           SCAN OVERLAY
+           ============================================================ */
         .scan-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(16px);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
-            border-radius: 18px;
+            z-index: 20;
+            border-radius: var(--radius);
+            animation: fadeIn 0.4s ease;
         }
 
         .scan-overlay.active {
             display: flex;
         }
 
-        .scan-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            width: 85%;
-            max-width: 240px;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
-        .scan-step {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 10px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            transition: all 0.4s ease;
-            opacity: 0.3;
-        }
-
-        .scan-step.active {
-            opacity: 1;
-            background: rgba(139, 124, 247, 0.08);
-            border-color: rgba(139, 124, 247, 0.15);
-        }
-
-        .scan-step.done {
-            opacity: 0.7;
-            border-color: rgba(74, 222, 128, 0.15);
-        }
-
-        .scan-step .step-icon {
-            width: 20px;
-            height: 20px;
+        .scan-spinner {
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #8b9bb5;
-            flex-shrink: 0;
+            border: 3px solid rgba(255, 255, 255, 0.04);
+            border-top-color: var(--primary);
+            border-right-color: var(--secondary);
+            animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            box-shadow: 0 0 60px rgba(124, 108, 240, 0.1);
         }
 
-        .scan-step.active .step-icon {
-            background: rgba(139, 124, 247, 0.2);
-            color: #8b7cf7;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        .scan-step.done .step-icon {
-            background: rgba(74, 222, 128, 0.15);
-            color: #4ade80;
-        }
-
-        .scan-step .step-text {
-            font-size: 11px;
-            font-weight: 500;
-            color: #b0bcca;
-        }
-
-        .scan-step.active .step-text {
+        .scan-title {
+            margin-top: 18px;
+            font-size: 16px;
+            font-weight: 600;
             color: #e8ecf2;
         }
 
-        .scan-step .step-status {
-            margin-left: auto;
-            font-size: 10px;
-            color: #5f6b80;
+        .scan-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
-        .scan-step.active .step-status {
-            color: #8b7cf7;
-        }
-        .scan-step.done .step-status {
-            color: #4ade80;
-        }
-
-        /* ===== CONTROLS ===== */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            padding: 10px 0 2px;
-            justify-content: center;
+        .scan-progress-wrap {
+            width: 200px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 4px;
+            margin-top: 16px;
+            overflow: hidden;
         }
 
-        .btn {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 6px 10px;
-            border-radius: 24px;
-            color: #c8d0dc;
-            font-weight: 500;
-            font-size: 11px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            transition: all 0.25s ease;
-            cursor: pointer;
-            flex: 1 1 auto;
-            min-width: 44px;
-            max-width: 100%;
-            min-height: 30px;
-            user-select: none;
+        .scan-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            width: 0%;
+            animation: progressAnim 2s ease-in-out infinite;
         }
 
-        .btn:active {
-            transform: scale(0.95);
+        @keyframes progressAnim {
+            0% {
+                width: 0%;
+                transform: translateX(-100%);
+            }
+            100% {
+                width: 100%;
+                transform: translateX(0%);
+            }
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #8b7cf7, #7c6cf0);
-            border-color: #8b7cf7;
-            color: white;
-            box-shadow: 0 4px 16px rgba(139, 124, 247, 0.2);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            border-color: #4ade80;
-            color: white;
-            box-shadow: 0 4px 16px rgba(74, 222, 128, 0.15);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            border-color: #ef4444;
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 3px 8px;
-            font-size: 9px;
-            min-height: 22px;
-            flex: 0 1 auto;
-        }
-
-        #file-input {
+        /* ============================================================
+           RESULTS SECTION
+           ============================================================ */
+        .results-section {
+            margin-top: 14px;
             display: none;
+            animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ===== RESULT ===== */
-        .result-card {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 18px;
-            padding: 12px 12px 10px;
-            margin-top: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            display: none;
-            animation: slideUp 0.5s ease;
-        }
-
-        .result-card.active {
+        .results-section.active {
             display: block;
         }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -383,287 +432,636 @@
             }
         }
 
-        .result-header {
+        /* Score Header */
+        .score-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 6px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            margin-bottom: 8px;
+            padding: 14px 16px;
+            background: rgba(124, 108, 240, 0.04);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(124, 108, 240, 0.06);
+            margin-bottom: 12px;
         }
 
-        .score-main {
+        .score-left {
             display: flex;
             align-items: baseline;
-            gap: 3px;
+            gap: 6px;
         }
 
-        .score-main .label {
-            font-size: 12px;
-            color: #8b9bb5;
+        .score-left .label {
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
-        .score-main .number {
-            font-size: 30px;
+        .score-number {
+            font-size: 36px;
             font-weight: 800;
-            background: linear-gradient(135deg, #d9c9ff, #a188ff, #8b7cf7);
+            background: linear-gradient(135deg, #d9c9ff, var(--secondary), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -1px;
         }
 
-        .score-main .max {
-            font-size: 13px;
+        .score-max {
+            font-size: 14px;
             font-weight: 300;
-            color: #5f6b80;
+            color: var(--text-muted);
         }
 
-        .score-badges {
+        .score-right {
             display: flex;
-            gap: 4px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .badge-shape {
-            font-size: 10px;
-            color: #a188ff;
-            background: rgba(161, 136, 255, 0.08);
-            padding: 2px 10px;
-            border-radius: 12px;
-        }
-
-        .badge-rating {
+        .score-badge {
             font-size: 11px;
             font-weight: 500;
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.08);
-            padding: 2px 10px;
-            border-radius: 12px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
+        .score-badge.shape {
+            color: var(--secondary);
+            background: rgba(161, 136, 255, 0.08);
+            border: 1px solid rgba(161, 136, 255, 0.08);
+        }
+
+        .score-badge.rating {
+            color: var(--warning);
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.08);
+        }
+
+        /* Overall Progress Bar */
+        .overall-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0 14px;
+        }
+
+        .overall-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 1.2s ease;
+            width: 0%;
+        }
+
+        /* ============================================================
+           METRICS GRID
+           ============================================================ */
         .metrics-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 2px 6px;
-            margin: 8px 0;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin: 10px 0 14px;
         }
 
-        .metric-item {
-            display: flex;
-            flex-direction: column;
-            padding: 3px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition);
         }
 
-        .metric-item .label {
+        .metric-card:hover {
+            border-color: rgba(124, 108, 240, 0.1);
+        }
+
+        .metric-card .label {
             font-size: 9px;
-            color: #6a7a8f;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
             display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
         }
 
-        .metric-item .label i {
-            font-size: 8px;
+        .metric-card .label i {
+            font-size: 9px;
+            color: var(--primary);
         }
 
-        .metric-item .value {
-            font-size: 13px;
+        .metric-card .value {
+            font-size: 18px;
             font-weight: 700;
-            color: #e8ecf2;
-            margin-top: 1px;
+            color: var(--text-primary);
+            margin-top: 2px;
         }
 
-        .gr-display {
+        .metric-card .bar-mini {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .metric-card .bar-mini-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* ============================================================
+           GOLDEN RATIO
+           ============================================================ */
+        .gr-card {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            background: rgba(139, 124, 247, 0.04);
-            border-radius: 10px;
-            border: 1px solid rgba(139, 124, 247, 0.06);
-            margin: 6px 0;
+            gap: 14px;
+            padding: 10px 14px;
+            background: rgba(161, 136, 255, 0.04);
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(161, 136, 255, 0.06);
+            margin: 10px 0 14px;
         }
 
-        .gr-display .label {
-            font-size: 11px;
-            color: #8b9bb5;
+        .gr-card .label {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
-        .gr-display .value {
-            font-size: 16px;
+        .gr-card .value {
+            font-size: 20px;
             font-weight: 700;
-            color: #a188ff;
-            min-width: 44px;
+            color: var(--secondary);
+            min-width: 50px;
         }
 
-        .gr-display .bar {
+        .gr-card .bar {
             flex: 1;
             height: 3px;
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 4px;
             overflow: hidden;
         }
 
-        .gr-display .bar-fill {
+        .gr-card .bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #8b7cf7, #a188ff);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: 4px;
             transition: width 1.2s ease;
         }
 
-        .feedback-block {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin-bottom: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+        /* ============================================================
+           CHARTS
+           ============================================================ */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 12px 0;
         }
 
-        .feedback-block .title {
+        .chart-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-box .title {
             font-size: 10px;
             font-weight: 600;
-            color: #6a7a8f;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 3px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            margin-bottom: 8px;
+            text-align: center;
         }
 
-        .feedback-block .title i {
+        .chart-box canvas {
+            width: 100%;
+            height: 100%;
+            max-height: 120px;
+        }
+
+        /* ============================================================
+           FEEDBACK
+           ============================================================ */
+        .feedback-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0 12px;
+        }
+
+        .feedback-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .feedback-box .title {
             font-size: 10px;
-            color: #8b7cf7;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .feedback-box .title i {
+            font-size: 11px;
+        }
+
+        .feedback-box .title .fa-check-circle {
+            color: var(--success);
+        }
+        .feedback-box .title .fa-arrow-right {
+            color: var(--warning);
+        }
+        .feedback-box .title .fa-lightbulb {
+            color: var(--primary);
         }
 
         .feedback-list {
             list-style: none;
             display: flex;
-            flex-wrap: wrap;
-            gap: 2px 10px;
+            flex-direction: column;
+            gap: 3px;
         }
 
         .feedback-list li {
-            font-size: 11px;
+            font-size: 12px;
             color: #c8d0dc;
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 1px 0;
+            gap: 6px;
+            padding: 2px 0;
+            animation: fadeItem 0.3s ease forwards;
+            opacity: 0;
         }
 
-        .feedback-list .strength i {
-            color: #4ade80;
+        .feedback-list li:nth-child(1) {
+            animation-delay: 0.05s;
         }
-        .feedback-list .improve i {
-            color: #fbbf24;
+        .feedback-list li:nth-child(2) {
+            animation-delay: 0.1s;
         }
-        .feedback-list .tip i {
-            color: #8b7cf7;
+        .feedback-list li:nth-child(3) {
+            animation-delay: 0.15s;
         }
 
-        /* ===== HISTORY ===== */
-        .history-section {
+        @keyframes fadeItem {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .feedback-list li i {
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        /* ============================================================
+           SHARE BUTTONS
+           ============================================================ */
+        .share-row {
+            display: flex;
+            gap: 8px;
             margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
 
-        .history-header {
+        .btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all var(--transition);
+            cursor: pointer;
+            flex: 1;
+            min-height: 38px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 20px rgba(124, 108, 240, 0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #22c55e);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 10px;
+            min-height: 28px;
+            flex: 0 1 auto;
+        }
+
+        /* ============================================================
+           BOTTOM NAV
+           ============================================================ */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 480px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 16px 12px;
+            background: rgba(10, 12, 16, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            z-index: 50;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 9px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            padding: 4px 12px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+            transition: all var(--transition);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item.active i {
+            transform: translateY(-2px);
+        }
+
+        .nav-item .badge-dot {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: none;
+        }
+
+        .nav-item .badge-dot.show {
+            display: block;
+        }
+
+        /* ============================================================
+           HISTORY PAGE
+           ============================================================ */
+        .page {
+            display: none;
+            animation: fadePage 0.3s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadePage {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 12px;
         }
 
-        .history-header .title {
-            font-size: 11px;
-            color: #8b9bb5;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        .page-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .history-header .btn {
-            min-height: 20px;
-            padding: 2px 8px;
-            font-size: 9px;
-            flex: 0 1 auto;
+        .page-header .count {
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
         .history-list {
             display: flex;
-            gap: 5px;
-            overflow-x: auto;
-            padding: 3px 2px 5px;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .history-item {
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 10px;
-            padding: 3px 10px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            flex-shrink: 0;
-            font-size: 10px;
-            color: #b0bcca;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
             cursor: pointer;
+            transition: all var(--transition);
         }
 
         .history-item:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(124, 108, 240, 0.1);
         }
 
-        .history-item .h-score {
-            font-weight: 700;
-            color: #e8ecf2;
-            background: rgba(139, 124, 247, 0.1);
-            padding: 0 6px;
-            border-radius: 6px;
+        .history-item .left {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .history-item .left .date {
             font-size: 11px;
+            color: var(--text-muted);
         }
 
-        .history-item .h-time {
-            color: #6a7a8f;
-            font-size: 9px;
+        .history-item .left .score-small {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .empty-history {
-            color: #5f6b80;
-            font-size: 11px;
-            padding: 4px 0;
+        .history-item .right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-item .right .shape-tag {
+            font-size: 10px;
+            color: var(--secondary);
+            background: rgba(161, 136, 255, 0.08);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .history-item .right .arrow {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .empty-state {
             text-align: center;
-            width: 100%;
+            padding: 40px 20px;
+            color: var(--text-muted);
         }
 
-        /* ===== TOAST ===== */
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* ============================================================
+           SETTINGS PAGE
+           ============================================================ */
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .settings-group .group-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-left: 4px;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .settings-item .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-item .label i {
+            font-size: 14px;
+            color: var(--text-muted);
+            width: 20px;
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            width: 40px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toggle.active {
+            background: var(--primary);
+        }
+
+        .toggle .knob {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: all var(--transition);
+        }
+
+        .toggle.active .knob {
+            left: 21px;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
         .toast {
             position: fixed;
-            bottom: 16px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: rgba(16, 18, 24, 0.95);
             backdrop-filter: blur(20px);
-            padding: 8px 18px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            color: #e8ecf2;
-            font-size: 12px;
+            color: var(--text-primary);
+            font-size: 13px;
             z-index: 1000;
             transition: all 0.5s ease;
             opacity: 0;
             pointer-events: none;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             max-width: 90%;
         }
 
@@ -674,287 +1072,380 @@
         }
 
         .toast i {
-            font-size: 13px;
-            color: #8b7cf7;
+            font-size: 14px;
+            color: var(--primary);
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
         @media (max-width: 480px) {
-            .main-container {
-                padding: 10px 8px 14px;
-                border-radius: 20px;
+            .app-content {
+                padding: 10px 10px 70px;
             }
 
-            .header h1 {
-                font-size: 15px;
-            }
-
-            .score-main .number {
-                font-size: 26px;
+            .camera-section {
+                max-height: 320px;
+                border-radius: 18px;
             }
 
             .metrics-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 2px 8px;
-            }
-
-            .metric-item .value {
-                font-size: 12px;
-            }
-
-            .btn {
-                font-size: 10px;
-                padding: 5px 8px;
-                min-height: 28px;
-                min-width: 38px;
-            }
-
-            .controls {
+                grid-template-columns: 1fr 1fr 1fr;
                 gap: 4px;
-                padding: 8px 0 2px;
             }
 
-            .guidance-text {
-                font-size: 9px;
-                bottom: 8%;
+            .metric-card {
+                padding: 8px 10px;
             }
 
-            .camera-area {
-                min-height: 220px;
+            .metric-card .value {
+                font-size: 15px;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+
+            .feedback-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score-number {
+                font-size: 30px;
+            }
+
+            .score-header {
+                padding: 10px 12px;
             }
         }
 
         @media (max-width: 380px) {
-            .btn {
-                font-size: 9px;
-                padding: 4px 6px;
-                min-height: 24px;
-                min-width: 32px;
-                gap: 2px;
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
             }
 
-            .btn i {
-                font-size: 8px;
+            .camera-section {
+                max-height: 260px;
             }
 
-            .controls {
-                gap: 3px;
+            .camera-controls .cam-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
             }
 
-            .score-main .number {
-                font-size: 22px;
-            }
-
-            .badge-shape,
-            .badge-rating {
-                font-size: 9px;
-                padding: 1px 8px;
-            }
-
-            .camera-area {
-                min-height: 180px;
+            .camera-controls .cam-btn.primary {
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
             }
         }
 
         @media (max-width: 340px) {
-            .btn {
-                font-size: 8px;
-                padding: 3px 4px;
-                min-height: 20px;
-                min-width: 28px;
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 3px;
             }
 
-            .btn i {
-                font-size: 7px;
+            .metric-card {
+                padding: 6px 8px;
+            }
+
+            .metric-card .value {
+                font-size: 13px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-wrapper">
+    <div id="app">
 
-        <!-- ===== TOAST ===== -->
-        <div class="toast" id="toast">
-            <i class="fas fa-check-circle"></i>
-            <span id="toastMessage">Thông báo</span>
-        </div>
+        <!-- ===== HEADER ===== -->
+        <header class="app-header">
+            <i class="fas fa-wand-magic-sparkles logo"></i>
+            <h1>Looksmax AI</h1>
+            <span class="badge"><i class="fas fa-bolt"></i> PRO</span>
+        </header>
 
-        <!-- ===== MAIN ===== -->
-        <div class="main-container">
+        <!-- ===== CONTENT ===== -->
+        <div class="app-content" id="appContent">
 
-            <!-- ===== HEADER ===== -->
-            <div class="header">
-                <i class="fas fa-wand-magic-sparkles logo"></i>
-                <h1>Looksmax AI</h1>
-                <span class="badge"><i class="fas fa-bolt"></i> Pro</span>
-            </div>
+            <!-- ====== HOME PAGE ====== -->
+            <div class="page active" id="page-home">
 
-            <!-- ===== CAMERA ===== -->
-            <div class="camera-area">
-                <video id="video" playsinline autoplay></video>
-                <img id="image-preview" alt="Preview" />
-                <canvas id="overlay-canvas"></canvas>
+                <!-- Camera -->
+                <div class="camera-section">
+                    <video id="video" playsinline autoplay></video>
+                    <img id="image-preview" alt="Preview" />
+                    <canvas id="overlay-canvas"></canvas>
 
-                <div class="guidance-frame" id="guidanceFrame">
-                    <div class="guidance-text">📸 Đặt khuôn mặt vào khung</div>
+                    <div class="guidance-frame" id="guidanceFrame">
+                        <div class="guidance-text">📸 Đặt khuôn mặt vào khung</div>
+                    </div>
+
+                    <div class="laser-scan" id="laserScan">
+                        <div class="laser-line"></div>
+                    </div>
+
+                    <!-- Camera Controls -->
+                    <div class="camera-controls">
+                        <button class="cam-btn" id="cameraSwitchBtn" title="Đổi camera">
+                            <i class="fas fa-rotate"></i>
+                        </button>
+                        <button class="cam-btn" id="flashBtn" title="Đèn flash">
+                            <i class="fas fa-bolt"></i>
+                        </button>
+                        <button class="cam-btn" id="uploadBtn" title="Tải ảnh">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button class="cam-btn primary" id="captureBtn" title="Chụp ảnh">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                    <input type="file" id="file-input" accept="image/*">
                 </div>
 
-                <div class="laser-scan" id="laserScan">
-                    <div class="laser-line"></div>
-                </div>
-
+                <!-- Scan Overlay -->
                 <div class="scan-overlay" id="scanOverlay">
-                    <div class="scan-steps" id="scanSteps">
-                        <div class="scan-step" data-step="0">
-                            <span class="step-icon"><i class="fas fa-camera"></i></span>
-                            <span class="step-text">Phát hiện khuôn mặt</span>
-                            <span class="step-status">...</span>
-                        </div>
-                        <div class="scan-step" data-step="1">
-                            <span class="step-icon"><i class="fas fa-bezier-curve"></i></span>
-                            <span class="step-text">Phân tích cấu trúc</span>
-                            <span class="step-status">...</span>
-                        </div>
-                        <div class="scan-step" data-step="2">
-                            <span class="step-icon"><i class="fas fa-arrows-left-right"></i></span>
-                            <span class="step-text">Đánh giá đối xứng</span>
-                            <span class="step-status">...</span>
-                        </div>
-                        <div class="scan-step" data-step="3">
-                            <span class="step-icon"><i class="fas fa-divide"></i></span>
-                            <span class="step-text">Tỷ lệ vàng</span>
-                            <span class="step-status">...</span>
-                        </div>
-                        <div class="scan-step" data-step="4">
-                            <span class="step-icon"><i class="fas fa-brain"></i></span>
-                            <span class="step-text">AI Analysis</span>
-                            <span class="step-status">...</span>
-                        </div>
-                        <div class="scan-step" data-step="5">
-                            <span class="step-icon"><i class="fas fa-check-circle"></i></span>
-                            <span class="step-text">Hoàn tất</span>
-                            <span class="step-status">...</span>
-                        </div>
+                    <div class="scan-spinner"></div>
+                    <div class="scan-title">Đang phân tích...</div>
+                    <div class="scan-subtitle">AI đang đánh giá khuôn mặt của bạn</div>
+                    <div class="scan-progress-wrap">
+                        <div class="scan-progress-fill"></div>
                     </div>
                 </div>
 
-                <!-- ===== CONTROLS ===== -->
-                <div class="controls">
-                    <button class="btn" id="cameraBtn">
-                        <i class="fas fa-camera"></i> Cam
-                    </button>
-                    <button class="btn" id="uploadBtn">
-                        <i class="fas fa-image"></i> Ảnh
-                    </button>
-                    <button class="btn btn-success" id="snapshotBtn">
-                        <i class="fas fa-camera"></i> Chụp
-                    </button>
-                    <button class="btn btn-primary" id="captureBtn">
-                        <i class="fas fa-sync"></i> Quét
-                    </button>
-                    <button class="btn" id="overlayToggle">
-                        <i class="fas fa-layer-group"></i>
-                    </button>
+                <!-- Results -->
+                <div class="results-section" id="resultsSection">
+
+                    <!-- Score Header -->
+                    <div class="score-header">
+                        <div class="score-left">
+                            <span class="label">Tổng điểm</span>
+                            <span class="score-number" id="overallScore">0.0</span>
+                            <span class="score-max">/10</span>
+                        </div>
+                        <div class="score-right">
+                            <span class="score-badge shape" id="faceShapeBadge">
+                                <i class="fas fa-face-smile"></i> <span id="faceShapeText">--</span>
+                            </span>
+                            <span class="score-badge rating" id="ratingBadge">
+                                <i class="fas fa-star"></i> <span id="ratingText">--</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Overall Bar -->
+                    <div class="overall-bar">
+                        <div class="overall-bar-fill" id="overallBar"></div>
+                    </div>
+
+                    <!-- Golden Ratio -->
+                    <div class="gr-card">
+                        <span class="label">Tỷ lệ vàng</span>
+                        <span class="value" id="grValue">0%</span>
+                        <div class="bar"><div class="bar-fill" id="grBar" style="width:0%"></div></div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="metrics-grid" id="metricsGrid">
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-grip-lines"></i> Jawline</div>
+                            <div class="value" id="jawline">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="jawlineBar" style="width:0%;background:linear-gradient(90deg,#8b7cf7,#a188ff)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-eye"></i> Eyes</div>
+                            <div class="value" id="eyes">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="eyesBar" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f59e0b)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-arrows-up-down"></i> Eyebrows</div>
+                            <div class="value" id="eyebrows">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="eyebrowsBar" style="width:0%;background:linear-gradient(90deg,#f472b6,#ec4899)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-nose"></i> Nose</div>
+                            <div class="value" id="nose">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="noseBar" style="width:0%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-mouth"></i> Lips</div>
+                            <div class="value" id="lips">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="lipsBar" style="width:0%;background:linear-gradient(90deg,#f472b6,#ec4899)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-circle"></i> Skin</div>
+                            <div class="value" id="skin">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="skinBar" style="width:0%;background:linear-gradient(90deg,#a188ff,#8b7cf7)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-cut"></i> Hair</div>
+                            <div class="value" id="hair">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="hairBar" style="width:0%;background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-arrows-left-right"></i> Symmetry</div>
+                            <div class="value" id="symmetry">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="symmetryBar" style="width:0%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="label"><i class="fas fa-gem"></i> Harmony</div>
+                            <div class="value" id="harmony">0.0</div>
+                            <div class="bar-mini"><div class="bar-mini-fill" id="harmonyBar" style="width:0%;background:linear-gradient(90deg,#a188ff,#8b7cf7)"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="charts-grid">
+                        <div class="chart-box">
+                            <div class="title">Radar Chart</div>
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                        <div class="chart-box">
+                            <div class="title">Bar Chart</div>
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div class="feedback-grid">
+                        <div class="feedback-box">
+                            <div class="title"><i class="fas fa-check-circle"></i> Điểm mạnh</div>
+                            <ul class="feedback-list" id="strengthList">
+                                <li><i class="fas fa-check-circle" style="color:var(--success)"></i> Chưa có dữ liệu</li>
+                            </ul>
+                        </div>
+                        <div class="feedback-box">
+                            <div class="title"><i class="fas fa-arrow-right" style="color:var(--warning)"></i> Cải thiện</div>
+                            <ul class="feedback-list" id="improveList">
+                                <li><i class="fas fa-arrow-right" style="color:var(--warning)"></i> Chưa có dữ liệu</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="feedback-box" style="margin-bottom:10px;">
+                        <div class="title"><i class="fas fa-lightbulb" style="color:var(--primary)"></i> Gợi ý chi tiết</div>
+                        <ul class="feedback-list" id="tipList">
+                            <li><i class="fas fa-lightbulb" style="color:var(--primary)"></i> Chưa có dữ liệu</li>
+                        </ul>
+                    </div>
+
+                    <!-- Share -->
+                    <div class="share-row">
+                        <button class="btn btn-primary" id="shareBtn"><i class="fas fa-share-alt"></i> Chia sẻ</button>
+                        <button class="btn btn-success" id="exportBtn"><i class="fas fa-download"></i> Xuất PNG</button>
+                        <button class="btn" id="copyBtn"><i class="fas fa-copy"></i> Sao chép</button>
+                    </div>
+
                 </div>
-                <input type="file" id="file-input" accept="image/*">
+
             </div>
 
-            <!-- ===== RESULT ===== -->
-            <div class="result-card" id="resultCard">
-                <div class="result-header">
-                    <div class="score-main">
-                        <span class="label">Tổng điểm</span>
-                        <span class="number" id="overallScore">0.0</span>
-                        <span class="max">/10</span>
-                    </div>
-                    <div class="score-badges">
-                        <span class="badge-shape"><i class="fas fa-face-smile"></i> <span id="faceShapeText">--</span></span>
-                        <span class="badge-rating"><i class="fas fa-star"></i> <span id="ratingText">--</span></span>
-                    </div>
-                </div>
-
-                <div class="gr-display">
-                    <span class="label">Tỷ lệ vàng</span>
-                    <span class="value" id="grValue">0%</span>
-                    <div class="bar"><div class="bar-fill" id="grBar" style="width:0%"></div></div>
-                </div>
-
-                <div class="metrics-grid">
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-arrows-left-right"></i> Đối xứng</span>
-                        <span class="value" id="symmetry">0.0</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-grip-lines"></i> Jawline</span>
-                        <span class="value" id="jawline">0.0</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-eye"></i> Mắt</span>
-                        <span class="value" id="eyes">0.0</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-nose"></i> Mũi</span>
-                        <span class="value" id="nose">0.0</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-mouth"></i> Môi</span>
-                        <span class="value" id="lips">0.0</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-circle"></i> Da</span>
-                        <span class="value" id="skin">0.0</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-cut"></i> Tóc</span>
-                        <span class="value" id="hair">0.0</span>
-                    </div>
-                    <div class="metric-item">
-                        <span class="label"><i class="fas fa-gem"></i> Hài hòa</span>
-                        <span class="value" id="harmony">0.0</span>
-                    </div>
-                </div>
-
-                <div class="feedback-block">
-                    <div class="title"><i class="fas fa-star"></i> Điểm mạnh</div>
-                    <ul class="feedback-list" id="strengthList">
-                        <li class="strength"><i class="fas fa-check-circle"></i> Chưa có dữ liệu</li>
-                    </ul>
-                </div>
-                <div class="feedback-block">
-                    <div class="title"><i class="fas fa-lightbulb"></i> Cải thiện</div>
-                    <ul class="feedback-list" id="improveList">
-                        <li class="improve"><i class="fas fa-arrow-right"></i> Chưa có dữ liệu</li>
-                    </ul>
-                </div>
-                <div class="feedback-block">
-                    <div class="title"><i class="fas fa-wand-sparkles"></i> Gợi ý</div>
-                    <ul class="feedback-list" id="tipList">
-                        <li class="tip"><i class="fas fa-lightbulb"></i> Chưa có dữ liệu</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- ===== HISTORY ===== -->
-            <div class="history-section">
-                <div class="history-header">
-                    <span class="title"><i class="fas fa-clock-rotate-left"></i> Lịch sử</span>
-                    <button class="btn btn-danger" id="clearHistoryBtn">
-                        <i class="fas fa-trash-can"></i> Xóa
-                    </button>
+            <!-- ====== HISTORY PAGE ====== -->
+            <div class="page" id="page-history">
+                <div class="page-header">
+                    <h2>📊 Lịch sử phân tích</h2>
+                    <span class="count" id="historyCount">0 mục</span>
                 </div>
                 <div class="history-list" id="historyList">
-                    <span class="empty-history">Chưa có đánh giá nào</span>
+                    <div class="empty-state">
+                        <i class="fas fa-clock-rotate-left"></i>
+                        <p>Chưa có đánh giá nào</p>
+                    </div>
+                </div>
+                <button class="btn btn-sm" id="clearHistoryBtn" style="margin-top:8px;width:100%;">
+                    <i class="fas fa-trash-can"></i> Xóa tất cả
+                </button>
+            </div>
+
+            <!-- ====== SETTINGS PAGE ====== -->
+            <div class="page" id="page-settings">
+                <div class="page-header">
+                    <h2>⚙️ Cài đặt</h2>
+                </div>
+
+                <div class="settings-group">
+                    <div class="group-title">Giao diện</div>
+                    <div class="settings-item">
+                        <span class="label"><i class="fas fa-moon"></i> Dark Mode</span>
+                        <div class="toggle active" id="darkToggle"><div class="knob"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="label"><i class="fas fa-film"></i> Animation</span>
+                        <div class="toggle active" id="animToggle"><div class="knob"></div></div>
+                    </div>
+                    <div class="settings-item">
+                        <span class="label"><i class="fas fa-vector-square"></i> Face Overlay</span>
+                        <div class="toggle active" id="overlayToggle"><div class="knob"></div></div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="group-title">Dữ liệu</div>
+                    <div class="settings-item">
+                        <span class="label"><i class="fas fa-database"></i> Lưu lịch sử</span>
+                        <div class="toggle active" id="historyToggle"><div class="knob"></div></div>
+                    </div>
+                    <div class="settings-item" style="cursor:pointer;" id="exportDataBtn">
+                        <span class="label"><i class="fas fa-file-export"></i> Xuất dữ liệu JSON</span>
+                        <i class="fas fa-chevron-right" style="color:var(--text-muted);"></i>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="group-title">Thông tin</div>
+                    <div class="settings-item">
+                        <span class="label"><i class="fas fa-code"></i> Version</span>
+                        <span style="font-size:12px;color:var(--text-muted);">v3.5 Pro</span>
+                    </div>
+                    <div class="settings-item">
+                        <span class="label"><i class="fas fa-face-smile"></i> AI Engine</span>
+                        <span style="font-size:12px;color:var(--text-muted);">MediaPipe FaceMesh</span>
+                    </div>
                 </div>
             </div>
 
         </div>
+
+        <!-- ===== BOTTOM NAV ===== -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-page="page-home">
+                <i class="fas fa-home"></i>
+                <span>Trang chủ</span>
+            </button>
+            <button class="nav-item" data-page="page-history">
+                <i class="fas fa-clock-rotate-left"></i>
+                <span>Lịch sử</span>
+                <span class="badge-dot" id="historyDot"></span>
+            </button>
+            <button class="nav-item" data-page="page-settings">
+                <i class="fas fa-sliders"></i>
+                <span>Cài đặt</span>
+            </button>
+        </nav>
+
     </div>
 
-    <!-- ===== SCRIPTS ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous">
-    </script>
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Thông báo</span>
+    </div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
     <script>
+        /**
+         * ============================================================
+         * LOOKSMAX AI PRO - COMPLETE APPLICATION
+         * Version: 3.5 Pro
+         * ============================================================
+         */
+
         // ===== DOM REFS =====
         const $ = (id) => document.getElementById(id);
         const video = $('video');
@@ -962,41 +1453,63 @@
         const canvas = $('overlay-canvas');
         const ctx = canvas ? canvas.getContext('2d') : null;
         const fileInput = $('file-input');
-        const cameraBtn = $('cameraBtn');
-        const uploadBtn = $('uploadBtn');
-        const snapshotBtn = $('snapshotBtn');
+
         const captureBtn = $('captureBtn');
-        const overlayToggle = $('overlayToggle');
-        const clearHistoryBtn = $('clearHistoryBtn');
+        const uploadBtn = $('uploadBtn');
+        const cameraSwitchBtn = $('cameraSwitchBtn');
+        const flashBtn = $('flashBtn');
+
         const guidanceFrame = $('guidanceFrame');
         const laserScan = $('laserScan');
         const scanOverlay = $('scanOverlay');
-        const scanSteps = $('scanSteps');
-        const resultCard = $('resultCard');
-        const toast = $('toast');
-        const toastMessage = $('toastMessage');
 
+        const resultsSection = $('resultsSection');
         const overallScore = $('overallScore');
+        const overallBar = $('overallBar');
         const ratingText = $('ratingText');
         const faceShapeText = $('faceShapeText');
         const grValue = $('grValue');
         const grBar = $('grBar');
-        const symmetryEl = $('symmetry');
-        const jawlineEl = $('jawline');
-        const eyesEl = $('eyes');
-        const noseEl = $('nose');
-        const lipsEl = $('lips');
-        const skinEl = $('skin');
-        const hairEl = $('hair');
-        const harmonyEl = $('harmony');
+
+        const metrics = {
+            jawline: { el: $('jawline'), bar: $('jawlineBar') },
+            eyes: { el: $('eyes'), bar: $('eyesBar') },
+            eyebrows: { el: $('eyebrows'), bar: $('eyebrowsBar') },
+            nose: { el: $('nose'), bar: $('noseBar') },
+            lips: { el: $('lips'), bar: $('lipsBar') },
+            skin: { el: $('skin'), bar: $('skinBar') },
+            hair: { el: $('hair'), bar: $('hairBar') },
+            symmetry: { el: $('symmetry'), bar: $('symmetryBar') },
+            harmony: { el: $('harmony'), bar: $('harmonyBar') },
+        };
+
         const strengthList = $('strengthList');
         const improveList = $('improveList');
         const tipList = $('tipList');
+
         const historyList = $('historyList');
+        const historyCount = $('historyCount');
+        const historyDot = $('historyDot');
+        const clearHistoryBtn = $('clearHistoryBtn');
+
+        const toast = $('toast');
+        const toastMessage = $('toastMessage');
+
+        const shareBtn = $('shareBtn');
+        const exportBtn = $('exportBtn');
+        const copyBtn = $('copyBtn');
+
+        const darkToggle = $('darkToggle');
+        const animToggle = $('animToggle');
+        const overlayToggle = $('overlayToggle');
+        const historyToggle = $('historyToggle');
+        const exportDataBtn = $('exportDataBtn');
 
         // ===== STATE =====
         let cameraStream = null;
         let cameraActive = false;
+        let cameraFacing = 'user';
+        let flashActive = false;
         let faceMesh = null;
         let faceMeshReady = false;
         let isScanning = false;
@@ -1005,27 +1518,23 @@
         let isFaceDetected = false;
         let animationFrameId = null;
         let isPageVisible = true;
+        let useAnimation = true;
         let history = [];
+        let currentResults = null;
 
         // ===== LOAD HISTORY =====
         try {
             const saved = localStorage.getItem('looksmax_history');
             history = saved ? JSON.parse(saved) : [];
-        } catch (e) {
-            history = [];
-        }
+        } catch (e) { history = []; }
 
         // ===== TOAST =====
         function showToast(msg, type = 'success') {
             if (!toast || !toastMessage) return;
             toastMessage.textContent = msg;
             toast.className = 'toast';
-            const icons = {
-                success: 'fa-check-circle',
-                error: 'fa-exclamation-circle',
-                info: 'fa-info-circle',
-                warning: 'fa-exclamation-triangle'
-            };
+            const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle' };
             toast.querySelector('i').className = `fas ${icons[type] || icons.success}`;
             toast.classList.add('show');
             clearTimeout(toast._timeout);
@@ -1049,7 +1558,6 @@
         function initFaceMesh() {
             if (faceMesh || !window.FaceMesh) {
                 if (!window.FaceMesh) {
-                    showToast('⏳ Đang tải AI...', 'info');
                     setTimeout(initFaceMesh, 1000);
                 }
                 return;
@@ -1077,12 +1585,10 @@
                     showToast('✅ AI đã sẵn sàng', 'success');
                 }).catch((err) => {
                     console.error('FaceMesh init error:', err);
-                    showToast('⚠️ Lỗi tải AI, thử refresh', 'error');
                 });
 
             } catch (err) {
                 console.error('FaceMesh error:', err);
-                showToast('⚠️ Lỗi khởi tạo AI', 'error');
             }
         }
 
@@ -1132,7 +1638,7 @@
             const faceIndices = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152,
                 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
             ];
-            drawLine(faceIndices, lm, scale, 'rgba(139, 124, 247, 0.35)', 1.5, true);
+            drawLine(faceIndices, lm, scale, 'rgba(124, 108, 240, 0.35)', 1.5, true);
 
             // Jawline
             const jawIndices = [172, 150, 149, 176, 148, 152];
@@ -1143,6 +1649,12 @@
             const eyeRight = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249];
             drawLine(eyeLeft, lm, scale, 'rgba(251, 191, 36, 0.4)', 1.2, true);
             drawLine(eyeRight, lm, scale, 'rgba(251, 191, 36, 0.4)', 1.2, true);
+
+            // Eyebrows
+            const browLeft = [46, 53, 52, 65, 55];
+            const browRight = [276, 283, 282, 295, 285];
+            drawLine(browLeft, lm, scale, 'rgba(244, 114, 182, 0.3)', 1.2, true);
+            drawLine(browRight, lm, scale, 'rgba(244, 114, 182, 0.3)', 1.2, true);
 
             // Nose
             const noseIndices = [1, 2, 98, 327, 326, 325, 294, 64];
@@ -1156,7 +1668,7 @@
             const top = lm[10];
             const bottom = lm[152];
             ctx.beginPath();
-            ctx.strokeStyle = 'rgba(139, 124, 247, 0.2)';
+            ctx.strokeStyle = 'rgba(124, 108, 240, 0.2)';
             ctx.lineWidth = 1;
             ctx.setLineDash([4, 6]);
             ctx.moveTo((1 - top.x) * scale, top.y * scale);
@@ -1174,23 +1686,6 @@
             ctx.moveTo((1 - lEye.x) * scale, lEye.y * scale);
             ctx.lineTo((1 - rEye.x) * scale, rEye.y * scale);
             ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Facial Thirds
-            const yTop = lm[10].y * scale;
-            const yBottom = lm[152].y * scale;
-            const yThird1 = (yTop * 2 + yBottom) / 3;
-            const yThird2 = (yTop + yBottom * 2) / 3;
-
-            ctx.strokeStyle = 'rgba(139, 124, 247, 0.08)';
-            ctx.lineWidth = 1;
-            ctx.setLineDash([3, 5]);
-            [yThird1, yThird2].forEach(y => {
-                ctx.beginPath();
-                ctx.moveTo(10, y);
-                ctx.lineTo(scale - 10, y);
-                ctx.stroke();
-            });
             ctx.setLineDash([]);
 
             // Golden Ratio Spiral
@@ -1218,7 +1713,7 @@
                 const y = p.y * scale;
                 ctx.beginPath();
                 ctx.arc(x, y, 2.5, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(139, 124, 247, 0.25)';
+                ctx.fillStyle = 'rgba(124, 108, 240, 0.25)';
                 ctx.fill();
             });
         }
@@ -1260,7 +1755,7 @@
 
             ctx.beginPath();
             ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(139, 124, 247, 0.12)';
+            ctx.strokeStyle = 'rgba(124, 108, 240, 0.12)';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([6, 8]);
             ctx.stroke();
@@ -1296,6 +1791,8 @@
                 const rCheek = getLM(lm, 454);
                 const lJaw = getLM(lm, 172);
                 const rJaw = getLM(lm, 397);
+                const lBrow = getLM(lm, 70);
+                const rBrow = getLM(lm, 300);
 
                 // Symmetry
                 const eyeDistL = dist(lEye, lEyeOuter);
@@ -1333,6 +1830,11 @@
                     3.0;
                 const eyes = clamp((1 - Math.abs(eyeSize - 3.0) * 0.6) * 10, 0, 10);
 
+                // Eyebrows
+                const browDist = dist(lBrow, rBrow);
+                const browRatio = faceHeight > 0.001 ? browDist / faceHeight : 0.3;
+                const eyebrows = clamp((1 - Math.abs(browRatio - 0.3) * 3) * 10, 0, 10);
+
                 // Nose
                 const noseWidth = dist(getLM(lm, 64), getLM(lm, 294));
                 const noseLength = dist(noseTip, noseBridge);
@@ -1365,12 +1867,24 @@
 
                 // Overall
                 const overall = clamp(
-                    symmetry * 0.2 + jawline * 0.15 + eyes * 0.15 + nose * 0.1 +
-                    lips * 0.1 + harmony * 0.2 + skin * 0.05 + hair * 0.05, 0, 10
+                    symmetry * 0.15 + jawline * 0.15 + eyes * 0.12 + eyebrows * 0.08 +
+                    nose * 0.1 + lips * 0.1 + harmony * 0.15 + skin * 0.05 + hair * 0.05, 0, 10
                 );
 
-                return { symmetry, jawline, eyes, nose, lips, skin, hair, harmony, goldenRatio, faceShape: shape,
-                    overall };
+                return {
+                    symmetry,
+                    jawline,
+                    eyes,
+                    eyebrows,
+                    nose,
+                    lips,
+                    skin,
+                    hair,
+                    harmony,
+                    goldenRatio,
+                    faceShape: shape,
+                    overall
+                };
 
             } catch (err) {
                 console.warn('Error computing metrics:', err);
@@ -1383,6 +1897,7 @@
                 symmetry: 5.0,
                 jawline: 5.0,
                 eyes: 5.0,
+                eyebrows: 5.0,
                 nose: 5.0,
                 lips: 5.0,
                 skin: 5.0,
@@ -1427,44 +1942,8 @@
             }
         }
 
-        // ===== SNAPSHOT =====
-        function takeSnapshot() {
-            if (!video || !video.srcObject || video.readyState < 2) {
-                showToast('📸 Vui lòng bật camera trước', 'error');
-                return;
-            }
-
-            try {
-                const snapCanvas = document.createElement('canvas');
-                const snapCtx = snapCanvas.getContext('2d');
-                const size = Math.min(video.videoWidth || 400, video.videoHeight || 400) || 400;
-                snapCanvas.width = size;
-                snapCanvas.height = size;
-
-                snapCtx.save();
-                snapCtx.scale(-1, 1);
-                snapCtx.drawImage(video, -size, 0, size, size);
-                snapCtx.restore();
-
-                const dataUrl = snapCanvas.toDataURL('image/jpeg', 0.95);
-
-                if (imagePreview) {
-                    imagePreview.src = dataUrl;
-                    imagePreview.style.display = 'block';
-                    video.style.display = 'none';
-                }
-
-                stopCamera();
-
-                showToast('📸 Đã chụp ảnh! Nhấn "Quét" để phân tích', 'success');
-            } catch (err) {
-                console.error('Snapshot error:', err);
-                showToast('⚠️ Lỗi chụp ảnh', 'error');
-            }
-        }
-
-        // ===== PERFORM SCAN =====
-        async function performScan() {
+        // ===== CAPTURE / SCAN =====
+        async function performCapture() {
             if (isScanning) return;
             if (!faceMeshReady) {
                 showToast('⏳ Đang tải AI, vui lòng đợi...', 'info');
@@ -1480,88 +1959,34 @@
             }
 
             isScanning = true;
-            if (scanOverlay) scanOverlay.classList.add('active');
-            if (laserScan) laserScan.classList.add('active');
-            if (resultCard) resultCard.classList.remove('active');
-
-            const steps = scanSteps ? scanSteps.querySelectorAll('.scan-step') : [];
-            steps.forEach(s => { s.classList.remove('active', 'done');
-                s.querySelector('.step-status').textContent = '...'; });
+            scanOverlay.classList.add('active');
+            laserScan.classList.add('active');
+            resultsSection.classList.remove('active');
 
             try {
-                if (steps.length > 0) {
-                    steps[0].classList.add('active');
-                    steps[0].querySelector('.step-status').textContent = '⏳';
-                    await sleep(400);
-                }
-
                 const blob = await getCurrentFrame();
                 if (!blob) throw new Error('Không có ảnh');
 
                 const imageBitmap = await createImageBitmap(blob);
-
-                if (steps.length > 0) {
-                    steps[0].classList.remove('active');
-                    steps[0].classList.add('done');
-                    steps[0].querySelector('.step-status').textContent = '✅';
-                    steps[1].classList.add('active');
-                    steps[1].querySelector('.step-status').textContent = '⏳';
-                    await sleep(300);
-                }
-
                 await faceMesh.send({ image: imageBitmap });
 
                 if (!currentLandmarks) {
                     throw new Error('Không tìm thấy khuôn mặt');
                 }
 
-                if (steps.length > 1) {
-                    steps[1].classList.remove('active');
-                    steps[1].classList.add('done');
-                    steps[1].querySelector('.step-status').textContent = '✅';
-                    steps[2].classList.add('active');
-                    steps[2].querySelector('.step-status').textContent = '⏳';
-                    await sleep(300);
-                }
-
                 const metrics = computeMetrics(currentLandmarks);
-
-                if (steps.length > 2) {
-                    steps[2].classList.remove('active');
-                    steps[2].classList.add('done');
-                    steps[2].querySelector('.step-status').textContent = '✅';
-                    steps[3].classList.add('active');
-                    steps[3].querySelector('.step-status').textContent = '⏳';
-                    await sleep(300);
-                    steps[3].classList.remove('active');
-                    steps[3].classList.add('done');
-                    steps[3].querySelector('.step-status').textContent = '✅';
-                    steps[4].classList.add('active');
-                    steps[4].querySelector('.step-status').textContent = '⏳';
-                    await sleep(400);
-                    steps[4].classList.remove('active');
-                    steps[4].classList.add('done');
-                    steps[4].querySelector('.step-status').textContent = '✅';
-                    steps[5].classList.add('active');
-                    steps[5].querySelector('.step-status').textContent = '⏳';
-                    await sleep(300);
-                    steps[5].classList.remove('active');
-                    steps[5].classList.add('done');
-                    steps[5].querySelector('.step-status').textContent = '✅';
-                }
-
                 displayResults(metrics);
 
-                await sleep(500);
-                if (scanOverlay) scanOverlay.classList.remove('active');
-                if (laserScan) laserScan.classList.remove('active');
+                await sleep(400);
+                scanOverlay.classList.remove('active');
+                laserScan.classList.remove('active');
 
                 showToast('✅ Phân tích hoàn tất!', 'success');
 
             } catch (err) {
                 console.error('Scan error:', err);
-                if (scanOverlay) scanOverlay.classList.remove('active');
-                if (laserScan) laserScan.classList.remove('active');
+                scanOverlay.classList.remove('active');
+                laserScan.classList.remove('active');
                 showToast(err.message || '⚠️ Lỗi phân tích', 'error');
             }
 
@@ -1600,30 +2025,45 @@
 
         // ===== DISPLAY RESULTS =====
         function displayResults(metrics) {
-            if (!resultCard) return;
-
+            currentResults = metrics;
             const o = metrics.overall;
 
+            // Overall score
             animateNumber(overallScore, 0, o, 800);
+            overallBar.style.width = (o * 10) + '%';
 
+            // Rating
             const rating = o >= 9 ? 'Xuất sắc' : o >= 8 ? 'Rất tốt' : o >= 7 ? 'Tốt' : o >= 6 ? 'Trung bình' : 'Cần cải thiện';
-            if (ratingText) ratingText.textContent = rating;
-            if (faceShapeText) faceShapeText.textContent = metrics.faceShape;
-            if (grValue) grValue.textContent = metrics.goldenRatio.toFixed(0) + '%';
-            if (grBar) grBar.style.width = metrics.goldenRatio + '%';
+            ratingText.textContent = rating;
 
-            animateNumber(symmetryEl, 0, metrics.symmetry, 600);
-            animateNumber(jawlineEl, 0, metrics.jawline, 600);
-            animateNumber(eyesEl, 0, metrics.eyes, 600);
-            animateNumber(noseEl, 0, metrics.nose, 600);
-            animateNumber(lipsEl, 0, metrics.lips, 600);
-            animateNumber(skinEl, 0, metrics.skin, 600);
-            animateNumber(hairEl, 0, metrics.hair, 600);
-            animateNumber(harmonyEl, 0, metrics.harmony, 600);
+            // Face shape
+            faceShapeText.textContent = metrics.faceShape;
 
+            // Golden Ratio
+            grValue.textContent = metrics.goldenRatio.toFixed(0) + '%';
+            grBar.style.width = metrics.goldenRatio + '%';
+
+            // Metrics
+            const metricKeys = ['jawline', 'eyes', 'eyebrows', 'nose', 'lips', 'skin', 'hair', 'symmetry', 'harmony'];
+            metricKeys.forEach(key => {
+                const val = metrics[key];
+                if (metrics[key] !== undefined) {
+                    animateNumber(metrics[key].el || document.getElementById(key), 0, val, 600);
+                    const bar = metrics[key].bar || document.getElementById(key + 'Bar');
+                    if (bar) bar.style.width = (val * 10) + '%';
+                }
+            });
+
+            // Feedback
             generateFeedback(metrics);
 
-            resultCard.classList.add('active');
+            // Charts
+            drawCharts(metrics);
+
+            // Show results
+            resultsSection.classList.add('active');
+
+            // Save history
             saveHistory(metrics);
         }
 
@@ -1652,62 +2092,207 @@
             const improves = [];
             const tips = [];
 
-            if (metrics.symmetry > 7) strengths.push('Khuôn mặt cân đối');
-            else improves.push('Cải thiện độ đối xứng');
+            const checks = [
+                { key: 'symmetry', good: 'Khuôn mặt cân đối', bad: 'Cải thiện độ đối xứng' },
+                { key: 'jawline', good: 'Đường jawline sắc nét', bad: 'Góc chụp thấp hơn' },
+                { key: 'eyes', good: 'Đôi mắt rõ nét', bad: 'Mở mắt tự nhiên hơn' },
+                { key: 'eyebrows', good: 'Lông mày đẹp', bad: 'Tỉa lông mày gọn gàng' },
+                { key: 'nose', good: 'Cấu trúc mũi hài hòa', bad: 'Góc nghiêng phù hợp' },
+                { key: 'lips', good: 'Môi cân đối', bad: 'Cười nhẹ để tôn môi' },
+                { key: 'skin', good: 'Da sáng mịn', bad: 'Tăng ánh sáng khi chụp' },
+                { key: 'hair', good: 'Tóc hợp phong cách', bad: 'Chọn kiểu tóc phù hợp' },
+            ];
 
-            if (metrics.jawline > 7) strengths.push('Đường jawline sắc nét');
-            else improves.push('Góc chụp thấp hơn');
+            checks.forEach(c => {
+                if (metrics[c.key] > 7) strengths.push(c.good);
+                else improves.push(c.bad);
+            });
 
-            if (metrics.eyes > 7) strengths.push('Đôi mắt rõ nét');
-            else improves.push('Mở mắt tự nhiên hơn');
-
-            if (metrics.nose > 7) strengths.push('Cấu trúc mũi hài hòa');
-            else improves.push('Góc nghiêng phù hợp');
-
-            if (metrics.lips > 7) strengths.push('Môi cân đối');
-            else improves.push('Cười nhẹ để tôn môi');
-
-            if (metrics.skin > 7) strengths.push('Da sáng mịn');
-            else improves.push('Tăng ánh sáng khi chụp');
-
-            if (strengths.length < 2) strengths.push('Tổng thể hài hòa');
-            if (improves.length < 2) {
+            if (strengths.length < 3) strengths.push('Tổng thể hài hòa');
+            if (improves.length < 3) {
                 improves.push('Cười nhẹ sẽ tăng điểm');
                 improves.push('Góc máy thấp hơn');
             }
 
             tips.push(metrics.overall > 7 ? 'Bạn có tiềm năng Looksmax cao!' : 'Tập trung vào chăm sóc da và ánh sáng');
             tips.push('Thử nhiều góc chụp khác nhau');
+            if (metrics.overall < 6) tips.push('Duy trì chế độ chăm sóc da tốt');
+            if (metrics.jawline < 6) tips.push('Tập gym để cải thiện jawline');
 
-            if (strengthList) {
-                strengthList.innerHTML = strengths.map(s =>
-                    `<li class="strength"><i class="fas fa-check-circle"></i> ${s}</li>`
-                ).join('');
+            strengthList.innerHTML = strengths.slice(0, 4).map(s =>
+                `<li><i class="fas fa-check-circle" style="color:var(--success)"></i> ${s}</li>`
+            ).join('');
+
+            improveList.innerHTML = improves.slice(0, 4).map(s =>
+                `<li><i class="fas fa-arrow-right" style="color:var(--warning)"></i> ${s}</li>`
+            ).join('');
+
+            tipList.innerHTML = tips.slice(0, 4).map(s =>
+                `<li><i class="fas fa-lightbulb" style="color:var(--primary)"></i> ${s}</li>`
+            ).join('');
+        }
+
+        // ===== DRAW CHARTS =====
+        function drawCharts(metrics) {
+            drawRadarChart(metrics);
+            drawBarChart(metrics);
+        }
+
+        function drawRadarChart(metrics) {
+            const canvas = document.getElementById('radarChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const size = Math.min(rect.width - 20, 160);
+            canvas.width = size;
+            canvas.height = size;
+
+            const labels = ['Jawline', 'Eyes', 'Nose', 'Lips', 'Symmetry', 'Harmony'];
+            const values = [
+                metrics.jawline / 10,
+                metrics.eyes / 10,
+                metrics.nose / 10,
+                metrics.lips / 10,
+                metrics.symmetry / 10,
+                metrics.harmony / 10
+            ];
+
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = Math.min(cx, cy) * 0.75;
+
+            ctx.clearRect(0, 0, size, size);
+
+            // Grid
+            for (let r = 0.25; r <= 1; r += 0.25) {
+                ctx.beginPath();
+                for (let i = 0; i < labels.length; i++) {
+                    const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
+                    const x = cx + radius * r * Math.cos(angle);
+                    const y = cy + radius * r * Math.sin(angle);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
             }
 
-            if (improveList) {
-                improveList.innerHTML = improves.map(s =>
-                    `<li class="improve"><i class="fas fa-arrow-right"></i> ${s}</li>`
-                ).join('');
+            // Data
+            ctx.beginPath();
+            for (let i = 0; i < labels.length; i++) {
+                const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
+                const val = Math.min(values[i] || 0, 1);
+                const x = cx + radius * val * Math.cos(angle);
+                const y = cy + radius * val * Math.sin(angle);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(124,108,240,0.2)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(124,108,240,0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
 
-            if (tipList) {
-                tipList.innerHTML = tips.map(s =>
-                    `<li class="tip"><i class="fas fa-lightbulb"></i> ${s}</li>`
-                ).join('');
+            // Labels
+            ctx.fillStyle = 'rgba(255,255,255,0.3)';
+            ctx.font = '7px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for (let i = 0; i < labels.length; i++) {
+                const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
+                const x = cx + (radius + 14) * Math.cos(angle);
+                const y = cy + (radius + 14) * Math.sin(angle);
+                ctx.fillText(labels[i], x, y);
             }
+        }
+
+        function drawBarChart(metrics) {
+            const canvas = document.getElementById('barChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const width = Math.min(rect.width - 20, 160);
+            const height = 120;
+            canvas.width = width;
+            canvas.height = height;
+
+            const labels = ['Jaw', 'Eyes', 'Nose', 'Lips', 'Skin', 'Hair'];
+            const values = [
+                metrics.jawline / 10,
+                metrics.eyes / 10,
+                metrics.nose / 10,
+                metrics.lips / 10,
+                metrics.skin / 10,
+                metrics.hair / 10
+            ];
+            const colors = ['#8b7cf7', '#fbbf24', '#4ade80', '#f472b6', '#a188ff', '#f59e0b'];
+
+            const padding = 8;
+            const barWidth = (width - padding * 2) / labels.length - 4;
+            const maxVal = 1;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const chartHeight = height - 20;
+            const bottom = height - 4;
+
+            labels.forEach((label, i) => {
+                const x = padding + i * (barWidth + 4);
+                const val = Math.min(values[i] || 0, 1);
+                const barHeight = val * chartHeight;
+
+                // Bar
+                const grad = ctx.createLinearGradient(x, bottom, x, bottom - barHeight);
+                grad.addColorStop(0, colors[i]);
+                grad.addColorStop(1, colors[i] + '88');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.roundRect(x, bottom - barHeight, barWidth, barHeight, 2);
+                ctx.fill();
+
+                // Label
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.font = '6px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText(label, x + barWidth / 2, bottom + 2);
+
+                // Value
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.font = '6px Inter, sans-serif';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText((values[i] * 10).toFixed(1), x + barWidth / 2, bottom - barHeight - 2);
+            });
         }
 
         // ===== SAVE HISTORY =====
         function saveHistory(metrics) {
+            if (!historyToggle.classList.contains('active')) return;
+
             const entry = {
                 time: new Date().toLocaleTimeString(),
                 date: new Date().toLocaleDateString(),
                 score: metrics.overall.toFixed(1),
-                faceShape: metrics.faceShape
+                faceShape: metrics.faceShape,
+                metrics: {
+                    jawline: metrics.jawline.toFixed(1),
+                    eyes: metrics.eyes.toFixed(1),
+                    eyebrows: metrics.eyebrows.toFixed(1),
+                    nose: metrics.nose.toFixed(1),
+                    lips: metrics.lips.toFixed(1),
+                    skin: metrics.skin.toFixed(1),
+                    hair: metrics.hair.toFixed(1),
+                    symmetry: metrics.symmetry.toFixed(1),
+                    harmony: metrics.harmony.toFixed(1),
+                    goldenRatio: metrics.goldenRatio.toFixed(0)
+                }
             };
+
             history.unshift(entry);
-            if (history.length > 30) history.pop();
+            if (history.length > 50) history.pop();
 
             try {
                 localStorage.setItem('looksmax_history', JSON.stringify(history));
@@ -1721,16 +2306,32 @@
             if (!historyList) return;
 
             if (history.length === 0) {
-                historyList.innerHTML = '<span class="empty-history">Chưa có đánh giá nào</span>';
+                historyList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-clock-rotate-left"></i>
+                            <p>Chưa có đánh giá nào</p>
+                        </div>
+                    `;
+                historyCount.textContent = '0 mục';
+                historyDot.classList.remove('show');
                 return;
             }
 
             historyList.innerHTML = history.map((item, index) => `
                     <div class="history-item" onclick="loadHistory(${index})">
-                        <span class="h-time">${item.time}</span>
-                        <span class="h-score">${item.score}</span>
+                        <div class="left">
+                            <span class="score-small">${item.score}/10</span>
+                            <span class="date">${item.date} · ${item.time}</span>
+                        </div>
+                        <div class="right">
+                            <span class="shape-tag">${item.faceShape || '--'}</span>
+                            <i class="fas fa-chevron-right arrow"></i>
+                        </div>
                     </div>
                 `).join('');
+
+            historyCount.textContent = history.length + ' mục';
+            historyDot.classList.add('show');
         }
 
         // ===== LOAD HISTORY =====
@@ -1738,11 +2339,27 @@
             const item = history[index];
             if (!item) return;
 
-            if (overallScore) overallScore.textContent = item.score;
-            if (faceShapeText) faceShapeText.textContent = item.faceShape || '--';
+            // Navigate to home
+            navigateTo('page-home');
 
-            if (resultCard) resultCard.classList.add('active');
+            // Display results
+            const metrics = {
+                overall: parseFloat(item.score),
+                faceShape: item.faceShape,
+                jawline: parseFloat(item.metrics?.jawline || 5),
+                eyes: parseFloat(item.metrics?.eyes || 5),
+                eyebrows: parseFloat(item.metrics?.eyebrows || 5),
+                nose: parseFloat(item.metrics?.nose || 5),
+                lips: parseFloat(item.metrics?.lips || 5),
+                skin: parseFloat(item.metrics?.skin || 5),
+                hair: parseFloat(item.metrics?.hair || 5),
+                symmetry: parseFloat(item.metrics?.symmetry || 5),
+                harmony: parseFloat(item.metrics?.harmony || 5),
+                goldenRatio: parseFloat(item.metrics?.goldenRatio || 50)
+            };
 
+            // Display without animation
+            displayResults(metrics);
             showToast(`📊 Đã tải kết quả lúc ${item.time}`, 'success');
         };
 
@@ -1764,15 +2381,14 @@
         }
 
         // ===== CAMERA =====
-        function startCamera() {
+        function startCamera(facing = 'user') {
             if (cameraStream) {
                 stopCamera();
-                return;
             }
 
             const constraints = {
                 video: {
-                    facingMode: 'user',
+                    facingMode: facing,
                     width: { ideal: 400 },
                     height: { ideal: 400 }
                 }
@@ -1781,20 +2397,17 @@
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     cameraStream = stream;
-                    if (video) {
-                        video.srcObject = stream;
-                        video.play().catch(e => console.warn('Video play error:', e));
-                    }
+                    video.srcObject = stream;
+                    video.play().catch(e => console.warn('Video play error:', e));
                     cameraActive = true;
-                    if (imagePreview) imagePreview.style.display = 'none';
-                    if (video) video.style.display = 'block';
-                    if (cameraBtn) cameraBtn.innerHTML = '<i class="fas fa-stop"></i> Tắt';
+                    imagePreview.style.display = 'none';
+                    video.style.display = 'block';
                     showToast('📸 Camera đã sẵn sàng', 'success');
                 })
                 .catch(err => {
                     console.error('Camera error:', err);
                     showToast('⚠️ Không thể truy cập camera. Hãy tải ảnh lên.', 'error');
-                    if (uploadBtn) uploadBtn.click();
+                    uploadBtn.click();
                 });
         }
 
@@ -1804,11 +2417,21 @@
                 cameraStream = null;
             }
             cameraActive = false;
-            if (video) {
-                video.srcObject = null;
-                video.style.display = 'none';
-            }
-            if (cameraBtn) cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Cam';
+            video.srcObject = null;
+            video.style.display = 'none';
+        }
+
+        function switchCamera() {
+            cameraFacing = cameraFacing === 'user' ? 'environment' : 'user';
+            startCamera(cameraFacing);
+            showToast(`🔄 Đã chuyển sang camera ${cameraFacing === 'user' ? 'trước' : 'sau'}`, 'info');
+        }
+
+        function toggleFlash() {
+            flashActive = !flashActive;
+            // Note: Flash control requires track.getCapabilities() which may not be supported
+            flashBtn.classList.toggle('active');
+            showToast(flashActive ? '💡 Đèn flash bật' : '💡 Đèn flash tắt', 'info');
         }
 
         // ===== LOAD IMAGE =====
@@ -1816,18 +2439,121 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
-                if (imagePreview) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                }
-                if (video) video.style.display = 'none';
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                video.style.display = 'none';
                 stopCamera();
-                showToast('📷 Đã tải ảnh', 'success');
+                showToast('📷 Đã tải ảnh! Nhấn nút chụp để phân tích', 'success');
+                // Auto analyze
+                setTimeout(performCapture, 500);
             };
             reader.onerror = () => {
                 showToast('⚠️ Lỗi đọc ảnh', 'error');
             };
             reader.readAsDataURL(file);
+        }
+
+        // ===== SHARE =====
+        function shareResult() {
+            if (!currentResults) {
+                showToast('Không có kết quả để chia sẻ', 'error');
+                return;
+            }
+
+            const text =
+                `🔥 Looksmax AI Pro - Điểm của tôi: ${currentResults.overall.toFixed(1)}/10\n` +
+                `📊 Khuôn mặt: ${currentResults.faceShape}\n` +
+                `✨ Tỷ lệ vàng: ${currentResults.goldenRatio.toFixed(0)}%\n\n` +
+                `Thử ngay để biết điểm của bạn!`;
+
+            if (navigator.share) {
+                navigator.share({ title: 'Looksmax AI Pro', text }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('📋 Đã sao chép kết quả!', 'success');
+                });
+            }
+        }
+
+        // ===== EXPORT PNG =====
+        function exportPNG() {
+            const section = resultsSection;
+            if (!section || !section.classList.contains('active')) {
+                showToast('Không có kết quả để xuất', 'error');
+                return;
+            }
+
+            html2canvas ? html2canvas(section, {
+                backgroundColor: '#0a0c10',
+                scale: 2
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `looksmax_result_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('✅ Đã xuất PNG!', 'success');
+            }).catch(() => {
+                showToast('⚠️ Lỗi xuất ảnh', 'error');
+            }) : showToast('⚠️ Đang tải thư viện...', 'warning');
+        }
+
+        // ===== COPY TO CLIPBOARD =====
+        function copyResult() {
+            if (!currentResults) {
+                showToast('Không có kết quả để sao chép', 'error');
+                return;
+            }
+
+            const text =
+                `🔥 Looksmax AI Pro\n` +
+                `Điểm: ${currentResults.overall.toFixed(1)}/10\n` +
+                `Khuôn mặt: ${currentResults.faceShape}\n` +
+                `Tỷ lệ vàng: ${currentResults.goldenRatio.toFixed(0)}%\n` +
+                `Jawline: ${currentResults.jawline.toFixed(1)} | Eyes: ${currentResults.eyes.toFixed(1)}\n` +
+                `Nose: ${currentResults.nose.toFixed(1)} | Lips: ${currentResults.lips.toFixed(1)}\n` +
+                `Symmetry: ${currentResults.symmetry.toFixed(1)} | Harmony: ${currentResults.harmony.toFixed(1)}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 Đã sao chép!', 'success');
+            }).catch(() => {
+                showToast('⚠️ Lỗi sao chép', 'error');
+            });
+        }
+
+        // ===== EXPORT DATA =====
+        function exportData() {
+            if (history.length === 0) {
+                showToast('Không có dữ liệu để xuất', 'error');
+                return;
+            }
+
+            const data = {
+                exportedAt: new Date().toISOString(),
+                total: history.length,
+                history: history
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = `looksmax_data_${Date.now()}.json`;
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+            showToast('✅ Đã xuất dữ liệu!', 'success');
+        }
+
+        // ===== NAVIGATION =====
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const page = document.getElementById(pageId);
+            if (page) page.classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
+
+            // Scroll to top
+            document.getElementById('appContent').scrollTop = 0;
         }
 
         // ===== FRAME LOOP =====
@@ -1850,7 +2576,78 @@
             animationFrameId = requestAnimationFrame(frameLoop);
         }
 
-        // ===== PAGE VISIBILITY =====
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+                navigateTo(page);
+            });
+        });
+
+        // Camera
+        captureBtn.addEventListener('click', performCapture);
+        uploadBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                loadImageFile(e.target.files[0]);
+            }
+            e.target.value = '';
+        });
+
+        cameraSwitchBtn.addEventListener('click', switchCamera);
+        flashBtn.addEventListener('click', toggleFlash);
+
+        // Share
+        shareBtn.addEventListener('click', shareResult);
+        exportBtn.addEventListener('click', exportPNG);
+        copyBtn.addEventListener('click', copyResult);
+
+        // History
+        clearHistoryBtn.addEventListener('click', clearHistory);
+
+        // Settings
+        darkToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            // Toggle dark mode (simplified)
+            document.body.style.background = this.classList.contains('active') ? '#0a0c10' : '#f0f2f5';
+            showToast(this.classList.contains('active') ? '🌙 Dark Mode' : '☀️ Light Mode', 'info');
+        });
+
+        animToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            useAnimation = this.classList.contains('active');
+            showToast(useAnimation ? '✅ Animation bật' : '⏸️ Animation tắt', 'info');
+        });
+
+        overlayToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            showOverlay = this.classList.contains('active');
+            if (canvas) canvas.style.display = showOverlay ? 'block' : 'none';
+            showToast(showOverlay ? '✅ Face Overlay bật' : '❌ Face Overlay tắt', 'info');
+            if (showOverlay) drawOverlay();
+        });
+
+        historyToggle.addEventListener('click', function() {
+            this.classList.toggle('active');
+            showToast(this.classList.contains('active') ? '✅ Lưu lịch sử bật' : '❌ Lưu lịch sử tắt', 'info');
+        });
+
+        exportDataBtn.addEventListener('click', exportData);
+
+        // Keyboard shortcut
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && !e.target.matches('input, button, textarea')) {
+                e.preventDefault();
+                performCapture();
+            }
+        });
+
+        // Page Visibility
         document.addEventListener('visibilitychange', () => {
             isPageVisible = !document.hidden;
             if (!isPageVisible && animationFrameId) {
@@ -1861,70 +2658,22 @@
             }
         });
 
-        // ===== RESIZE =====
-        function handleResize() {
+        // Resize
+        window.addEventListener('resize', () => {
             if (showOverlay && isFaceDetected) {
                 drawOverlay();
             } else {
                 drawGuidanceOval();
             }
-        }
-
-        // ===== EVENT LISTENERS =====
-        if (cameraBtn) {
-            cameraBtn.addEventListener('click', startCamera);
-        }
-
-        if (uploadBtn) {
-            uploadBtn.addEventListener('click', () => {
-                if (fileInput) fileInput.click();
-            });
-        }
-
-        if (fileInput) {
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files && e.target.files[0]) {
-                    loadImageFile(e.target.files[0]);
-                }
-                e.target.value = '';
-            });
-        }
-
-        if (snapshotBtn) {
-            snapshotBtn.addEventListener('click', takeSnapshot);
-        }
-
-        if (captureBtn) {
-            captureBtn.addEventListener('click', performScan);
-        }
-
-        if (overlayToggle) {
-            overlayToggle.addEventListener('click', () => {
-                showOverlay = !showOverlay;
-                if (canvas) canvas.style.display = showOverlay ? 'block' : 'none';
-                showToast(showOverlay ? 'Bật Overlay' : 'Tắt Overlay', 'success');
-                if (showOverlay) drawOverlay();
-            });
-        }
-
-        if (clearHistoryBtn) {
-            clearHistoryBtn.addEventListener('click', clearHistory);
-        }
-
-        window.addEventListener('resize', handleResize);
-
-        // ===== KEYBOARD =====
-        document.addEventListener('keydown', (e) => {
-            if ((e.key === 'Enter' || e.key === ' ') &&
-                !e.target.matches('input, button, textarea')) {
-                e.preventDefault();
-                performScan();
-            }
         });
 
-        // ===== INIT =====
-        console.log('🚀 Looksmax AI Pro v3.5 - FINAL FIX');
+        // ============================================================
+        // INIT
+        // ============================================================
 
+        console.log('🚀 Looksmax AI Pro v3.5');
+
+        // Load FaceMesh
         if (window.FaceMesh) {
             initFaceMesh();
         } else {
@@ -1943,10 +2692,16 @@
             }, 10000);
         }
 
+        // Render history
         renderHistory();
+
+        // Start camera
         setTimeout(startCamera, 500);
+
+        // Start frame loop
         frameLoop();
 
+        // Cleanup
         window.addEventListener('beforeunload', () => {
             stopCamera();
             if (animationFrameId) {
@@ -1958,9 +2713,23 @@
             }
         });
 
+        // Add roundRect polyfill for older browsers
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (r > w / 2) r = w / 2;
+                if (r > h / 2) r = h / 2;
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                return this;
+            };
+        }
+
         console.log('✅ All systems ready');
         console.log(`📊 History: ${history.length} entries`);
-        console.log('📸 Buttons: Cam | Ảnh | Chụp | Quét | Layer');
+        console.log('📸 Capture → Analyze → Results');
     </script>
 </body>
 </html>
