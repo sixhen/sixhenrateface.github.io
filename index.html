@@ -22,7 +22,6 @@
             justify-content: center;
             align-items: center;
             padding: 12px;
-            overflow: hidden;
         }
 
         .app-wrapper {
@@ -386,6 +385,11 @@
             box-shadow: 0 4px 20px rgba(74, 222, 128, 0.2);
         }
 
+        .btn-success:hover {
+            box-shadow: 0 6px 30px rgba(74, 222, 128, 0.3);
+            transform: translateY(-1px);
+        }
+
         .btn-danger {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             border-color: #ef4444;
@@ -397,13 +401,6 @@
             font-size: 12px;
             min-height: 34px;
             flex: 0 1 auto;
-        }
-
-        .btn-icon {
-            padding: 10px;
-            flex: 0 0 auto;
-            aspect-ratio: 1;
-            min-height: 42px;
         }
 
         #file-input {
@@ -811,6 +808,11 @@
             .metric-item .value {
                 font-size: 14px;
             }
+            .controls .btn {
+                font-size: 11px;
+                padding: 6px 10px;
+                min-height: 32px;
+            }
         }
     </style>
 </head>
@@ -895,7 +897,10 @@
                     <button class="btn btn-sm" id="uploadBtn">
                         <i class="fas fa-image"></i> Ảnh
                     </button>
-                    <button class="btn btn-primary" id="captureBtn">
+                    <button class="btn btn-success btn-sm" id="snapshotBtn">
+                        <i class="fas fa-camera"></i> Chụp
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="captureBtn">
                         <i class="fas fa-sync"></i> Quét
                     </button>
                     <button class="btn btn-sm" id="overlayToggle">
@@ -1010,13 +1015,13 @@
         /**
          * ================================================================
          * LOOKSMAX AI PRO - COMPLETE FACE ANALYSIS
-         * Version: 3.2 (Fully Fixed)
+         * Version: 3.3 (Fully Fixed with Snapshot)
          * All calculations from real MediaPipe landmarks
          * No Math.random() - deterministic results
          * ================================================================
          */
 
-        // ===== DOM REFS WITH SAFETY CHECKS =====
+        // ===== DOM REFS =====
         const $ = (id) => document.getElementById(id);
         const video = $('video');
         const imagePreview = $('image-preview');
@@ -1025,6 +1030,7 @@
         const fileInput = $('file-input');
         const cameraBtn = $('cameraBtn');
         const uploadBtn = $('uploadBtn');
+        const snapshotBtn = $('snapshotBtn');
         const captureBtn = $('captureBtn');
         const overlayToggle = $('overlayToggle');
         const clearHistoryBtn = $('clearHistoryBtn');
@@ -1066,7 +1072,6 @@
         let isFaceDetected = false;
         let animationFrameId = null;
         let isPageVisible = true;
-        let lastResults = null;
         let history = [];
 
         // ===== SAFE LOAD FROM LOCALSTORAGE =====
@@ -1075,7 +1080,6 @@
             history = saved ? JSON.parse(saved) : [];
         } catch (e) {
             history = [];
-            console.warn('LocalStorage not available');
         }
 
         // ===== TOAST SYSTEM =====
@@ -1083,8 +1087,13 @@
             if (!toast || !toastMessage) return;
             toastMessage.textContent = msg;
             toast.className = 'toast';
-            toast.querySelector('i').className =
-                `fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}`;
+            const iconMap = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
+            };
+            toast.querySelector('i').className = `fas ${iconMap[type] || iconMap.success}`;
             toast.classList.add('show');
             clearTimeout(toast._timeout);
             toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
@@ -1103,7 +1112,7 @@
 
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-        // ===== INIT FACEMESH WITH ERROR HANDLING =====
+        // ===== INIT FACEMESH =====
         function initFaceMesh() {
             if (faceMesh || !window.FaceMesh) {
                 if (!window.FaceMesh) {
@@ -1132,7 +1141,6 @@
 
                 faceMesh.initialize().then(() => {
                     console.log('✅ FaceMesh initialized');
-                    showToast('✅ AI đã sẵn sàng', 'success');
                 }).catch((err) => {
                     console.error('FaceMesh init error:', err);
                     showToast('⚠️ Lỗi tải AI, thử refresh', 'error');
@@ -1146,7 +1154,6 @@
 
         // ===== ON FACEMESH RESULTS =====
         function onFaceMeshResults(results) {
-            lastResults = results;
             const hasFace = results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0;
 
             if (hasFace) {
@@ -1187,31 +1194,31 @@
             const lm = currentLandmarks;
             const scale = size;
 
-            // === 1. Face Outline ===
+            // Face Outline
             const faceIndices = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152,
                 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
             ];
-            drawLine(ctx, faceIndices, lm, scale, 'rgba(139, 124, 247, 0.35)', 1.5, true);
+            drawLine(faceIndices, lm, scale, 'rgba(139, 124, 247, 0.35)', 1.5, true);
 
-            // === 2. Jawline ===
+            // Jawline
             const jawIndices = [172, 150, 149, 176, 148, 152];
-            drawLine(ctx, jawIndices, lm, scale, 'rgba(161, 136, 255, 0.3)', 1.2, false);
+            drawLine(jawIndices, lm, scale, 'rgba(161, 136, 255, 0.3)', 1.2, false);
 
-            // === 3. Eyes ===
+            // Eyes
             const eyeLeft = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7];
             const eyeRight = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249];
-            drawLine(ctx, eyeLeft, lm, scale, 'rgba(251, 191, 36, 0.4)', 1.2, true);
-            drawLine(ctx, eyeRight, lm, scale, 'rgba(251, 191, 36, 0.4)', 1.2, true);
+            drawLine(eyeLeft, lm, scale, 'rgba(251, 191, 36, 0.4)', 1.2, true);
+            drawLine(eyeRight, lm, scale, 'rgba(251, 191, 36, 0.4)', 1.2, true);
 
-            // === 4. Nose ===
+            // Nose
             const noseIndices = [1, 2, 98, 327, 326, 325, 294, 64];
-            drawLine(ctx, noseIndices, lm, scale, 'rgba(161, 136, 255, 0.25)', 1.2, true);
+            drawLine(noseIndices, lm, scale, 'rgba(161, 136, 255, 0.25)', 1.2, true);
 
-            // === 5. Mouth ===
+            // Mouth
             const mouthIndices = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185];
-            drawLine(ctx, mouthIndices, lm, scale, 'rgba(251, 191, 36, 0.3)', 1.2, true);
+            drawLine(mouthIndices, lm, scale, 'rgba(251, 191, 36, 0.3)', 1.2, true);
 
-            // === 6. Midline ===
+            // Midline
             const top = lm[10];
             const bottom = lm[152];
             ctx.beginPath();
@@ -1223,7 +1230,7 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // === 7. Eye Line ===
+            // Eye Line
             const lEye = lm[33];
             const rEye = lm[263];
             ctx.beginPath();
@@ -1235,7 +1242,7 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // === 8. Facial Thirds ===
+            // Facial Thirds
             const yTop = lm[10].y * scale;
             const yBottom = lm[152].y * scale;
             const yThird1 = (yTop * 2 + yBottom) / 3;
@@ -1252,7 +1259,7 @@
             });
             ctx.setLineDash([]);
 
-            // === 9. Golden Ratio Spiral ===
+            // Golden Ratio Spiral
             const grX = (1 - lm[1].x) * scale;
             const grY = lm[1].y * scale;
             const grRadius = dist(lm[1], lm[152]) * scale * 0.2;
@@ -1268,7 +1275,7 @@
                 ctx.stroke();
             }
 
-            // === 10. Landmark dots ===
+            // Landmark dots
             const keyPoints = [33, 263, 1, 152, 10, 234, 454, 61, 291];
             keyPoints.forEach(idx => {
                 const p = lm[idx];
@@ -1282,9 +1289,8 @@
             });
         }
 
-        // Helper: Draw line from landmarks
-        function drawLine(ctx, indices, lm, scale, color, width, closed) {
-            if (!indices || indices.length === 0) return;
+        function drawLine(indices, lm, scale, color, width, closed) {
+            if (!ctx || !indices || indices.length === 0) return;
             ctx.beginPath();
             indices.forEach((idx, i) => {
                 const p = lm[idx];
@@ -1358,7 +1364,7 @@
                 const lJaw = getLM(lm, 172);
                 const rJaw = getLM(lm, 397);
 
-                // ===== SYMMETRY =====
+                // Symmetry
                 const eyeDistL = dist(lEye, lEyeOuter);
                 const eyeDistR = dist(rEye, rEyeOuter);
                 const eyeSym = eyeDistL + eyeDistR > 0.001 ?
@@ -1378,13 +1384,13 @@
 
                 const symmetry = clamp((eyeSym * 0.6 + mouthSym * 0.4) * 10, 0, 10);
 
-                // ===== JAWLINE =====
+                // Jawline
                 const jawWidth = dist(lJaw, rJaw);
                 const faceHeight = dist(forehead, chin);
                 const jawRatio = faceHeight > 0.001 ? jawWidth / faceHeight : 0.65;
                 const jawline = clamp((1 - Math.abs(jawRatio - 0.65) * 2.5) * 10, 0, 10);
 
-                // ===== EYES =====
+                // Eyes
                 const eyeWidthL = dist(lEyeOuter, lEyeInner);
                 const eyeWidthR = dist(rEyeOuter, rEyeInner);
                 const eyeHeightL = dist(lEyeTop, lEyeBottom);
@@ -1394,37 +1400,37 @@
                     3.0;
                 const eyes = clamp((1 - Math.abs(eyeSize - 3.0) * 0.6) * 10, 0, 10);
 
-                // ===== NOSE =====
+                // Nose
                 const noseWidth = dist(getLM(lm, 64), getLM(lm, 294));
                 const noseLength = dist(noseTip, noseBridge);
                 const noseRatio = noseLength > 0.001 ? noseWidth / noseLength : 0.5;
                 const nose = clamp((1 - Math.abs(noseRatio - 0.5) * 2) * 10, 0, 10);
 
-                // ===== LIPS =====
+                // Lips
                 const lipWidth = dist(lMouth, rMouth);
                 const lipHeight = dist(upperLip, lowerLip);
                 const lipRatio = lipWidth > 0.001 ? lipHeight / lipWidth : 0.35;
                 const lips = clamp((1 - Math.abs(lipRatio - 0.35) * 2.5) * 10, 0, 10);
 
-                // ===== SKIN (proxy) =====
+                // Skin (proxy)
                 const skin = clamp(symmetry * 0.8 + 0.5, 0, 10);
 
-                // ===== HAIR =====
+                // Hair
                 const hairline = getLM(lm, 10);
                 const hair = clamp((1 - Math.abs(hairline.y - 0.15) * 3) * 10, 0, 10);
 
-                // ===== HARMONY =====
+                // Harmony
                 const harmony = clamp((symmetry + jawline + eyes + nose + lips) / 5 * 1.1, 0, 10);
 
-                // ===== GOLDEN RATIO =====
+                // Golden Ratio
                 const faceWidth = dist(lCheek, rCheek);
                 const gr = faceHeight > 0.001 ? faceWidth / faceHeight : 0.618;
                 const goldenRatio = clamp((1 - Math.abs(gr - 0.618) * 3.5) * 100, 0, 100);
 
-                // ===== FACE SHAPE =====
+                // Face Shape
                 const shape = detectFaceShape(lm);
 
-                // ===== OVERALL =====
+                // Overall
                 const overall = clamp(
                     symmetry * 0.2 + jawline * 0.15 + eyes * 0.15 + nose * 0.1 +
                     lips * 0.1 + harmony * 0.2 + skin * 0.05 + hair * 0.05, 0, 10
@@ -1489,6 +1495,46 @@
             }
         }
 
+        // ===== SNAPSHOT (CHỤP ẢNH) =====
+        function takeSnapshot() {
+            if (!video || !video.srcObject || video.readyState < 2) {
+                showToast('📸 Vui lòng bật camera trước', 'error');
+                return;
+            }
+
+            try {
+                const snapCanvas = document.createElement('canvas');
+                const snapCtx = snapCanvas.getContext('2d');
+                const size = Math.min(video.videoWidth || 400, video.videoHeight || 400) || 400;
+                snapCanvas.width = size;
+                snapCanvas.height = size;
+
+                // Draw from video (mirrored)
+                snapCtx.save();
+                snapCtx.scale(-1, 1);
+                snapCtx.drawImage(video, -size, 0, size, size);
+                snapCtx.restore();
+
+                // Convert to image
+                const dataUrl = snapCanvas.toDataURL('image/jpeg', 0.95);
+
+                // Show preview
+                if (imagePreview) {
+                    imagePreview.src = dataUrl;
+                    imagePreview.style.display = 'block';
+                    video.style.display = 'none';
+                }
+
+                // Stop camera
+                stopCamera();
+
+                showToast('📸 Đã chụp ảnh! Nhấn "Quét" để phân tích', 'success');
+            } catch (err) {
+                console.error('Snapshot error:', err);
+                showToast('⚠️ Lỗi chụp ảnh', 'error');
+            }
+        }
+
         // ===== PERFORM SCAN =====
         async function performScan() {
             if (isScanning) return;
@@ -1497,7 +1543,6 @@
                 return;
             }
 
-            // Check if we have a source
             const hasVideo = video && video.srcObject && video.readyState >= 2;
             const hasImage = imagePreview && imagePreview.style.display !== 'none' && imagePreview.src;
 
@@ -1516,7 +1561,7 @@
                 s.querySelector('.step-status').textContent = '...'; });
 
             try {
-                // Step 1: Face Detect
+                // Step 1
                 if (steps.length > 0) {
                     steps[0].classList.add('active');
                     steps[0].querySelector('.step-status').textContent = '⏳';
@@ -1632,21 +1677,14 @@
 
             const o = metrics.overall;
 
-            // Score with count-up
             animateNumber(overallScore, 0, o, 800);
 
-            // Rating
             const rating = o >= 9 ? 'Xuất sắc' : o >= 8 ? 'Rất tốt' : o >= 7 ? 'Tốt' : o >= 6 ? 'Trung bình' : 'Cần cải thiện';
             if (ratingText) ratingText.textContent = rating;
-
-            // Face shape
             if (faceShapeText) faceShapeText.textContent = metrics.faceShape;
-
-            // Golden Ratio
             if (grValue) grValue.textContent = metrics.goldenRatio.toFixed(0) + '%';
             if (grBar) grBar.style.width = metrics.goldenRatio + '%';
 
-            // Metrics
             animateNumber(symmetryEl, 0, metrics.symmetry, 600);
             animateNumber(jawlineEl, 0, metrics.jawline, 600);
             animateNumber(eyesEl, 0, metrics.eyes, 600);
@@ -1656,7 +1694,6 @@
             animateNumber(hairEl, 0, metrics.hair, 600);
             animateNumber(harmonyEl, 0, metrics.harmony, 600);
 
-            // Feedback
             generateFeedback(metrics);
 
             resultCard.classList.add('active');
@@ -1747,9 +1784,8 @@
 
             try {
                 localStorage.setItem('looksmax_history', JSON.stringify(history));
-            } catch (e) {
-                // LocalStorage full or disabled - ignore
-            }
+            } catch (e) {}
+
             renderHistory();
         }
 
@@ -1762,8 +1798,8 @@
                 return;
             }
 
-            historyList.innerHTML = history.map((item) => `
-                    <div class="history-item" onclick="loadHistory(${history.indexOf(item)})">
+            historyList.innerHTML = history.map((item, index) => `
+                    <div class="history-item" onclick="loadHistory(${index})">
                         <span class="h-time">${item.time}</span>
                         <span class="h-score">${item.score}</span>
                     </div>
@@ -1778,7 +1814,6 @@
             if (overallScore) overallScore.textContent = item.score;
             if (faceShapeText) faceShapeText.textContent = item.faceShape || '--';
 
-            // Show result card
             if (resultCard) resultCard.classList.add('active');
 
             showToast(`📊 Đã tải kết quả lúc ${item.time}`, 'success');
@@ -1795,7 +1830,7 @@
                 history = [];
                 try {
                     localStorage.removeItem('looksmax_history');
-                } catch (e) { /* ignore */ }
+                } catch (e) {}
                 renderHistory();
                 showToast('🗑️ Đã xóa lịch sử', 'success');
             }
@@ -1832,7 +1867,6 @@
                 .catch(err => {
                     console.error('Camera error:', err);
                     showToast('⚠️ Không thể truy cập camera. Hãy tải ảnh lên.', 'error');
-                    // Fallback to image upload
                     if (uploadBtn) uploadBtn.click();
                 });
         }
@@ -1879,12 +1913,9 @@
             if (faceMesh && cameraActive && video && video.readyState >= 2) {
                 try {
                     faceMesh.send({ image: video });
-                } catch (e) {
-                    // Silent fail - frame may be unready
-                }
+                } catch (e) {}
             }
 
-            // Draw guidance if no face detected
             if (!isFaceDetected && showOverlay) {
                 drawGuidanceOval();
             }
@@ -1903,7 +1934,7 @@
             }
         });
 
-        // ===== RESIZE HANDLER =====
+        // ===== RESIZE =====
         function handleResize() {
             if (showOverlay && isFaceDetected) {
                 drawOverlay();
@@ -1913,12 +1944,10 @@
         }
 
         // ===== EVENT LISTENERS =====
-        // Camera
         if (cameraBtn) {
             cameraBtn.addEventListener('click', startCamera);
         }
 
-        // Upload
         if (uploadBtn) {
             uploadBtn.addEventListener('click', () => {
                 if (fileInput) fileInput.click();
@@ -1934,12 +1963,16 @@
             });
         }
 
-        // Capture - NÚT CHỤP ẢNH QUAN TRỌNG
+        // ===== SNAPSHOT BUTTON =====
+        if (snapshotBtn) {
+            snapshotBtn.addEventListener('click', takeSnapshot);
+        }
+
+        // ===== CAPTURE/SCAN BUTTON =====
         if (captureBtn) {
             captureBtn.addEventListener('click', performScan);
         }
 
-        // Overlay toggle
         if (overlayToggle) {
             overlayToggle.addEventListener('click', () => {
                 showOverlay = !showOverlay;
@@ -1949,15 +1982,13 @@
             });
         }
 
-        // Clear history
         if (clearHistoryBtn) {
             clearHistoryBtn.addEventListener('click', clearHistory);
         }
 
-        // Resize
         window.addEventListener('resize', handleResize);
 
-        // ===== KEYBOARD SHORTCUTS =====
+        // ===== KEYBOARD =====
         document.addEventListener('keydown', (e) => {
             if ((e.key === 'Enter' || e.key === ' ') &&
                 !e.target.matches('input, button, textarea')) {
@@ -1967,13 +1998,11 @@
         });
 
         // ===== INIT =====
-        console.log('🚀 Looksmax AI Pro v3.2 (Fully Fixed)');
+        console.log('🚀 Looksmax AI Pro v3.3 (Fully Fixed with Snapshot)');
 
-        // Init FaceMesh with retry
         if (window.FaceMesh) {
             initFaceMesh();
         } else {
-            // Wait for CDN
             const checkCDN = setInterval(() => {
                 if (window.FaceMesh) {
                     clearInterval(checkCDN);
@@ -1981,7 +2010,6 @@
                 }
             }, 500);
 
-            // Timeout after 10 seconds
             setTimeout(() => {
                 clearInterval(checkCDN);
                 if (!faceMeshReady) {
@@ -1990,16 +2018,10 @@
             }, 10000);
         }
 
-        // Render history
         renderHistory();
-
-        // Start camera automatically
         setTimeout(startCamera, 500);
-
-        // Start frame loop
         frameLoop();
 
-        // ===== CLEANUP =====
         window.addEventListener('beforeunload', () => {
             stopCamera();
             if (animationFrameId) {
@@ -2007,13 +2029,13 @@
                 animationFrameId = null;
             }
             if (faceMesh) {
-                try { faceMesh.close(); } catch (e) { /* ignore */ }
+                try { faceMesh.close(); } catch (e) {}
             }
         });
 
         console.log('✅ All systems ready');
         console.log(`📊 History: ${history.length} entries`);
-        console.log('📸 Press "Quét" button or Space/Enter to analyze');
+        console.log('📸 Buttons: Cam → Chụp → Quét');
     </script>
 </body>
 </html>
