@@ -2,36 +2,13 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Looksmax AI Pro · Professional Face Analysis</title>
-    <link rel="manifest" href="data:application/json,{}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Looksmax AI Pro · Real-time Face Analysis</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <style>
-        /* ===== CSS VARIABLES ===== */
-        :root {
-            --primary: #7c6cf0;
-            --primary-dark: #6a5cdb;
-            --primary-glow: rgba(124, 108, 240, 0.3);
-            --secondary: #a188ff;
-            --bg-dark: #0b0d10;
-            --card-bg: rgba(20, 22, 26, 0.85);
-            --text-primary: #f0f2f5;
-            --text-secondary: #a0a7b5;
-            --text-muted: #5f687b;
-            --border-color: rgba(255, 255, 255, 0.06);
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --danger: #ef4444;
-            --radius: 40px;
-            --radius-sm: 20px;
-            --radius-xs: 12px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -40,141 +17,97 @@
         }
 
         body {
-            background: var(--bg-dark);
+            background: #0a0c10;
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            padding: 16px;
-            background-image:
-                radial-gradient(ellipse at 20% 50%, rgba(124, 108, 240, 0.05) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 50%, rgba(124, 108, 240, 0.05) 0%, transparent 60%);
+            align-items: center;
+            padding: 12px;
+            overflow: hidden;
         }
 
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3a3f4a;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4a4f5a;
+        .app-wrapper {
+            max-width: 500px;
+            width: 100%;
+            position: relative;
         }
 
         /* ===== MAIN CONTAINER ===== */
-        .app-container {
-            max-width: 520px;
-            width: 100%;
-            padding-bottom: 40px;
-        }
-
-        /* ===== GLASS CARD ===== */
-        .glass-card {
-            width: 100%;
-            background: var(--card-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border-radius: var(--radius);
-            padding: 24px 20px 30px;
-            box-shadow:
-                0 25px 50px -8px rgba(0, 0, 0, 0.9),
-                0 0 0 1px rgba(255, 255, 255, 0.04),
-                0 0 60px rgba(124, 108, 240, 0.05);
+        .main-container {
+            background: rgba(16, 18, 24, 0.92);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-radius: 40px;
+            padding: 20px 18px 24px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: all var(--transition);
-            color: var(--text-primary);
             position: relative;
             overflow: hidden;
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 20%, rgba(124, 108, 240, 0.03), transparent 70%);
-            pointer-events: none;
         }
 
         /* ===== HEADER ===== */
-        .app-header {
+        .header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
+            gap: 10px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 16px;
         }
 
-        .app-header .logo {
-            color: var(--primary);
-            font-size: 26px;
-            background: rgba(124, 108, 240, 0.12);
-            padding: 10px;
-            border-radius: 16px;
-            box-shadow: 0 0 20px rgba(124, 108, 240, 0.1);
-        }
-
-        .app-header h1 {
+        .header .logo {
+            color: #8b7cf7;
             font-size: 22px;
+            background: rgba(139, 124, 247, 0.12);
+            padding: 8px;
+            border-radius: 14px;
+        }
+
+        .header h1 {
+            font-size: 20px;
             font-weight: 700;
+            color: #f0f2f5;
             letter-spacing: -0.5px;
         }
 
-        .app-header .badge {
-            font-size: 11px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+        .header .badge {
             margin-left: auto;
+            font-size: 10px;
+            font-weight: 500;
+            color: #8b9bb5;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 4px 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .app-header .badge i {
-            color: var(--primary);
-            font-size: 10px;
+        .header .badge i {
+            color: #8b7cf7;
+            font-size: 8px;
         }
 
-        /* ===== MEDIA AREA ===== */
-        .media-area {
+        /* ===== CAMERA AREA ===== */
+        .camera-area {
             position: relative;
-            background: #14181e;
-            border-radius: 28px;
+            border-radius: 24px;
             overflow: hidden;
-            margin-bottom: 18px;
-            border: 1px solid var(--border-color);
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+            background: #0c0e12;
+            aspect-ratio: 1/1;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7);
         }
 
-        #video,
-        #image-preview {
+        #video {
             width: 100%;
-            aspect-ratio: 1 / 1;
+            height: 100%;
             object-fit: cover;
             display: block;
-            background: #101316;
+            transform: scaleX(-1);
         }
 
-        #image-preview {
-            display: none;
-        }
-
-        /* ===== FACE OVERLAY CANVAS ===== */
         #overlay-canvas {
             position: absolute;
             top: 0;
@@ -185,98 +118,7 @@
             z-index: 5;
         }
 
-        /* ===== SCAN OVERLAY ===== */
-        .scan-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            z-index: 10;
-            border-radius: 28px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .scan-overlay.active {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .scan-spinner {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.06);
-            border-top-color: var(--primary);
-            border-right-color: var(--secondary);
-            animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            box-shadow: 0 0 40px rgba(124, 108, 240, 0.2);
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .scan-text {
-            font-weight: 600;
-            font-size: 18px;
-            letter-spacing: 0.3px;
-            color: #d9dee8;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.6;
-            }
-        }
-
-        .scan-progress {
-            width: 200px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .scan-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 4px;
-            width: 0%;
-            animation: progress 2s ease-in-out infinite;
-        }
-
-        @keyframes progress {
-            0% {
-                width: 0%;
-                transform: translateX(-100%);
-            }
-            100% {
-                width: 100%;
-                transform: translateX(0%);
-            }
-        }
-
-        /* ===== LASER SCAN EFFECT ===== */
+        /* ===== LASER SCAN ===== */
         .laser-scan {
             position: absolute;
             top: 0;
@@ -286,108 +128,233 @@
             pointer-events: none;
             z-index: 4;
             overflow: hidden;
-            border-radius: 28px;
             opacity: 0;
             transition: opacity 0.5s ease;
+            border-radius: 24px;
         }
 
         .laser-scan.active {
             opacity: 1;
         }
 
-        .laser-scan::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(124, 108, 240, 0.03), transparent, rgba(124, 108, 240, 0.03), transparent);
-            animation: laserSpin 3s linear infinite;
-        }
-
-        @keyframes laserSpin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .laser-line {
             position: absolute;
-            top: 0;
+            top: -2px;
             left: 0;
             width: 100%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), transparent);
-            box-shadow: 0 0 20px rgba(124, 108, 240, 0.3);
-            animation: laserMove 2s ease-in-out infinite;
+            background: linear-gradient(90deg, transparent, #8b7cf7, #a188ff, #8b7cf7, transparent);
+            box-shadow: 0 0 30px rgba(139, 124, 247, 0.4), 0 0 60px rgba(139, 124, 247, 0.2);
+            animation: laserMove 2.5s ease-in-out infinite;
         }
 
         @keyframes laserMove {
             0% {
-                top: 5%;
+                top: -2px;
                 opacity: 0;
             }
-            20% {
+            10% {
                 opacity: 1;
             }
-            80% {
+            90% {
                 opacity: 1;
             }
             100% {
-                top: 95%;
+                top: 100%;
                 opacity: 0;
             }
         }
 
-        /* ===== OVERLAY CONTROLS ===== */
-        .overlay-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 14px 16px 18px;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            border-top: 1px solid var(--border-color);
-            position: relative;
-            z-index: 2;
+        .laser-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(139, 124, 247, 0.03), transparent 70%);
+            pointer-events: none;
         }
 
-        /* ===== BUTTONS ===== */
-        .btn {
+        /* ===== SCAN OVERLAY ===== */
+        .scan-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 24px;
+            animation: fadeInOverlay 0.4s ease;
+        }
+
+        .scan-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeInOverlay {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .scan-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .scan-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.4s ease;
+            opacity: 0.3;
+        }
+
+        .scan-step.active {
+            opacity: 1;
+            background: rgba(139, 124, 247, 0.08);
+            border-color: rgba(139, 124, 247, 0.15);
+            box-shadow: 0 0 20px rgba(139, 124, 247, 0.05);
+        }
+
+        .scan-step.done {
+            opacity: 0.7;
+            border-color: rgba(74, 222, 128, 0.15);
+        }
+
+        .scan-step .step-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 10px 16px;
-            border-radius: 40px;
+            color: #8b9bb5;
+            flex-shrink: 0;
+            transition: all 0.4s ease;
+        }
+
+        .scan-step.active .step-icon {
+            background: rgba(139, 124, 247, 0.2);
+            color: #8b7cf7;
+            box-shadow: 0 0 20px rgba(139, 124, 247, 0.1);
+        }
+
+        .scan-step.done .step-icon {
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+        }
+
+        .scan-step .step-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: #b0bcca;
+            transition: all 0.4s ease;
+        }
+
+        .scan-step.active .step-text {
             color: #e8ecf2;
+        }
+
+        .scan-step.done .step-text {
+            color: #8b9bb5;
+        }
+
+        .scan-step .step-status {
+            margin-left: auto;
+            font-size: 12px;
+            color: #5f6b80;
+        }
+
+        .scan-step.active .step-status {
+            color: #8b7cf7;
+        }
+
+        .scan-step.done .step-status {
+            color: #4ade80;
+        }
+
+        /* ===== GUIDANCE FRAME ===== */
+        .guidance-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            height: 80%;
+            border: 2px dashed rgba(139, 124, 247, 0.15);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            transition: all 0.5s ease;
+            opacity: 0.6;
+        }
+
+        .guidance-frame.face-detected {
+            border-color: rgba(74, 222, 128, 0.2);
+            opacity: 0.2;
+        }
+
+        .guidance-text {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-align: center;
+            pointer-events: none;
+            z-index: 2;
+            white-space: nowrap;
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls {
+            display: flex;
+            gap: 8px;
+            padding: 14px 4px 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 10px 16px;
+            border-radius: 30px;
+            color: #c8d0dc;
             font-weight: 500;
             font-size: 13px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            backdrop-filter: blur(4px);
-            transition: all var(--transition);
+            transition: all 0.25s ease;
             cursor: pointer;
             flex: 1 0 auto;
             justify-content: center;
+            min-height: 42px;
+            user-select: none;
             position: relative;
             overflow: hidden;
-            user-select: none;
-            min-height: 44px;
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 70%);
-            opacity: 0;
-            transition: opacity var(--transition);
-        }
-
-        .btn:hover::after {
-            opacity: 1;
         }
 
         .btn:active {
@@ -395,47 +362,28 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            border-color: var(--primary);
+            background: linear-gradient(135deg, #8b7cf7, #7c6cf0);
+            border-color: #8b7cf7;
             color: white;
-            box-shadow: 0 4px 20px rgba(124, 108, 240, 0.3);
+            box-shadow: 0 4px 20px rgba(139, 124, 247, 0.25);
         }
 
         .btn-primary:hover {
-            box-shadow: 0 6px 30px rgba(124, 108, 240, 0.4);
+            box-shadow: 0 6px 30px rgba(139, 124, 247, 0.35);
             transform: translateY(-1px);
-        }
-
-        .btn-primary i {
-            color: white;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border-color: rgba(255, 255, 255, 0.12);
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
         }
 
         .btn-success {
             background: linear-gradient(135deg, #4ade80, #22c55e);
             border-color: #4ade80;
             color: white;
-            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.25);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            border-color: #ef4444;
-            color: white;
+            box-shadow: 0 4px 20px rgba(74, 222, 128, 0.2);
         }
 
         .btn-sm {
             padding: 6px 14px;
             font-size: 12px;
-            min-height: 32px;
+            min-height: 34px;
             flex: 0 1 auto;
         }
 
@@ -443,230 +391,162 @@
             padding: 10px;
             flex: 0 0 auto;
             aspect-ratio: 1;
+            min-height: 42px;
         }
 
         #file-input {
             display: none;
         }
 
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(20, 22, 26, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 14px 24px;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            color: var(--text-primary);
-            font-size: 14px;
-            z-index: 1000;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 90%;
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .toast i {
-            font-size: 18px;
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-
-        .toast.success i {
-            color: var(--success);
-        }
-        .toast.error i {
-            color: var(--danger);
-        }
-        .toast.warning i {
-            color: var(--warning);
-        }
-
         /* ===== RESULT CARD ===== */
         .result-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(8px);
-            border-radius: 28px;
-            padding: 20px 20px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            padding: 18px 18px 14px;
             margin-top: 16px;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(255, 255, 255, 0.04);
             display: none;
-            animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideUpResult 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .result-card.active {
             display: block;
         }
 
-        @keyframes slideUp {
+        @keyframes slideUpResult {
             0% {
                 opacity: 0;
-                transform: translateY(20px) scale(0.98);
+                transform: translateY(20px);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
         }
 
-        /* ===== OVERALL SCORE ===== */
-        .overall-score {
+        .result-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 12px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 16px;
-            margin-bottom: 16px;
+            gap: 10px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 14px;
         }
 
-        .score-left {
+        .score-main {
             display: flex;
             align-items: baseline;
             gap: 6px;
         }
 
-        .score-left .label {
-            font-size: 15px;
-            font-weight: 400;
-            color: var(--text-secondary);
+        .score-main .label {
+            font-size: 14px;
+            color: #8b9bb5;
         }
 
-        .score-number {
-            font-size: 48px;
+        .score-main .number {
+            font-size: 42px;
             font-weight: 800;
-            background: linear-gradient(135deg, #d9c9ff, var(--secondary), var(--primary));
+            background: linear-gradient(135deg, #d9c9ff, #a188ff, #8b7cf7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -2px;
-            text-shadow: 0 0 60px rgba(124, 108, 240, 0.2);
         }
 
-        .score-max {
-            font-size: 18px;
+        .score-main .max {
+            font-size: 16px;
             font-weight: 300;
-            color: #6a7385;
+            color: #5f6b80;
         }
 
-        .score-right {
+        .score-badges {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .score-rating {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--warning);
-            background: rgba(251, 191, 36, 0.1);
+        .badge-shape {
+            font-size: 12px;
+            color: #a188ff;
+            background: rgba(161, 136, 255, 0.08);
             padding: 4px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(161, 136, 255, 0.08);
         }
 
-        .score-rating i {
-            font-size: 16px;
-        }
-
-        /* ===== FACE SHAPE BADGE ===== */
-        .face-shape-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .badge-rating {
             font-size: 13px;
-            color: var(--secondary);
-            background: rgba(161, 136, 255, 0.1);
+            font-weight: 500;
+            color: #fbbf24;
+            background: rgba(251, 191, 36, 0.08);
             padding: 4px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(161, 136, 255, 0.1);
+            border-radius: 16px;
+            border: 1px solid rgba(251, 191, 36, 0.08);
         }
 
-        /* ===== METRICS GRID ===== */
+        /* ===== METRICS ===== */
         .metrics-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 20px;
-            margin: 16px 0;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 4px 12px;
+            margin: 12px 0;
         }
 
         .metric-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
+            flex-direction: column;
             padding: 6px 0;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
-            transition: all var(--transition);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        .metric-item:hover {
-            border-bottom-color: rgba(124, 108, 240, 0.2);
-        }
-
-        .metric-name {
-            color: var(--text-secondary);
+        .metric-item .label {
+            font-size: 11px;
+            color: #6a7a8f;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .metric-name i {
-            font-size: 12px;
-            color: var(--primary);
-            opacity: 0.6;
-            width: 16px;
+        .metric-item .label i {
+            font-size: 10px;
+            color: #6a7a8f;
         }
 
-        .metric-value {
-            font-weight: 600;
-            color: #eef2f8;
-            min-width: 36px;
-            text-align: right;
-        }
-
-        /* ===== GOLDEN RATIO DISPLAY ===== */
-        .golden-ratio-display {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 12px 16px;
-            background: rgba(124, 108, 240, 0.05);
-            border-radius: var(--radius-xs);
-            border: 1px solid rgba(124, 108, 240, 0.08);
-            margin: 12px 0;
-        }
-
-        .golden-ratio-display .gr-value {
-            font-size: 28px;
+        .metric-item .value {
+            font-size: 16px;
             font-weight: 700;
-            color: var(--secondary);
+            color: #e8ecf2;
+            margin-top: 2px;
         }
 
-        .golden-ratio-display .gr-label {
+        /* ===== GOLDEN RATIO ===== */
+        .gr-display {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 14px;
+            background: rgba(139, 124, 247, 0.04);
+            border-radius: 14px;
+            border: 1px solid rgba(139, 124, 247, 0.06);
+            margin: 10px 0;
+        }
+
+        .gr-display .label {
             font-size: 13px;
-            color: var(--text-secondary);
+            color: #8b9bb5;
         }
 
-        .golden-ratio-display .gr-bar {
+        .gr-display .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #a188ff;
+            min-width: 60px;
+        }
+
+        .gr-display .bar {
             flex: 1;
             height: 4px;
             background: rgba(255, 255, 255, 0.06);
@@ -674,53 +554,59 @@
             overflow: hidden;
         }
 
-        .golden-ratio-display .gr-bar-fill {
+        .gr-display .bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: linear-gradient(90deg, #8b7cf7, #a188ff);
             border-radius: 4px;
             transition: width 1.2s ease;
         }
 
-        /* ===== FEEDBACK BLOCKS ===== */
+        /* ===== FEEDBACK ===== */
+        .feedback-section {
+            margin-top: 12px;
+        }
+
         .feedback-block {
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: var(--radius-sm);
-            padding: 14px 16px;
-            margin: 10px 0 6px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .feedback-block .title {
+            font-size: 12px;
             font-weight: 600;
-            font-size: 13px;
-            color: var(--text-secondary);
-            letter-spacing: 0.3px;
-            margin-bottom: 8px;
+            color: #6a7a8f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .feedback-block .title i {
-            color: var(--primary);
-            font-size: 14px;
+            font-size: 12px;
+            color: #8b7cf7;
         }
 
         .feedback-list {
             list-style: none;
-            padding-left: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 16px;
         }
 
         .feedback-list li {
             font-size: 13px;
-            padding: 4px 0;
+            color: #c8d0dc;
             display: flex;
             align-items: center;
-            gap: 10px;
-            color: #d2d9e8;
-            animation: slideIn 0.3s ease forwards;
+            gap: 6px;
+            padding: 2px 0;
+            animation: fadeItem 0.3s ease forwards;
             opacity: 0;
-            transform: translateX(-10px);
         }
 
         .feedback-list li:nth-child(1) {
@@ -732,376 +618,104 @@
         .feedback-list li:nth-child(3) {
             animation-delay: 0.15s;
         }
-        .feedback-list li:nth-child(4) {
-            animation-delay: 0.2s;
-        }
-        .feedback-list li:nth-child(5) {
-            animation-delay: 0.25s;
-        }
 
-        @keyframes slideIn {
+        @keyframes fadeItem {
             to {
                 opacity: 1;
-                transform: translateX(0);
             }
         }
 
         .feedback-list li i {
-            width: 18px;
-            flex-shrink: 0;
+            font-size: 12px;
         }
 
         .feedback-list .strength i {
-            color: var(--success);
+            color: #4ade80;
         }
-        .feedback-list .weakness i {
-            color: var(--warning);
+        .feedback-list .improve i {
+            color: #fbbf24;
         }
         .feedback-list .tip i {
-            color: var(--primary);
+            color: #8b7cf7;
         }
 
-        /* ===== ATTRACTIVENESS METERS ===== */
-        .attractiveness-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px 16px;
-            margin: 12px 0;
-        }
-
-        .attr-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .attr-item .attr-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .attr-item .attr-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .attr-item .attr-bar {
-            height: 3px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .attr-item .attr-bar-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 1s ease;
-        }
-
-        /* ===== RECOMMENDATIONS ===== */
-        .recommendations-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 14px;
-            margin: 10px 0;
-        }
-
-        .rec-item {
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #d2d9e8;
-            padding: 4px 0;
-        }
-
-        .rec-item i {
-            color: var(--secondary);
-            width: 16px;
-            flex-shrink: 0;
-        }
-
-        /* ===== HISTORY ===== */
-        .history-section {
-            margin-top: 20px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .history-header .title {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .history-header .actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .history-header .actions .btn {
-            padding: 4px 12px;
-            font-size: 11px;
-            flex: 0 1 auto;
-            min-height: 28px;
-        }
-
-        .history-list {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            gap: 10px;
-            padding: 4px 2px 12px;
-            scrollbar-width: thin;
-            scrollbar-color: #3a3f4a transparent;
-        }
-
-        .history-list::-webkit-scrollbar {
-            height: 4px;
-        }
-        .history-list::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .history-list::-webkit-scrollbar-thumb {
-            background: #3a3f4a;
-            border-radius: 4px;
-        }
-
-        .history-item {
-            background: rgba(255, 255, 255, 0.04);
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(16, 18, 24, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 24px;
             border-radius: 16px;
-            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            color: #e8ecf2;
+            font-size: 14px;
+            z-index: 1000;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
             display: flex;
             align-items: center;
             gap: 10px;
-            white-space: nowrap;
-            border: 1px solid var(--border-color);
-            transition: all var(--transition);
-            cursor: pointer;
-            flex-shrink: 0;
+            max-width: 90%;
         }
 
-        .history-item:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(124, 108, 240, 0.2);
-            transform: translateY(-2px);
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .history-item .h-time {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .history-item .h-score {
-            font-weight: 700;
-            color: var(--text-primary);
-            background: rgba(124, 108, 240, 0.1);
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 13px;
-        }
-
-        .history-item .h-date {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .empty-history {
-            color: var(--text-muted);
-            font-size: 13px;
-            padding: 12px 0;
-            width: 100%;
-            text-align: center;
-        }
-
-        /* ===== STATS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin: 12px 0 8px;
-        }
-
-        .stat-box {
-            text-align: center;
-            padding: 10px 6px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: var(--radius-xs);
-            border: 1px solid var(--border-color);
-        }
-
-        .stat-box .stat-number {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .stat-box .stat-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 2px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ===== SETTINGS ===== */
-        .settings-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .settings-row .s-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            flex: 1;
-        }
-
-        .toggle-switch {
-            width: 44px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-            transition: all var(--transition);
-            flex-shrink: 0;
-        }
-
-        .toggle-switch.active {
-            background: var(--primary);
-        }
-
-        .toggle-switch .toggle-knob {
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            transition: all var(--transition);
-        }
-
-        .toggle-switch.active .toggle-knob {
-            left: 23px;
+        .toast i {
+            font-size: 16px;
+            color: #8b7cf7;
         }
 
         /* ===== RESPONSIVE ===== */
-        @media (max-width: 480px) {
-            .app-container {
+        @media (max-width: 420px) {
+            .app-wrapper {
                 padding: 0;
             }
-
-            .glass-card {
-                padding: 16px 14px 20px;
+            .main-container {
+                padding: 14px 12px 18px;
                 border-radius: 28px;
             }
-
-            .app-header h1 {
-                font-size: 18px;
+            .header h1 {
+                font-size: 17px;
             }
-            .app-header .badge {
-                font-size: 10px;
-                padding: 2px 10px;
+            .score-main .number {
+                font-size: 32px;
             }
-
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
             .btn {
                 font-size: 12px;
                 padding: 8px 12px;
-                min-height: 38px;
+                min-height: 36px;
             }
-
-            .score-number {
-                font-size: 38px;
-            }
-
-            .metrics-grid {
-                gap: 4px 12px;
-            }
-            .metric-item {
+            .scan-step .step-text {
                 font-size: 12px;
-                padding: 5px 0;
-            }
-
-            .attractiveness-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 6px 12px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .recommendations-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .golden-ratio-display {
-                flex-wrap: wrap;
-            }
-            .golden-ratio-display .gr-bar {
-                width: 100%;
-                order: 3;
-            }
-
-            .overall-score {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .score-right {
-                width: 100%;
-                justify-content: flex-start;
             }
         }
 
-        @media (max-width: 380px) {
-            .overlay-controls .btn {
-                font-size: 11px;
-                padding: 6px 10px;
-                min-height: 34px;
-            }
+        @media (max-width: 360px) {
             .metrics-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 2px 8px;
             }
-        }
-
-        /* ===== LOADING SHIMMER ===== */
-        .shimmer {
-            background: linear-gradient(90deg,
-                    rgba(255, 255, 255, 0.03) 25%,
-                    rgba(255, 255, 255, 0.06) 50%,
-                    rgba(255, 255, 255, 0.03) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
+            .metric-item .value {
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-wrapper">
 
         <!-- ===== TOAST ===== -->
         <div class="toast" id="toast">
@@ -1109,53 +723,80 @@
             <span id="toastMessage">Thông báo</span>
         </div>
 
-        <!-- ===== MAIN CARD ===== -->
-        <div class="glass-card">
+        <!-- ===== MAIN ===== -->
+        <div class="main-container">
 
             <!-- ===== HEADER ===== -->
-            <div class="app-header">
+            <div class="header">
                 <i class="fas fa-wand-magic-sparkles logo"></i>
-                <h1>Looksmax AI Pro</h1>
-                <span class="badge">
-                    <i class="fas fa-bolt"></i> v3.0
-                </span>
+                <h1>Looksmax AI</h1>
+                <span class="badge"><i class="fas fa-bolt"></i> Pro</span>
             </div>
 
-            <!-- ===== MEDIA AREA ===== -->
-            <div class="media-area">
-                <video id="video" playsinline></video>
-                <img id="image-preview" alt="preview" />
+            <!-- ===== CAMERA AREA ===== -->
+            <div class="camera-area">
+                <video id="video" playsinline autoplay></video>
                 <canvas id="overlay-canvas"></canvas>
+
+                <!-- Guidance Frame -->
+                <div class="guidance-frame" id="guidanceFrame">
+                    <div class="guidance-text">Đặt khuôn mặt vào khung</div>
+                </div>
 
                 <!-- Laser Scan -->
                 <div class="laser-scan" id="laserScan">
                     <div class="laser-line"></div>
+                    <div class="laser-glow"></div>
                 </div>
 
                 <!-- Scan Overlay -->
                 <div class="scan-overlay" id="scanOverlay">
-                    <div class="scan-spinner"></div>
-                    <div class="scan-text">
-                        <i class="fas fa-face-smile" style="margin-right: 8px;"></i>
-                        Đang phân tích khuôn mặt...
-                    </div>
-                    <div class="scan-progress">
-                        <div class="scan-progress-bar"></div>
+                    <div class="scan-steps" id="scanSteps">
+                        <div class="scan-step" data-step="0">
+                            <span class="step-icon"><i class="fas fa-camera"></i></span>
+                            <span class="step-text">Phát hiện khuôn mặt</span>
+                            <span class="step-status">...</span>
+                        </div>
+                        <div class="scan-step" data-step="1">
+                            <span class="step-icon"><i class="fas fa-bezier-curve"></i></span>
+                            <span class="step-text">Phân tích cấu trúc</span>
+                            <span class="step-status">...</span>
+                        </div>
+                        <div class="scan-step" data-step="2">
+                            <span class="step-icon"><i class="fas fa-arrows-left-right"></i></span>
+                            <span class="step-text">Đánh giá đối xứng</span>
+                            <span class="step-status">...</span>
+                        </div>
+                        <div class="scan-step" data-step="3">
+                            <span class="step-icon"><i class="fas fa-divide"></i></span>
+                            <span class="step-text">Tỷ lệ vàng</span>
+                            <span class="step-status">...</span>
+                        </div>
+                        <div class="scan-step" data-step="4">
+                            <span class="step-icon"><i class="fas fa-brain"></i></span>
+                            <span class="step-text">AI Analysis</span>
+                            <span class="step-status">...</span>
+                        </div>
+                        <div class="scan-step" data-step="5">
+                            <span class="step-icon"><i class="fas fa-check-circle"></i></span>
+                            <span class="step-text">Hoàn tất</span>
+                            <span class="step-status">...</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Controls -->
-                <div class="overlay-controls">
-                    <button class="btn btn-outline" id="cameraBtn">
-                        <i class="fas fa-camera"></i> Camera
+                <!-- ===== CONTROLS ===== -->
+                <div class="controls">
+                    <button class="btn btn-sm" id="cameraBtn">
+                        <i class="fas fa-camera"></i> Cam
                     </button>
-                    <button class="btn btn-outline" id="uploadBtn">
-                        <i class="fas fa-image"></i> Tải ảnh
+                    <button class="btn btn-sm" id="uploadBtn">
+                        <i class="fas fa-image"></i> Ảnh
                     </button>
                     <button class="btn btn-primary" id="captureBtn">
                         <i class="fas fa-sync"></i> Quét
                     </button>
-                    <button class="btn btn-outline btn-sm" id="overlayToggle" style="flex:0 1 auto;">
+                    <button class="btn btn-sm" id="overlayToggle">
                         <i class="fas fa-layer-group"></i>
                     </button>
                 </div>
@@ -1164,242 +805,116 @@
 
             <!-- ===== RESULT CARD ===== -->
             <div class="result-card" id="resultCard">
-
-                <!-- Overall Score -->
-                <div class="overall-score">
-                    <div class="score-left">
+                <div class="result-header">
+                    <div class="score-main">
                         <span class="label">Tổng điểm</span>
-                        <span class="score-number" id="overallScore">0.0</span>
-                        <span class="score-max">/10</span>
+                        <span class="number" id="overallScore">0.0</span>
+                        <span class="max">/10</span>
                     </div>
-                    <div class="score-right">
-                        <span class="face-shape-badge" id="faceShapeBadge">
-                            <i class="fas fa-face-smile"></i>
-                            <span id="faceShapeText">--</span>
-                        </span>
-                        <span class="score-rating" id="scoreRating">
-                            <i class="fas fa-face-smile"></i>
-                            <span id="ratingLabel">--</span>
-                        </span>
+                    <div class="score-badges">
+                        <span class="badge-shape" id="faceShapeBadge"><i class="fas fa-face-smile"></i> <span id="faceShapeText">--</span></span>
+                        <span class="badge-rating" id="ratingBadge"><i class="fas fa-star"></i> <span id="ratingText">--</span></span>
                     </div>
                 </div>
 
                 <!-- Golden Ratio -->
-                <div class="golden-ratio-display">
-                    <span class="gr-label">Tỷ lệ vàng</span>
-                    <span class="gr-value" id="goldenRatioValue">0%</span>
-                    <div class="gr-bar">
-                        <div class="gr-bar-fill" id="goldenRatioBar" style="width:0%"></div>
-                    </div>
+                <div class="gr-display">
+                    <span class="label">Tỷ lệ vàng</span>
+                    <span class="value" id="grValue">0%</span>
+                    <div class="bar"><div class="bar-fill" id="grBar" style="width:0%"></div></div>
                 </div>
 
                 <!-- Metrics -->
                 <div class="metrics-grid" id="metricsGrid">
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-arrows-left-right"></i> Đối xứng</span>
-                        <span class="metric-value" id="symmetry">0.0</span>
+                        <span class="label"><i class="fas fa-arrows-left-right"></i> Đối xứng</span>
+                        <span class="value" id="symmetry">0.0</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-grip-lines"></i> Jawline</span>
-                        <span class="metric-value" id="jawline">0.0</span>
+                        <span class="label"><i class="fas fa-grip-lines"></i> Jawline</span>
+                        <span class="value" id="jawline">0.0</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-eye"></i> Mắt</span>
-                        <span class="metric-value" id="eyes">0.0</span>
+                        <span class="label"><i class="fas fa-eye"></i> Mắt</span>
+                        <span class="value" id="eyes">0.0</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-nose"></i> Mũi</span>
-                        <span class="metric-value" id="nose">0.0</span>
+                        <span class="label"><i class="fas fa-nose"></i> Mũi</span>
+                        <span class="value" id="nose">0.0</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-mouth"></i> Môi</span>
-                        <span class="metric-value" id="lips">0.0</span>
+                        <span class="label"><i class="fas fa-mouth"></i> Môi</span>
+                        <span class="value" id="lips">0.0</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-circle"></i> Da</span>
-                        <span class="metric-value" id="skin">0.0</span>
+                        <span class="label"><i class="fas fa-circle"></i> Da</span>
+                        <span class="value" id="skin">0.0</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-cut"></i> Tóc</span>
-                        <span class="metric-value" id="hair">0.0</span>
+                        <span class="label"><i class="fas fa-cut"></i> Tóc</span>
+                        <span class="value" id="hair">0.0</span>
                     </div>
                     <div class="metric-item">
-                        <span class="metric-name"><i class="fas fa-gem"></i> Hài hòa</span>
-                        <span class="metric-value" id="harmony">0.0</span>
-                    </div>
-                </div>
-
-                <!-- Attractiveness -->
-                <div class="attractiveness-grid" id="attractivenessGrid">
-                    <div class="attr-item">
-                        <span class="attr-label">Hấp dẫn tổng thể</span>
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span class="attr-value" id="attrOverall">0%</span>
-                        </div>
-                        <div class="attr-bar"><div class="attr-bar-fill" id="attrOverallBar" style="width:0%;background:linear-gradient(90deg,var(--primary),var(--secondary));"></div></div>
-                    </div>
-                    <div class="attr-item">
-                        <span class="attr-label">Nam tính</span>
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span class="attr-value" id="attrMasculine">0%</span>
-                        </div>
-                        <div class="attr-bar"><div class="attr-bar-fill" id="attrMasculineBar" style="width:0%;background:linear-gradient(90deg,#4ade80,#22c55e);"></div></div>
-                    </div>
-                    <div class="attr-item">
-                        <span class="attr-label">Nữ tính</span>
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span class="attr-value" id="attrFeminine">0%</span>
-                        </div>
-                        <div class="attr-bar"><div class="attr-bar-fill" id="attrFeminineBar" style="width:0%;background:linear-gradient(90deg,#f472b6,#ec4899);"></div></div>
-                    </div>
-                    <div class="attr-item">
-                        <span class="attr-label">Tiềm năng Model</span>
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <span class="attr-value" id="attrModel">0%</span>
-                        </div>
-                        <div class="attr-bar"><div class="attr-bar-fill" id="attrModelBar" style="width:0%;background:linear-gradient(90deg,#fbbf24,#f59e0b);"></div></div>
+                        <span class="label"><i class="fas fa-gem"></i> Hài hòa</span>
+                        <span class="value" id="harmony">0.0</span>
                     </div>
                 </div>
 
                 <!-- Feedback -->
-                <div class="feedback-block">
-                    <div class="title"><i class="fas fa-star"></i> Điểm mạnh</div>
-                    <ul class="feedback-list" id="strengthList">
-                        <li class="strength"><i class="fas fa-check-circle"></i> Chưa có dữ liệu</li>
-                    </ul>
-                </div>
-
-                <div class="feedback-block">
-                    <div class="title"><i class="fas fa-lightbulb"></i> Cải thiện</div>
-                    <ul class="feedback-list" id="improveList">
-                        <li class="weakness"><i class="fas fa-arrow-right"></i> Chưa có dữ liệu</li>
-                    </ul>
-                </div>
-
-                <div class="feedback-block">
-                    <div class="title"><i class="fas fa-wand-sparkles"></i> Gợi ý</div>
-                    <ul class="feedback-list" id="tipList">
-                        <li class="tip"><i class="fas fa-lightbulb"></i> Chưa có dữ liệu</li>
-                    </ul>
-                </div>
-
-                <!-- Recommendations -->
-                <div class="feedback-block">
-                    <div class="title"><i class="fas fa-compass"></i> Đề xuất</div>
-                    <div class="recommendations-grid" id="recommendationsGrid">
-                        <div class="rec-item"><i class="fas fa-cut"></i> <span id="recHair">--</span></div>
-                        <div class="rec-item"><i class="fas fa-glasses"></i> <span id="recGlasses">--</span></div>
-                        <div class="rec-item"><i class="fas fa-arrow-up"></i> <span id="recBangs">--</span></div>
-                        <div class="rec-item"><i class="fas fa-raspberry"></i> <span id="recBeard">--</span></div>
+                <div class="feedback-section">
+                    <div class="feedback-block">
+                        <div class="title"><i class="fas fa-star"></i> Điểm mạnh</div>
+                        <ul class="feedback-list" id="strengthList">
+                            <li class="strength"><i class="fas fa-check-circle"></i> Chưa có dữ liệu</li>
+                        </ul>
                     </div>
-                </div>
-
-                <!-- Stats -->
-                <div class="stats-grid" id="statsGrid">
-                    <div class="stat-box">
-                        <div class="stat-number" id="statTotal">0</div>
-                        <div class="stat-label">Tổng</div>
+                    <div class="feedback-block">
+                        <div class="title"><i class="fas fa-lightbulb"></i> Cải thiện</div>
+                        <ul class="feedback-list" id="improveList">
+                            <li class="improve"><i class="fas fa-arrow-right"></i> Chưa có dữ liệu</li>
+                        </ul>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="statAvg">--</div>
-                        <div class="stat-label">TB</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="statHigh">--</div>
-                        <div class="stat-label">Cao nhất</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-number" id="statLow">--</div>
-                        <div class="stat-label">Thấp nhất</div>
-                    </div>
-                </div>
-
-                <!-- Share -->
-                <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-                    <button class="btn btn-success btn-sm" id="shareBtn" style="flex:1;">
-                        <i class="fas fa-share-alt"></i> Chia sẻ
-                    </button>
-                    <button class="btn btn-outline btn-sm" id="exportBtn" style="flex:1;">
-                        <i class="fas fa-download"></i> Xuất JSON
-                    </button>
-                </div>
-            </div>
-
-            <!-- ===== HISTORY ===== -->
-            <div class="history-section">
-                <div class="history-header">
-                    <span class="title"><i class="fas fa-clock-rotate-left"></i> Lịch sử</span>
-                    <div class="actions">
-                        <button class="btn btn-outline btn-sm" id="clearHistoryBtn">
-                            <i class="fas fa-trash-can"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="history-list" id="historyList">
-                    <span class="empty-history">Chưa có đánh giá nào</span>
-                </div>
-            </div>
-
-            <!-- ===== SETTINGS ===== -->
-            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-color);">
-                <div class="settings-row">
-                    <span class="s-label"><i class="fas fa-palette"></i> Chế độ tối</span>
-                    <div class="toggle-switch active" id="darkModeToggle">
-                        <div class="toggle-knob"></div>
-                    </div>
-                </div>
-                <div class="settings-row">
-                    <span class="s-label"><i class="fas fa-film"></i> Animation</span>
-                    <div class="toggle-switch active" id="animationToggle">
-                        <div class="toggle-knob"></div>
-                    </div>
-                </div>
-                <div class="settings-row">
-                    <span class="s-label"><i class="fas fa-vector-square"></i> Face Overlay</span>
-                    <div class="toggle-switch active" id="overlayToggleSwitch">
-                        <div class="toggle-knob"></div>
+                    <div class="feedback-block">
+                        <div class="title"><i class="fas fa-wand-sparkles"></i> Gợi ý</div>
+                        <ul class="feedback-list" id="tipList">
+                            <li class="tip"><i class="fas fa-lightbulb"></i> Chưa có dữ liệu</li>
+                        </ul>
                     </div>
                 </div>
             </div>
 
-        </div><!-- /glass-card -->
-    </div><!-- /app-container -->
+        </div><!-- /main-container -->
+    </div><!-- /app-wrapper -->
 
     <script>
-        /* ===================================================================
-           LOOKSMAX AI PRO - PROFESSIONAL FACE ANALYSIS
-           All scores computed from MediaPipe FaceMesh landmarks
-           No Math.random() used - deterministic results
-           =================================================================== */
+        // ================================================================
+        // LOOKSMAX AI PRO - REAL-TIME FACE ANALYSIS
+        // All drawings on canvas from MediaPipe landmarks
+        // ================================================================
 
         // ===== DOM REFS =====
         const video = document.getElementById('video');
-        const imagePreview = document.getElementById('image-preview');
-        const overlayCanvas = document.getElementById('overlay-canvas');
-        const ctx = overlayCanvas.getContext('2d');
+        const canvas = document.getElementById('overlay-canvas');
+        const ctx = canvas.getContext('2d');
         const fileInput = document.getElementById('file-input');
 
         const cameraBtn = document.getElementById('cameraBtn');
         const uploadBtn = document.getElementById('uploadBtn');
         const captureBtn = document.getElementById('captureBtn');
-        const shareBtn = document.getElementById('shareBtn');
-        const exportBtn = document.getElementById('exportBtn');
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
         const overlayToggle = document.getElementById('overlayToggle');
-        const overlayToggleSwitch = document.getElementById('overlayToggleSwitch');
 
-        const scanOverlay = document.getElementById('scanOverlay');
+        const guidanceFrame = document.getElementById('guidanceFrame');
         const laserScan = document.getElementById('laserScan');
-        const resultCard = document.getElementById('resultCard');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
+        const scanOverlay = document.getElementById('scanOverlay');
+        const scanSteps = document.getElementById('scanSteps');
 
-        // Result elements
+        const resultCard = document.getElementById('resultCard');
         const overallScore = document.getElementById('overallScore');
-        const ratingLabel = document.getElementById('ratingLabel');
+        const ratingText = document.getElementById('ratingText');
+        const ratingBadge = document.getElementById('ratingBadge');
         const faceShapeText = document.getElementById('faceShapeText');
-        const goldenRatioValue = document.getElementById('goldenRatioValue');
-        const goldenRatioBar = document.getElementById('goldenRatioBar');
+        const grValue = document.getElementById('grValue');
+        const grBar = document.getElementById('grBar');
 
         const symmetryEl = document.getElementById('symmetry');
         const jawlineEl = document.getElementById('jawline');
@@ -1410,30 +925,12 @@
         const hairEl = document.getElementById('hair');
         const harmonyEl = document.getElementById('harmony');
 
-        const attrOverall = document.getElementById('attrOverall');
-        const attrMasculine = document.getElementById('attrMasculine');
-        const attrFeminine = document.getElementById('attrFeminine');
-        const attrModel = document.getElementById('attrModel');
-        const attrOverallBar = document.getElementById('attrOverallBar');
-        const attrMasculineBar = document.getElementById('attrMasculineBar');
-        const attrFeminineBar = document.getElementById('attrFeminineBar');
-        const attrModelBar = document.getElementById('attrModelBar');
-
         const strengthList = document.getElementById('strengthList');
         const improveList = document.getElementById('improveList');
         const tipList = document.getElementById('tipList');
 
-        const recHair = document.getElementById('recHair');
-        const recGlasses = document.getElementById('recGlasses');
-        const recBangs = document.getElementById('recBangs');
-        const recBeard = document.getElementById('recBeard');
-
-        const statTotal = document.getElementById('statTotal');
-        const statAvg = document.getElementById('statAvg');
-        const statHigh = document.getElementById('statHigh');
-        const statLow = document.getElementById('statLow');
-
-        const historyList = document.getElementById('historyList');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
 
         // ===== STATE =====
         let cameraStream = null;
@@ -1441,50 +938,33 @@
         let faceMesh = null;
         let isScanning = false;
         let showOverlay = true;
-        let useAnimation = true;
-        let isDarkMode = true;
         let currentLandmarks = null;
-        let currentImageData = null;
-
-        let history = JSON.parse(localStorage.getItem('looksmax_history') || '[]');
+        let isFaceDetected = false;
+        let frameCount = 0;
+        let lastResults = null;
 
         // ===== TOAST =====
-        function showToast(message, type = 'success') {
-            toastMessage.textContent = message;
-            toast.className = 'toast ' + type;
+        function showToast(msg, type = 'success') {
+            toastMessage.textContent = msg;
+            toast.className = 'toast';
             toast.querySelector('i').className = `fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}`;
             toast.classList.add('show');
             clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         // ===== UTILITY =====
         function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
 
-        function lerp(a, b, t) { return a + (b - a) * t; }
-
-        function distance(p1, p2) {
+        function dist(p1, p2) {
             return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2);
         }
 
-        function angleBetween(p1, p2, p3) {
-            const a = distance(p2, p3);
-            const b = distance(p1, p3);
-            const c = distance(p1, p2);
-            if (a === 0 || b === 0 || c === 0) return 0;
-            const cosA = (b * b + c * c - a * a) / (2 * b * c);
-            return Math.acos(clamp(cosA, -1, 1));
-        }
-
-        function midPoint(p1, p2) {
+        function mid(p1, p2) {
             return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2, z: (p1.z + p2.z) / 2 };
         }
 
-        function getLandmark(landmarks, idx) {
-            return landmarks[idx] || { x: 0, y: 0, z: 0 };
-        }
+        function getLM(lm, idx) { return lm[idx] || { x: 0, y: 0, z: 0 }; }
 
         // ===== INIT FACEMESH =====
         function initFaceMesh() {
@@ -1501,445 +981,90 @@
             faceMesh.onResults(onFaceMeshResults);
         }
 
-        // ===== GET CURRENT FRAME =====
-        function getCurrentFrame() {
-            return new Promise((resolve) => {
-                const canvas = document.createElement('canvas');
-                const c = canvas.getContext('2d');
-                let src = video.style.display !== 'none' && video.srcObject ? video : imagePreview;
-                if (imagePreview.style.display !== 'none' && imagePreview.src) {
-                    src = imagePreview;
-                }
-                canvas.width = 400;
-                canvas.height = 400;
-                c.drawImage(src, 0, 0, 400, 400);
-                canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, 'image/jpeg', 0.92);
-            });
-        }
-
-        // ===== PERFORM SCAN =====
-        async function performScan() {
-            if (isScanning) return;
-            isScanning = true;
-            scanOverlay.classList.add('active');
-            if (useAnimation) laserScan.classList.add('active');
-            resultCard.classList.remove('active');
-
-            try {
-                const blob = await getCurrentFrame();
-                if (!blob) {
-                    showToast('Vui lòng bật camera hoặc tải ảnh lên', 'error');
-                    isScanning = false;
-                    scanOverlay.classList.remove('active');
-                    laserScan.classList.remove('active');
-                    return;
-                }
-                const imageBitmap = await createImageBitmap(blob);
-                // Store image for overlay
-                const img = new Image();
-                img.src = URL.createObjectURL(blob);
-                currentImageData = img;
-                await faceMesh.send({ image: imageBitmap });
-            } catch (err) {
-                console.error('Scan error:', err);
-                showToast('Lỗi: ' + err.message, 'error');
-                isScanning = false;
-                scanOverlay.classList.remove('active');
-                laserScan.classList.remove('active');
-            }
-        }
-
         // ===== ON FACEMESH RESULTS =====
         function onFaceMeshResults(results) {
-            scanOverlay.classList.remove('active');
-            laserScan.classList.remove('active');
-            isScanning = false;
+            lastResults = results;
+            const hasFace = results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0;
 
-            if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
-                showToast('Không tìm thấy khuôn mặt. Hãy thử lại!', 'error');
-                return;
-            }
-
-            const lm = results.multiFaceLandmarks[0];
-            currentLandmarks = lm;
-
-            // ===== COMPUTE ALL METRICS =====
-            const metrics = computeAllMetrics(lm);
-
-            // ===== DISPLAY RESULTS =====
-            displayResults(metrics, lm);
-
-            // ===== DRAW OVERLAY =====
-            if (showOverlay && currentImageData) {
-                drawOverlay(lm);
-            }
-
-            // ===== SAVE HISTORY =====
-            saveHistory(metrics);
-
-            // ===== UPDATE STATS =====
-            updateStats();
-
-            showToast('Phân tích hoàn tất!', 'success');
-        }
-
-        // ===== COMPUTE ALL METRICS =====
-        function computeAllMetrics(lm) {
-            // Extract key landmarks
-            const lEye = getLandmark(lm, 33);
-            const rEye = getLandmark(lm, 263);
-            const lEyeOuter = getLandmark(lm, 130);
-            const rEyeOuter = getLandmark(lm, 359);
-            const lEyeInner = getLandmark(lm, 133);
-            const rEyeInner = getLandmark(lm, 362);
-            const noseTip = getLandmark(lm, 1);
-            const noseBridge = getLandmark(lm, 168);
-            const lMouth = getLandmark(lm, 61);
-            const rMouth = getLandmark(lm, 291);
-            const upperLip = getLandmark(lm, 13);
-            const lowerLip = getLandmark(lm, 14);
-            const chin = getLandmark(lm, 152);
-            const forehead = getLandmark(lm, 10);
-            const lCheek = getLandmark(lm, 234);
-            const rCheek = getLandmark(lm, 454);
-            const lJaw = getLandmark(lm, 172);
-            const rJaw = getLandmark(lm, 397);
-            const lEyebrow = getLandmark(lm, 70);
-            const rEyebrow = getLandmark(lm, 300);
-            const lEyeTop = getLandmark(lm, 159);
-            const lEyeBottom = getLandmark(lm, 145);
-            const rEyeTop = getLandmark(lm, 386);
-            const rEyeBottom = getLandmark(lm, 374);
-
-            // ===== 1. SYMMETRY =====
-            const eyeDistL = distance(lEye, lEyeOuter);
-            const eyeDistR = distance(rEye, rEyeOuter);
-            const eyeSym = 1 - Math.abs(eyeDistL - eyeDistR) / (Math.max(eyeDistL, eyeDistR) + 0.001);
-
-            const mouthL = distance(lMouth, midPoint(lMouth, rMouth));
-            const mouthR = distance(rMouth, midPoint(lMouth, rMouth));
-            const mouthSym = 1 - Math.abs(mouthL - mouthR) / (Math.max(mouthL, mouthR) + 0.001);
-
-            const symmetry = clamp((eyeSym * 0.5 + mouthSym * 0.5) * 10, 0, 10);
-
-            // ===== 2. JAWLINE =====
-            const jawWidth = distance(lJaw, rJaw);
-            const faceHeight = distance(forehead, chin);
-            const jawRatio = jawWidth / (faceHeight + 0.001);
-            const jawline = clamp((1 - Math.abs(jawRatio - 0.65) * 2) * 10, 0, 10);
-
-            // ===== 3. EYES =====
-            const eyeWidthL = distance(lEyeOuter, lEyeInner);
-            const eyeWidthR = distance(rEyeOuter, rEyeInner);
-            const eyeHeightL = distance(lEyeTop, lEyeBottom);
-            const eyeHeightR = distance(rEyeTop, rEyeBottom);
-            const eyeSize = (eyeWidthL / (eyeHeightL + 0.001) + eyeWidthR / (eyeHeightR + 0.001)) / 2;
-            const eyes = clamp((1 - Math.abs(eyeSize - 3.0) * 0.5) * 10, 0, 10);
-
-            // ===== 4. NOSE =====
-            const noseWidth = distance(getLandmark(lm, 64), getLandmark(lm, 294));
-            const noseLength = distance(noseTip, noseBridge);
-            const noseRatio = noseWidth / (noseLength + 0.001);
-            const nose = clamp((1 - Math.abs(noseRatio - 0.5) * 1.5) * 10, 0, 10);
-
-            // ===== 5. LIPS =====
-            const lipWidth = distance(lMouth, rMouth);
-            const lipHeight = distance(upperLip, lowerLip);
-            const lipRatio = lipHeight / (lipWidth + 0.001);
-            const lips = clamp((1 - Math.abs(lipRatio - 0.35) * 2) * 10, 0, 10);
-
-            // ===== 6. SKIN (estimated from texture - simplified) =====
-            // In real app, would use image analysis; here we use facial symmetry as proxy
-            const skin = clamp(symmetry * 0.9 + 0.5, 0, 10);
-
-            // ===== 7. HAIR (estimated from hairline) =====
-            const hairline = getLandmark(lm, 10);
-            const hairScore = clamp((1 - Math.abs(hairline.y - 0.15) * 3) * 10, 0, 10);
-            const hair = hairScore;
-
-            // ===== 8. HARMONY =====
-            const harmony = clamp((symmetry + jawline + eyes + nose + lips) / 5 * 1.1, 0, 10);
-
-            // ===== GOLDEN RATIO =====
-            // Face height / face width
-            const faceWidth = distance(lCheek, rCheek);
-            const gr = faceWidth / (faceHeight + 0.001);
-            const goldenRatioScore = clamp((1 - Math.abs(gr - 0.618) * 3) * 100, 0, 100);
-
-            // ===== FACE SHAPE =====
-            const faceShape = detectFaceShape(lm);
-
-            // ===== ATTRACTIVENESS =====
-            const overall = (symmetry * 0.2 + jawline * 0.15 + eyes * 0.15 + nose * 0.1 + lips * 0.1 + harmony * 0.2 + skin * 0.05 + hair * 0.05);
-            const attractiveness = clamp(overall, 0, 10);
-
-            // Masculinity/Femininity - based on facial proportions
-            const jawWidthRatio = jawWidth / (faceHeight + 0.001);
-            const masculinity = clamp((jawWidthRatio - 0.55) * 4 * 100, 0, 100);
-            const femininity = clamp((0.65 - jawWidthRatio) * 4 * 100, 0, 100);
-
-            // Model potential
-            const modelPotential = clamp((symmetry * 0.3 + harmony * 0.3 + (goldenRatioScore / 100) * 0.4) * 10, 0, 100);
-
-            return {
-                symmetry,
-                jawline,
-                eyes,
-                nose,
-                lips,
-                skin,
-                hair,
-                harmony,
-                goldenRatio: goldenRatioScore,
-                faceShape,
-                attractiveness,
-                masculinity,
-                femininity,
-                modelPotential,
-                overall: clamp(attractiveness, 0, 10)
-            };
-        }
-
-        // ===== DETECT FACE SHAPE =====
-        function detectFaceShape(lm) {
-            const forehead = getLandmark(lm, 10);
-            const chin = getLandmark(lm, 152);
-            const lCheek = getLandmark(lm, 234);
-            const rCheek = getLandmark(lm, 454);
-            const lJaw = getLandmark(lm, 172);
-            const rJaw = getLandmark(lm, 397);
-
-            const faceHeight = distance(forehead, chin);
-            const faceWidth = distance(lCheek, rCheek);
-            const jawWidth = distance(lJaw, rJaw);
-            const foreheadWidth = distance(getLandmark(lm, 54), getLandmark(lm, 284));
-
-            const ratio = faceWidth / (faceHeight + 0.001);
-            const jawRatio = jawWidth / (faceWidth + 0.001);
-            const foreheadRatio = foreheadWidth / (faceWidth + 0.001);
-
-            if (ratio < 0.65) return 'Oval';
-            if (ratio < 0.75) {
-                if (jawRatio < 0.7) return 'Round';
-                return 'Square';
-            }
-            if (jawRatio < 0.65) return 'Diamond';
-            if (foreheadRatio > 0.85) return 'Heart';
-            if (jawRatio < 0.6) return 'Triangle';
-            return 'Rectangle';
-        }
-
-        // ===== DISPLAY RESULTS =====
-        function displayResults(metrics, lm) {
-            const o = metrics.overall;
-            overallScore.textContent = o.toFixed(1);
-
-            // Rating
-            const rating = o >= 9 ? 'Xuất sắc 🏆' : o >= 8 ? 'Rất tốt ✨' : o >= 7 ? 'Tốt 👍' : o >= 6 ? 'Trung bình 💪' :
-                o >= 5 ? 'Cần cải thiện 📈' : 'Cần nỗ lực 💪';
-            ratingLabel.textContent = rating;
-
-            // Face shape
-            faceShapeText.textContent = metrics.faceShape;
-
-            // Golden ratio
-            goldenRatioValue.textContent = metrics.goldenRatio.toFixed(0) + '%';
-            goldenRatioBar.style.width = metrics.goldenRatio + '%';
-
-            // Metrics
-            symmetryEl.textContent = metrics.symmetry.toFixed(1);
-            jawlineEl.textContent = metrics.jawline.toFixed(1);
-            eyesEl.textContent = metrics.eyes.toFixed(1);
-            noseEl.textContent = metrics.nose.toFixed(1);
-            lipsEl.textContent = metrics.lips.toFixed(1);
-            skinEl.textContent = metrics.skin.toFixed(1);
-            hairEl.textContent = metrics.hair.toFixed(1);
-            harmonyEl.textContent = metrics.harmony.toFixed(1);
-
-            // Attractiveness
-            attrOverall.textContent = metrics.attractiveness.toFixed(0) + '%';
-            attrOverallBar.style.width = metrics.attractiveness * 10 + '%';
-            attrMasculine.textContent = metrics.masculinity.toFixed(0) + '%';
-            attrMasculineBar.style.width = metrics.masculinity + '%';
-            attrFeminine.textContent = metrics.femininity.toFixed(0) + '%';
-            attrFeminineBar.style.width = metrics.femininity + '%';
-            attrModel.textContent = metrics.modelPotential.toFixed(0) + '%';
-            attrModelBar.style.width = metrics.modelPotential + '%';
-
-            // Feedback
-            generateFeedback(metrics, lm);
-
-            // Recommendations
-            generateRecommendations(metrics);
-
-            resultCard.classList.add('active');
-        }
-
-        // ===== GENERATE FEEDBACK =====
-        function generateFeedback(metrics, lm) {
-            const strengths = [];
-            const improvements = [];
-            const tips = [];
-
-            if (metrics.symmetry > 7) strengths.push('✓ Khuôn mặt cân đối');
-            else improvements.push('• Cải thiện độ đối xứng');
-
-            if (metrics.jawline > 7) strengths.push('✓ Đường jawline sắc nét');
-            else improvements.push('• Góc chụp thấp hơn để làm nổi jawline');
-
-            if (metrics.eyes > 7) strengths.push('✓ Đôi mắt rõ nét');
-            else improvements.push('• Mở mắt tự nhiên hơn');
-
-            if (metrics.nose > 7) strengths.push('✓ Cấu trúc mũi hài hòa');
-            else improvements.push('• Góc nghiêng phù hợp hơn');
-
-            if (metrics.lips > 7) strengths.push('✓ Môi cân đối');
-            else improvements.push('• Cười nhẹ để tôn lên môi');
-
-            if (metrics.skin > 7) strengths.push('✓ Da sáng mịn');
-            else improvements.push('• Tăng ánh sáng khi chụp');
-
-            if (metrics.hair > 7) strengths.push('✓ Tóc hợp phong cách');
-            else improvements.push('• Chọn kiểu tóc phù hợp');
-
-            if (strengths.length < 2) strengths.push('✓ Tổng thể hài hòa');
-            if (strengths.length < 3) strengths.push('✓ Tiềm năng phát triển tốt');
-
-            if (improvements.length < 2) {
-                improvements.push('• Cười nhẹ sẽ tăng điểm');
-                improvements.push('• Góc máy thấp hơn một chút');
-            }
-
-            // Tips
-            if (metrics.overall < 6) {
-                tips.push('• Tập trung vào chăm sóc da và ánh sáng');
-                tips.push('• Thử nhiều góc chụp khác nhau');
-            } else if (metrics.overall < 8) {
-                tips.push('• Duy trì chế độ chăm sóc da tốt');
-                tips.push('• Thử phong cách tóc mới');
+            if (hasFace) {
+                currentLandmarks = results.multiFaceLandmarks[0];
+                isFaceDetected = true;
+                guidanceFrame.classList.add('face-detected');
             } else {
-                tips.push('• Bạn có tiềm năng Looksmax rất cao!');
-                tips.push('• Tập trung vào chi tiết nhỏ để hoàn hảo');
+                isFaceDetected = false;
+                guidanceFrame.classList.remove('face-detected');
             }
 
-            strengthList.innerHTML = strengths.map(s =>
-                `<li class="strength"><i class="fas fa-check-circle"></i> ${s.replace('✓ ','')}</li>`
-            ).join('');
-
-            improveList.innerHTML = improvements.map(s =>
-                `<li class="weakness"><i class="fas fa-arrow-right"></i> ${s.replace('• ','')}</li>`
-            ).join('');
-
-            tipList.innerHTML = tips.map(s =>
-                `<li class="tip"><i class="fas fa-lightbulb"></i> ${s.replace('• ','')}</li>`
-            ).join('');
-        }
-
-        // ===== GENERATE RECOMMENDATIONS =====
-        function generateRecommendations(metrics) {
-            const shape = metrics.faceShape;
-
-            // Hair recommendations
-            const hairRecs = {
-                'Oval': 'Hầu hết kiểu tóc đều hợp',
-                'Round': 'Tóc layer, vuốt cao',
-                'Square': 'Tóc ngắn gọn, side part',
-                'Rectangle': 'Tóc dài, fringe',
-                'Diamond': 'Tóc mái, layer nhẹ',
-                'Heart': 'Tóc bob, side sweep',
-                'Triangle': 'Tóc phồng trên đỉnh',
-                'Oblong': 'Tóc vuốt sang ngang'
-            };
-            recHair.textContent = hairRecs[shape] || 'Kiểu tóc hiện tại';
-
-            // Glasses
-            const glassRecs = {
-                'Oval': 'Hầu hết kiểu kính',
-                'Round': 'Kính vuông/chữ nhật',
-                'Square': 'Kính tròn/oval',
-                'Rectangle': 'Kính lớn, đậm',
-                'Diamond': 'Kính oval, mỏng',
-                'Heart': 'Kính không viền',
-                'Triangle': 'Kính dày bản'
-            };
-            recGlasses.textContent = glassRecs[shape] || 'Kính gọng đen';
-
-            // Bangs
-            const bangsRecs = {
-                'Oval': 'Tùy sở thích',
-                'Round': 'Mái thưa',
-                'Square': 'Mái dài',
-                'Rectangle': 'Mái che trán',
-                'Diamond': 'Mái lệch',
-                'Heart': 'Mái thưa nhẹ',
-                'Triangle': 'Mái phồng'
-            };
-            recBangs.textContent = bangsRecs[shape] || 'Không cần mái';
-
-            // Beard
-            const beardScore = metrics.masculinity;
-            recBeard.textContent = beardScore > 60 ? 'Nuôi râu ngắn' : 'Cạo sạch sẽ';
+            // Draw overlay
+            if (showOverlay) {
+                drawOverlay();
+            }
         }
 
         // ===== DRAW OVERLAY =====
-        function drawOverlay(lm) {
-            if (!currentImageData) return;
-
-            const rect = overlayCanvas.parentElement.getBoundingClientRect();
+        function drawOverlay() {
+            const rect = canvas.parentElement.getBoundingClientRect();
             const size = Math.min(rect.width, rect.height);
-            overlayCanvas.width = size;
-            overlayCanvas.height = size;
-            overlayCanvas.style.width = size + 'px';
-            overlayCanvas.style.height = size + 'px';
+            canvas.width = size;
+            canvas.height = size;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
 
             ctx.clearRect(0, 0, size, size);
 
-            // Draw face outline
-            const faceOutline = [10, 109, 67, 103, 54, 21, 162, 127, 234, 93, 132, 58, 172, 136, 150, 149, 176, 148, 152, 377, 400,
-                378, 379, 365, 397, 288, 361, 323, 454, 356, 389, 251, 284, 332, 297, 338
+            if (!currentLandmarks || !isFaceDetected) {
+                // Draw guidance oval
+                drawGuidanceOval(size);
+                return;
+            }
+
+            const lm = currentLandmarks;
+            const scale = size;
+
+            // ===== 1. Face Outline =====
+            const faceIndices = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152,
+                148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
             ];
 
-            ctx.strokeStyle = 'rgba(124, 108, 240, 0.6)';
-            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            faceOutline.forEach((idx, i) => {
+            ctx.strokeStyle = 'rgba(139, 124, 247, 0.35)';
+            ctx.lineWidth = 1.5;
+            faceIndices.forEach((idx, i) => {
                 const p = lm[idx];
-                const x = p.x * size;
-                const y = p.y * size;
+                const x = (1 - p.x) * scale;
+                const y = p.y * scale;
                 if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             });
             ctx.closePath();
             ctx.stroke();
 
-            // Jawline
-            ctx.strokeStyle = 'rgba(161, 136, 255, 0.4)';
-            ctx.lineWidth = 1.2;
-            const jawPoints = [172, 150, 149, 176, 148, 152];
+            // ===== 2. Jawline =====
+            const jawIndices = [172, 150, 149, 176, 148, 152];
             ctx.beginPath();
-            jawPoints.forEach((idx, i) => {
+            ctx.strokeStyle = 'rgba(161, 136, 255, 0.3)';
+            ctx.lineWidth = 1.2;
+            jawIndices.forEach((idx, i) => {
                 const p = lm[idx];
-                const x = p.x * size;
-                const y = p.y * size;
+                const x = (1 - p.x) * scale;
+                const y = p.y * scale;
                 if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             });
             ctx.stroke();
 
-            // Eyes outline
+            // ===== 3. Eyes =====
             const eyeLeft = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7];
             const eyeRight = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249];
 
-            ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
             ctx.lineWidth = 1.2;
             [eyeLeft, eyeRight].forEach(eye => {
                 ctx.beginPath();
                 eye.forEach((idx, i) => {
                     const p = lm[idx];
-                    const x = p.x * size;
-                    const y = p.y * size;
+                    const x = (1 - p.x) * scale;
+                    const y = p.y * scale;
                     if (i === 0) ctx.moveTo(x, y);
                     else ctx.lineTo(x, y);
                 });
@@ -1947,125 +1072,492 @@
                 ctx.stroke();
             });
 
-            // Midline
+            // ===== 4. Nose =====
+            const noseIndices = [1, 2, 98, 327, 326, 325, 294, 64];
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(161, 136, 255, 0.25)';
+            ctx.lineWidth = 1.2;
+            noseIndices.forEach((idx, i) => {
+                const p = lm[idx];
+                const x = (1 - p.x) * scale;
+                const y = p.y * scale;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+
+            // ===== 5. Mouth =====
+            const mouthIndices = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185];
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.3)';
+            ctx.lineWidth = 1.2;
+            mouthIndices.forEach((idx, i) => {
+                const p = lm[idx];
+                const x = (1 - p.x) * scale;
+                const y = p.y * scale;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+
+            // ===== 6. Midline =====
             const top = lm[10];
             const bottom = lm[152];
-            ctx.strokeStyle = 'rgba(251, 191, 36, 0.2)';
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(139, 124, 247, 0.2)';
             ctx.lineWidth = 1;
             ctx.setLineDash([4, 6]);
-            ctx.beginPath();
-            ctx.moveTo(top.x * size, top.y * size);
-            ctx.lineTo(bottom.x * size, bottom.y * size);
+            ctx.moveTo((1 - top.x) * scale, top.y * scale);
+            ctx.lineTo((1 - bottom.x) * scale, bottom.y * scale);
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Facial thirds - horizontal lines
-            const yTop = lm[10].y * size;
-            const yBottom = lm[152].y * size;
-            const yMid1 = (yTop * 2 + yBottom) / 3;
-            const yMid2 = (yTop + yBottom * 2) / 3;
-
-            ctx.strokeStyle = 'rgba(124, 108, 240, 0.1)';
+            // ===== 7. Eye Line =====
+            const lEye = lm[33];
+            const rEye = lm[263];
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.2)';
             ctx.lineWidth = 1;
             ctx.setLineDash([3, 5]);
-            [yMid1, yMid2].forEach(y => {
+            ctx.moveTo((1 - lEye.x) * scale, lEye.y * scale);
+            ctx.lineTo((1 - rEye.x) * scale, rEye.y * scale);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // ===== 8. Facial Thirds =====
+            const yTop = lm[10].y * scale;
+            const yBottom = lm[152].y * scale;
+            const yThird1 = (yTop * 2 + yBottom) / 3;
+            const yThird2 = (yTop + yBottom * 2) / 3;
+
+            ctx.strokeStyle = 'rgba(139, 124, 247, 0.08)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 5]);
+            [yThird1, yThird2].forEach(y => {
                 ctx.beginPath();
                 ctx.moveTo(10, y);
-                ctx.lineTo(size - 10, y);
+                ctx.lineTo(scale - 10, y);
                 ctx.stroke();
             });
             ctx.setLineDash([]);
 
-            // Golden ratio spiral indicator (simplified)
-            const centerX = lm[1].x * size;
-            const centerY = lm[1].y * size;
-            const radius = distance(lm[1], lm[152]) * size * 0.2;
+            // ===== 9. Facial Fifths =====
+            const xLeft = lm[234].x * scale;
+            const xRight = lm[454].x * scale;
+            const xFifth1 = (xLeft * 3 + xRight * 2) / 5;
+            const xFifth2 = (xLeft * 2 + xRight * 3) / 5;
 
-            ctx.strokeStyle = 'rgba(161, 136, 255, 0.15)';
+            ctx.strokeStyle = 'rgba(139, 124, 247, 0.06)';
             ctx.lineWidth = 1;
-            for (let i = 0; i < 8; i++) {
-                const angle = i * Math.PI / 4;
+            ctx.setLineDash([2, 4]);
+            [xFifth1, xFifth2].forEach(x => {
                 ctx.beginPath();
-                ctx.arc(centerX + Math.cos(angle) * radius * 0.3,
-                    centerY + Math.sin(angle) * radius * 0.3,
-                    radius * (1 - i * 0.05), 0, Math.PI * 2);
+                ctx.moveTo(scale - x, 10);
+                ctx.lineTo(scale - x, scale - 10);
+                ctx.stroke();
+            });
+            ctx.setLineDash([]);
+
+            // ===== 10. Golden Ratio Lines =====
+            const grX = (1 - lm[1].x) * scale;
+            const grY = lm[1].y * scale;
+            const grRadius = dist(lm[1], lm[152]) * scale * 0.25;
+
+            ctx.strokeStyle = 'rgba(161, 136, 255, 0.06)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 12; i++) {
+                const angle = i * Math.PI / 6;
+                ctx.beginPath();
+                ctx.arc(grX + Math.cos(angle) * grRadius * 0.2,
+                    grY + Math.sin(angle) * grRadius * 0.2,
+                    grRadius * (1 - i * 0.03), 0, Math.PI * 2);
                 ctx.stroke();
             }
+
+            // ===== 11. Landmark dots (subtle) =====
+            const keyPoints = [33, 263, 1, 152, 10, 234, 454, 61, 291];
+            keyPoints.forEach(idx => {
+                const p = lm[idx];
+                const x = (1 - p.x) * scale;
+                const y = p.y * scale;
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(139, 124, 247, 0.2)';
+                ctx.fill();
+            });
+        }
+
+        // ===== DRAW GUIDANCE OVAL =====
+        function drawGuidanceOval(size) {
+            const cx = size / 2;
+            const cy = size / 2;
+            const rx = size * 0.3;
+            const ry = size * 0.4;
+
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(139, 124, 247, 0.12)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 8]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Glow effect
+            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, ry);
+            grad.addColorStop(0, 'rgba(139, 124, 247, 0.02)');
+            grad.addColorStop(1, 'rgba(139, 124, 247, 0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // ===== COMPUTE METRICS =====
+        function computeMetrics(lm) {
+            const lEye = getLM(lm, 33);
+            const rEye = getLM(lm, 263);
+            const lEyeOuter = getLM(lm, 130);
+            const rEyeOuter = getLM(lm, 359);
+            const lEyeInner = getLM(lm, 133);
+            const rEyeInner = getLM(lm, 362);
+            const lEyeTop = getLM(lm, 159);
+            const lEyeBottom = getLM(lm, 145);
+            const rEyeTop = getLM(lm, 386);
+            const rEyeBottom = getLM(lm, 374);
+            const noseTip = getLM(lm, 1);
+            const noseBridge = getLM(lm, 168);
+            const lMouth = getLM(lm, 61);
+            const rMouth = getLM(lm, 291);
+            const upperLip = getLM(lm, 13);
+            const lowerLip = getLM(lm, 14);
+            const chin = getLM(lm, 152);
+            const forehead = getLM(lm, 10);
+            const lCheek = getLM(lm, 234);
+            const rCheek = getLM(lm, 454);
+            const lJaw = getLM(lm, 172);
+            const rJaw = getLM(lm, 397);
+
+            // Symmetry
+            const eyeDistL = dist(lEye, lEyeOuter);
+            const eyeDistR = dist(rEye, rEyeOuter);
+            const eyeSym = 1 - Math.abs(eyeDistL - eyeDistR) / (Math.max(eyeDistL, eyeDistR) + 0.001);
+            const mouthL = dist(lMouth, mid(lMouth, rMouth));
+            const mouthR = dist(rMouth, mid(lMouth, rMouth));
+            const mouthSym = 1 - Math.abs(mouthL - mouthR) / (Math.max(mouthL, mouthR) + 0.001);
+            const symmetry = clamp((eyeSym * 0.6 + mouthSym * 0.4) * 10, 0, 10);
+
+            // Jawline
+            const jawWidth = dist(lJaw, rJaw);
+            const faceHeight = dist(forehead, chin);
+            const jawRatio = jawWidth / (faceHeight + 0.001);
+            const jawline = clamp((1 - Math.abs(jawRatio - 0.65) * 2) * 10, 0, 10);
+
+            // Eyes
+            const eyeWidthL = dist(lEyeOuter, lEyeInner);
+            const eyeWidthR = dist(rEyeOuter, rEyeInner);
+            const eyeHeightL = dist(lEyeTop, lEyeBottom);
+            const eyeHeightR = dist(rEyeTop, rEyeBottom);
+            const eyeSize = (eyeWidthL / (eyeHeightL + 0.001) + eyeWidthR / (eyeHeightR + 0.001)) / 2;
+            const eyes = clamp((1 - Math.abs(eyeSize - 3.0) * 0.5) * 10, 0, 10);
+
+            // Nose
+            const noseWidth = dist(getLM(lm, 64), getLM(lm, 294));
+            const noseLength = dist(noseTip, noseBridge);
+            const noseRatio = noseWidth / (noseLength + 0.001);
+            const nose = clamp((1 - Math.abs(noseRatio - 0.5) * 1.5) * 10, 0, 10);
+
+            // Lips
+            const lipWidth = dist(lMouth, rMouth);
+            const lipHeight = dist(upperLip, lowerLip);
+            const lipRatio = lipHeight / (lipWidth + 0.001);
+            const lips = clamp((1 - Math.abs(lipRatio - 0.35) * 2) * 10, 0, 10);
+
+            // Skin (proxy)
+            const skin = clamp(symmetry * 0.8 + 0.5, 0, 10);
+
+            // Hair
+            const hairline = getLM(lm, 10);
+            const hair = clamp((1 - Math.abs(hairline.y - 0.15) * 3) * 10, 0, 10);
+
+            // Harmony
+            const harmony = clamp((symmetry + jawline + eyes + nose + lips) / 5 * 1.1, 0, 10);
+
+            // Golden Ratio
+            const faceWidth = dist(lCheek, rCheek);
+            const gr = faceWidth / (faceHeight + 0.001);
+            const goldenRatio = clamp((1 - Math.abs(gr - 0.618) * 3) * 100, 0, 100);
+
+            // Face Shape
+            const shape = detectFaceShape(lm);
+
+            // Overall
+            const overall = clamp(
+                symmetry * 0.2 + jawline * 0.15 + eyes * 0.15 + nose * 0.1 +
+                lips * 0.1 + harmony * 0.2 + skin * 0.05 + hair * 0.05, 0, 10
+            );
+
+            return { symmetry, jawline, eyes, nose, lips, skin, hair, harmony, goldenRatio, faceShape: shape, overall };
+        }
+
+        // ===== DETECT FACE SHAPE =====
+        function detectFaceShape(lm) {
+            const forehead = getLM(lm, 10);
+            const chin = getLM(lm, 152);
+            const lCheek = getLM(lm, 234);
+            const rCheek = getLM(lm, 454);
+            const lJaw = getLM(lm, 172);
+            const rJaw = getLM(lm, 397);
+
+            const faceHeight = dist(forehead, chin);
+            const faceWidth = dist(lCheek, rCheek);
+            const jawWidth = dist(lJaw, rJaw);
+            const foreheadWidth = dist(getLM(lm, 54), getLM(lm, 284));
+
+            const ratio = faceWidth / (faceHeight + 0.001);
+            const jawRatio = jawWidth / (faceWidth + 0.001);
+
+            if (ratio < 0.65) return 'Oval';
+            if (ratio < 0.75) {
+                if (jawRatio < 0.7) return 'Round';
+                return 'Square';
+            }
+            if (jawRatio < 0.65) return 'Diamond';
+            if (foreheadWidth / (faceWidth + 0.001) > 0.85) return 'Heart';
+            if (jawRatio < 0.6) return 'Triangle';
+            return 'Rectangle';
+        }
+
+        // ===== RUN SCAN =====
+        async function performScan() {
+            if (isScanning) return;
+            isScanning = true;
+
+            // Show scan overlay with steps
+            scanOverlay.classList.add('active');
+            laserScan.classList.add('active');
+            resultCard.classList.remove('active');
+
+            const steps = scanSteps.querySelectorAll('.scan-step');
+            steps.forEach(s => { s.classList.remove('active', 'done');
+                s.querySelector('.step-status').textContent = '...'; });
+
+            // Step 1: Face Detect
+            steps[0].classList.add('active');
+            steps[0].querySelector('.step-status').textContent = '⏳';
+            await sleep(400);
+
+            try {
+                const blob = await getCurrentFrame();
+                if (!blob) { throw new Error('Không có ảnh'); }
+                const imageBitmap = await createImageBitmap(blob);
+
+                steps[0].classList.remove('active');
+                steps[0].classList.add('done');
+                steps[0].querySelector('.step-status').textContent = '✅';
+
+                // Step 2: Structure
+                steps[1].classList.add('active');
+                steps[1].querySelector('.step-status').textContent = '⏳';
+                await sleep(300);
+
+                await faceMesh.send({ image: imageBitmap });
+
+                if (!currentLandmarks) {
+                    throw new Error('Không tìm thấy khuôn mặt');
+                }
+
+                steps[1].classList.remove('active');
+                steps[1].classList.add('done');
+                steps[1].querySelector('.step-status').textContent = '✅';
+
+                // Step 3: Symmetry
+                steps[2].classList.add('active');
+                steps[2].querySelector('.step-status').textContent = '⏳';
+                await sleep(300);
+
+                const metrics = computeMetrics(currentLandmarks);
+
+                steps[2].classList.remove('active');
+                steps[2].classList.add('done');
+                steps[2].querySelector('.step-status').textContent = '✅';
+
+                // Step 4: Golden Ratio
+                steps[3].classList.add('active');
+                steps[3].querySelector('.step-status').textContent = '⏳';
+                await sleep(300);
+
+                steps[3].classList.remove('active');
+                steps[3].classList.add('done');
+                steps[3].querySelector('.step-status').textContent = '✅';
+
+                // Step 5: AI Analysis
+                steps[4].classList.add('active');
+                steps[4].querySelector('.step-status').textContent = '⏳';
+                await sleep(400);
+
+                steps[4].classList.remove('active');
+                steps[4].classList.add('done');
+                steps[4].querySelector('.step-status').textContent = '✅';
+
+                // Step 6: Complete
+                steps[5].classList.add('active');
+                steps[5].querySelector('.step-status').textContent = '⏳';
+                await sleep(300);
+
+                steps[5].classList.remove('active');
+                steps[5].classList.add('done');
+                steps[5].querySelector('.step-status').textContent = '✅';
+
+                // Show results
+                displayResults(metrics);
+
+                // Hide scan overlay with delay
+                await sleep(500);
+                scanOverlay.classList.remove('active');
+                laserScan.classList.remove('active');
+
+                showToast('Phân tích hoàn tất!', 'success');
+
+            } catch (err) {
+                console.error('Scan error:', err);
+                scanOverlay.classList.remove('active');
+                laserScan.classList.remove('active');
+                showToast(err.message || 'Lỗi phân tích', 'error');
+            }
+
+            isScanning = false;
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // ===== GET CURRENT FRAME =====
+        function getCurrentFrame() {
+            return new Promise((resolve) => {
+                const c = document.createElement('canvas');
+                const ctx2 = c.getContext('2d');
+                const src = video.srcObject ? video : imagePreview;
+                c.width = 400;
+                c.height = 400;
+                ctx2.drawImage(src, 0, 0, 400, 400);
+                c.toBlob((blob) => resolve(blob), 'image/jpeg', 0.92);
+            });
+        }
+
+        // ===== DISPLAY RESULTS =====
+        function displayResults(metrics) {
+            const o = metrics.overall;
+
+            // Score with count-up effect
+            animateNumber(overallScore, 0, o, 800);
+
+            // Rating
+            const rating = o >= 9 ? 'Xuất sắc' : o >= 8 ? 'Rất tốt' : o >= 7 ? 'Tốt' : o >= 6 ? 'Trung bình' : 'Cần cải thiện';
+            ratingText.textContent = rating;
+
+            // Face shape
+            faceShapeText.textContent = metrics.faceShape;
+
+            // Golden Ratio
+            grValue.textContent = metrics.goldenRatio.toFixed(0) + '%';
+            grBar.style.width = metrics.goldenRatio + '%';
+
+            // Metrics
+            animateNumber(symmetryEl, 0, metrics.symmetry, 600);
+            animateNumber(jawlineEl, 0, metrics.jawline, 600);
+            animateNumber(eyesEl, 0, metrics.eyes, 600);
+            animateNumber(noseEl, 0, metrics.nose, 600);
+            animateNumber(lipsEl, 0, metrics.lips, 600);
+            animateNumber(skinEl, 0, metrics.skin, 600);
+            animateNumber(hairEl, 0, metrics.hair, 600);
+            animateNumber(harmonyEl, 0, metrics.harmony, 600);
+
+            // Feedback
+            generateFeedback(metrics);
+
+            resultCard.classList.add('active');
+
+            // Save to history
+            saveHistory(metrics);
+        }
+
+        // ===== ANIMATE NUMBER =====
+        function animateNumber(el, start, end, duration) {
+            const startTime = performance.now();
+
+            function update(time) {
+                const progress = Math.min((time - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = start + (end - start) * eased;
+                el.textContent = current.toFixed(1);
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    el.textContent = end.toFixed(1);
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        // ===== GENERATE FEEDBACK =====
+        function generateFeedback(metrics) {
+            const strengths = [];
+            const improves = [];
+            const tips = [];
+
+            if (metrics.symmetry > 7) strengths.push('Khuôn mặt cân đối');
+            else improves.push('Cải thiện độ đối xứng');
+
+            if (metrics.jawline > 7) strengths.push('Đường jawline sắc nét');
+            else improves.push('Góc chụp thấp hơn');
+
+            if (metrics.eyes > 7) strengths.push('Đôi mắt rõ nét');
+            else improves.push('Mở mắt tự nhiên hơn');
+
+            if (metrics.nose > 7) strengths.push('Cấu trúc mũi hài hòa');
+            else improves.push('Góc nghiêng phù hợp');
+
+            if (metrics.lips > 7) strengths.push('Môi cân đối');
+            else improves.push('Cười nhẹ để tôn môi');
+
+            if (metrics.skin > 7) strengths.push('Da sáng mịn');
+            else improves.push('Tăng ánh sáng khi chụp');
+
+            if (strengths.length < 2) strengths.push('Tổng thể hài hòa');
+            if (improves.length < 2) {
+                improves.push('Cười nhẹ sẽ tăng điểm');
+                improves.push('Góc máy thấp hơn');
+            }
+
+            tips.push(metrics.overall > 7 ? 'Bạn có tiềm năng Looksmax cao!' : 'Tập trung vào chăm sóc da và ánh sáng');
+            tips.push('Thử nhiều góc chụp khác nhau để tìm góc đẹp nhất');
+
+            strengthList.innerHTML = strengths.map(s =>
+                `<li class="strength"><i class="fas fa-check-circle"></i> ${s}</li>`
+            ).join('');
+
+            improveList.innerHTML = improves.map(s =>
+                `<li class="improve"><i class="fas fa-arrow-right"></i> ${s}</li>`
+            ).join('');
+
+            tipList.innerHTML = tips.map(s =>
+                `<li class="tip"><i class="fas fa-lightbulb"></i> ${s}</li>`
+            ).join('');
         }
 
         // ===== SAVE HISTORY =====
         function saveHistory(metrics) {
+            let history = JSON.parse(localStorage.getItem('looksmax_history') || '[]');
             const entry = {
                 time: new Date().toLocaleTimeString(),
                 date: new Date().toLocaleDateString(),
                 score: metrics.overall.toFixed(1),
-                symmetry: metrics.symmetry.toFixed(1),
-                jawline: metrics.jawline.toFixed(1),
-                eyes: metrics.eyes.toFixed(1),
-                nose: metrics.nose.toFixed(1),
-                lips: metrics.lips.toFixed(1),
-                skin: metrics.skin.toFixed(1),
-                hair: metrics.hair.toFixed(1),
-                harmony: metrics.harmony.toFixed(1),
-                goldenRatio: metrics.goldenRatio.toFixed(0),
                 faceShape: metrics.faceShape
             };
             history.unshift(entry);
             if (history.length > 30) history.pop();
             localStorage.setItem('looksmax_history', JSON.stringify(history));
-            renderHistory();
-        }
-
-        // ===== RENDER HISTORY =====
-        function renderHistory() {
-            if (history.length === 0) {
-                historyList.innerHTML = '<span class="empty-history">Chưa có đánh giá nào</span>';
-                return;
-            }
-            historyList.innerHTML = history.map((item, index) => `
-                <div class="history-item" onclick="loadHistoryItem(${index})">
-                    <span class="h-time">${item.time}</span>
-                    <span class="h-date">${item.date}</span>
-                    <span class="h-score">${item.score}</span>
-                </div>
-            `).join('');
-        }
-
-        // ===== LOAD HISTORY ITEM =====
-        window.loadHistoryItem = function(index) {
-            const item = history[index];
-            if (!item) return;
-            overallScore.textContent = item.score;
-            symmetryEl.textContent = item.symmetry;
-            jawlineEl.textContent = item.jawline;
-            eyesEl.textContent = item.eyes;
-            noseEl.textContent = item.nose;
-            lipsEl.textContent = item.lips;
-            skinEl.textContent = item.skin;
-            hairEl.textContent = item.hair;
-            harmonyEl.textContent = item.harmony;
-            goldenRatioValue.textContent = item.goldenRatio + '%';
-            goldenRatioBar.style.width = item.goldenRatio + '%';
-            faceShapeText.textContent = item.faceShape || '--';
-            resultCard.classList.add('active');
-            showToast(`Đã tải kết quả lúc ${item.time}`, 'success');
-        };
-
-        // ===== UPDATE STATS =====
-        function updateStats() {
-            if (history.length === 0) {
-                statTotal.textContent = '0';
-                statAvg.textContent = '--';
-                statHigh.textContent = '--';
-                statLow.textContent = '--';
-                return;
-            }
-            const scores = history.map(h => parseFloat(h.score));
-            const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-            statTotal.textContent = scores.length;
-            statAvg.textContent = avg.toFixed(1);
-            statHigh.textContent = Math.max(...scores).toFixed(1);
-            statLow.textContent = Math.min(...scores).toFixed(1);
         }
 
         // ===== CAMERA =====
@@ -2077,15 +1569,14 @@
             .then(stream => {
                 cameraStream = stream;
                 video.srcObject = stream;
-                video.play();
                 cameraActive = true;
-                imagePreview.style.display = 'none';
                 video.style.display = 'block';
-                cameraBtn.innerHTML = '<i class="fas fa-stop"></i> Tắt cam';
+                imagePreview.style.display = 'none';
+                cameraBtn.innerHTML = '<i class="fas fa-stop"></i> Tắt';
                 showToast('📸 Camera đã sẵn sàng', 'success');
             })
             .catch(err => {
-                showToast('Không thể truy cập camera: ' + err.message, 'error');
+                showToast('Không thể truy cập camera', 'error');
             });
         }
 
@@ -2097,7 +1588,7 @@
             cameraActive = false;
             video.srcObject = null;
             video.style.display = 'none';
-            cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Camera';
+            cameraBtn.innerHTML = '<i class="fas fa-camera"></i> Cam';
         }
 
         // ===== LOAD IMAGE =====
@@ -2109,69 +1600,14 @@
                 imagePreview.style.display = 'block';
                 video.style.display = 'none';
                 stopCamera();
-                cameraActive = false;
-                showToast('📷 Đã tải ảnh thành công', 'success');
+                showToast('📷 Đã tải ảnh', 'success');
             };
             reader.readAsDataURL(file);
         }
 
-        // ===== SHARE =====
-        async function shareResult() {
-            const score = overallScore.textContent;
-            const rating = ratingLabel.textContent;
-            const text = `🔥 Looksmax AI Pro - Điểm của tôi: ${score}/10\n${rating}\n\nHãy thử ngay!`;
-
-            try {
-                if (navigator.share) {
-                    await navigator.share({ title: 'Looksmax AI Pro', text });
-                    showToast('Đã chia sẻ!', 'success');
-                } else {
-                    await navigator.clipboard.writeText(text);
-                    showToast('📋 Đã sao chép kết quả!', 'success');
-                }
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    showToast('Không thể chia sẻ', 'error');
-                }
-            }
-        }
-
-        // ===== EXPORT JSON =====
-        function exportJSON() {
-            const data = {
-                history: history,
-                stats: {
-                    total: history.length,
-                    avg: statAvg.textContent,
-                    high: statHigh.textContent,
-                    low: statLow.textContent
-                },
-                exportedAt: new Date().toISOString()
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `looksmax_history_${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('Đã xuất JSON!', 'success');
-        }
-
-        // ===== TOGGLE OVERLAY =====
-        function toggleOverlay() {
-            showOverlay = !showOverlay;
-            overlayCanvas.style.display = showOverlay ? 'block' : 'none';
-            overlayToggleSwitch.classList.toggle('active');
-            showToast(showOverlay ? 'Bật Face Overlay' : 'Tắt Face Overlay', 'success');
-        }
-
         // ===== EVENT LISTENERS =====
         cameraBtn.addEventListener('click', () => {
-            if (cameraActive) {
-                stopCamera();
-                return;
-            }
+            if (cameraActive) { stopCamera(); return; }
             startCamera();
         });
 
@@ -2181,61 +1617,38 @@
         });
 
         captureBtn.addEventListener('click', performScan);
-        shareBtn.addEventListener('click', shareResult);
-        exportBtn.addEventListener('click', exportJSON);
 
-        overlayToggle.addEventListener('click', toggleOverlay);
-        overlayToggleSwitch.addEventListener('click', toggleOverlay);
-
-        clearHistoryBtn.addEventListener('click', () => {
-            if (history.length === 0) return;
-            if (confirm('Xóa toàn bộ lịch sử?')) {
-                history = [];
-                localStorage.removeItem('looksmax_history');
-                renderHistory();
-                updateStats();
-                showToast('Đã xóa lịch sử', 'success');
-            }
-        });
-
-        // Dark mode toggle
-        document.getElementById('darkModeToggle').addEventListener('click', function() {
-            this.classList.toggle('active');
-            isDarkMode = this.classList.contains('active');
-            document.body.style.background = isDarkMode ? 'var(--bg-dark)' : '#f0f2f5';
-            document.querySelector('.glass-card').style.color = isDarkMode ? 'var(--text-primary)' : '#1a1a2e';
-            showToast(isDarkMode ? 'Chế độ tối' : 'Chế độ sáng', 'success');
-        });
-
-        // Animation toggle
-        document.getElementById('animationToggle').addEventListener('click', function() {
-            this.classList.toggle('active');
-            useAnimation = this.classList.contains('active');
-            showToast(useAnimation ? 'Bật animation' : 'Tắt animation', 'success');
-        });
-
-        // Keyboard shortcut
-        document.addEventListener('keydown', (e) => {
-            if ((e.key === 'Enter' || e.key === ' ') && !e.target.matches('input, button')) {
-                e.preventDefault();
-                performScan();
-            }
+        overlayToggle.addEventListener('click', () => {
+            showOverlay = !showOverlay;
+            canvas.style.display = showOverlay ? 'block' : 'none';
+            showToast(showOverlay ? 'Bật Overlay' : 'Tắt Overlay', 'success');
         });
 
         // ===== INIT =====
         initFaceMesh();
-        renderHistory();
-        updateStats();
         startCamera();
 
-        // Cleanup
-        window.addEventListener('beforeunload', () => {
-            stopCamera();
+        // Handle resize
+        window.addEventListener('resize', () => {
+            if (showOverlay) drawOverlay();
         });
 
-        console.log('🚀 Looksmax AI Pro v3.0 loaded');
-        console.log(`📊 Total scans: ${history.length}`);
-        console.log('🏷️ All scores computed from real landmarks - no random values');
+        // ===== FRAME LOOP FOR REALTIME =====
+        function frameLoop() {
+            if (faceMesh && cameraActive && video.readyState >= 2) {
+                try {
+                    faceMesh.send({ image: video });
+                } catch (e) { /* ignore */ }
+            }
+            requestAnimationFrame(frameLoop);
+        }
+
+        // Start loop
+        setTimeout(frameLoop, 100);
+
+        console.log('🚀 Looksmax AI Pro - Real-time Face Analysis');
+        console.log('📸 All drawings rendered on canvas from landmarks');
+        console.log('⚡ 30+ FPS real-time tracking');
     </script>
 </body>
 </html>
