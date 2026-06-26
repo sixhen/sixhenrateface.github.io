@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Looksmax AI Pro · Professional Face Analysis</title>
+    <title>Looksmax AI Pro · Complete Face Analysis</title>
     <link rel="manifest" href="data:application/json,{}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -51,9 +51,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ============================================================
-           APP SHELL
-           ============================================================ */
         #app {
             display: flex;
             flex-direction: column;
@@ -78,7 +75,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px 16px 10px;
+            padding: 10px 14px 8px;
             border-bottom: 1px solid var(--border-color);
             flex-shrink: 0;
             background: rgba(0, 0, 0, 0.2);
@@ -88,14 +85,14 @@
 
         .app-header .logo {
             color: var(--primary);
-            font-size: 22px;
+            font-size: 20px;
             background: rgba(124, 108, 240, 0.12);
-            padding: 8px;
-            border-radius: 12px;
+            padding: 6px 8px;
+            border-radius: 10px;
         }
 
         .app-header h1 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             background: linear-gradient(135deg, #d9c9ff, var(--secondary));
             -webkit-background-clip: text;
@@ -105,29 +102,29 @@
 
         .app-header .badge {
             margin-left: auto;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 600;
             color: var(--secondary);
             background: rgba(161, 136, 255, 0.1);
-            padding: 3px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
             border: 1px solid rgba(161, 136, 255, 0.1);
             letter-spacing: 0.5px;
         }
 
         .app-header .badge i {
-            font-size: 7px;
+            font-size: 6px;
             margin-right: 3px;
         }
 
         /* ============================================================
-           MAIN CONTENT (SCROLLABLE)
+           MAIN CONTENT
            ============================================================ */
         .app-content {
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 12px 14px 80px;
+            padding: 10px 12px 70px;
             scroll-behavior: smooth;
         }
 
@@ -152,7 +149,7 @@
             background: #0c0e12;
             aspect-ratio: 1/1;
             width: 100%;
-            max-height: 420px;
+            max-height: 380px;
             border: 1px solid var(--border-color);
             box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.5);
             flex-shrink: 0;
@@ -183,41 +180,50 @@
             z-index: 5;
         }
 
-        /* Guidance Frame */
-        .guidance-frame {
+        /* Face Detection Overlay */
+        .face-detection-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            border-radius: var(--radius);
+        }
+
+        .detection-box {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 55%;
             height: 72%;
-            border: 2px dashed rgba(124, 108, 240, 0.15);
+            border: 2px solid rgba(124, 108, 240, 0.2);
             border-radius: 50%;
-            pointer-events: none;
-            z-index: 2;
             transition: all 0.5s ease;
         }
 
-        .guidance-frame.face-detected {
-            border-color: rgba(74, 222, 128, 0.15);
+        .detection-box.face-detected {
+            border-color: rgba(74, 222, 128, 0.2);
             opacity: 0.3;
         }
 
-        .guidance-text {
+        .detection-text {
             position: absolute;
-            bottom: 10%;
+            bottom: 12%;
             left: 50%;
             transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 11px;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 10px;
             letter-spacing: 0.5px;
-            pointer-events: none;
-            z-index: 2;
             white-space: nowrap;
             font-weight: 400;
+            transition: all 0.5s ease;
         }
 
-        /* Laser Scan */
+        .detection-text.face-detected {
+            color: rgba(74, 222, 128, 0.3);
+        }
+
+        /* Laser Scan Effect */
         .laser-scan {
             position: absolute;
             top: 0;
@@ -264,18 +270,24 @@
             }
         }
 
-        /* Camera Controls Overlay */
+        .laser-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, rgba(124, 108, 240, 0.02), transparent 70%);
+        }
+
+        /* Camera Controls */
         .camera-controls {
             position: absolute;
-            bottom: 12px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 8px;
+            gap: 6px;
             z-index: 6;
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(12px);
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -284,16 +296,15 @@
             background: rgba(255, 255, 255, 0.05);
             border: none;
             color: #c8d0dc;
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all var(--transition);
-            position: relative;
         }
 
         .cam-btn:active {
@@ -313,36 +324,59 @@
             transform: scale(0.85);
         }
 
+        .cam-btn.primary .ripple {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(124, 108, 240, 0.2);
+            animation: ripple 1.5s ease-out infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+        }
+
         .cam-btn.active {
             background: rgba(74, 222, 128, 0.15);
             color: var(--success);
         }
 
+        #file-input {
+            display: none;
+        }
+
         /* ============================================================
-           SCAN OVERLAY
+           AI SCANNING ANIMATION (Full Screen Overlay)
            ============================================================ */
         .scan-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(16px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
             display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 20;
             border-radius: var(--radius);
-            animation: fadeIn 0.4s ease;
+            animation: fadeInOverlay 0.5s ease;
         }
 
         .scan-overlay.active {
             display: flex;
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeInOverlay {
             from {
                 opacity: 0;
-                transform: scale(0.97);
+                transform: scale(0.98);
             }
             to {
                 opacity: 1;
@@ -350,69 +384,174 @@
             }
         }
 
-        .scan-spinner {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.04);
-            border-top-color: var(--primary);
-            border-right-color: var(--secondary);
-            animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            box-shadow: 0 0 60px rgba(124, 108, 240, 0.1);
+        .scan-animation {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
         }
 
-        @keyframes spin {
-            to {
+        .scan-ring {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: ringSpin 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .scan-ring:nth-child(1) {
+            border-top-color: var(--primary);
+            animation-delay: 0s;
+        }
+
+        .scan-ring:nth-child(2) {
+            border-right-color: var(--secondary);
+            animation-delay: 0.4s;
+            inset: 10px;
+        }
+
+        .scan-ring:nth-child(3) {
+            border-bottom-color: var(--primary);
+            animation-delay: 0.8s;
+            inset: 20px;
+        }
+
+        @keyframes ringSpin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
                 transform: rotate(360deg);
             }
         }
 
+        .scan-center-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: var(--primary);
+            animation: pulseIcon 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulseIcon {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.7;
+            }
+        }
+
         .scan-title {
-            margin-top: 18px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #e8ecf2;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
         }
 
         .scan-subtitle {
             font-size: 13px;
             color: var(--text-secondary);
-            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+
+        .scan-steps {
+            display: flex;
+            gap: 12px;
+            margin: 12px 0 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .scan-step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            opacity: 0.3;
+            transition: all 0.5s ease;
+            min-width: 60px;
+        }
+
+        .scan-step-item.active {
+            opacity: 1;
+        }
+
+        .scan-step-item.done {
+            opacity: 0.6;
+        }
+
+        .scan-step-item .step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.5s ease;
+        }
+
+        .scan-step-item.active .step-icon {
+            background: rgba(124, 108, 240, 0.15);
+            color: var(--primary);
+            border-color: rgba(124, 108, 240, 0.15);
+            box-shadow: 0 0 30px rgba(124, 108, 240, 0.05);
+        }
+
+        .scan-step-item.done .step-icon {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success);
+            border-color: rgba(74, 222, 128, 0.1);
+        }
+
+        .scan-step-item .step-label {
+            font-size: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .scan-step-item.active .step-label {
+            color: var(--text-secondary);
+        }
+
+        .scan-step-item.done .step-label {
+            color: var(--text-muted);
         }
 
         .scan-progress-wrap {
             width: 200px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.06);
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 4px;
-            margin-top: 16px;
             overflow: hidden;
+            margin-top: 4px;
         }
 
         .scan-progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             border-radius: 4px;
+            transition: width 0.5s ease;
             width: 0%;
-            animation: progressAnim 2s ease-in-out infinite;
-        }
-
-        @keyframes progressAnim {
-            0% {
-                width: 0%;
-                transform: translateX(-100%);
-            }
-            100% {
-                width: 100%;
-                transform: translateX(0%);
-            }
         }
 
         /* ============================================================
            RESULTS SECTION
            ============================================================ */
         .results-section {
-            margin-top: 14px;
+            margin-top: 12px;
             display: none;
             animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -437,26 +576,26 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
+            padding: 12px 14px;
             background: rgba(124, 108, 240, 0.04);
             border-radius: var(--radius-sm);
             border: 1px solid rgba(124, 108, 240, 0.06);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .score-left {
             display: flex;
             align-items: baseline;
-            gap: 6px;
+            gap: 4px;
         }
 
         .score-left .label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
         }
 
         .score-number {
-            font-size: 36px;
+            font-size: 34px;
             font-weight: 800;
             background: linear-gradient(135deg, #d9c9ff, var(--secondary), var(--primary));
             -webkit-background-clip: text;
@@ -466,21 +605,21 @@
         }
 
         .score-max {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 300;
             color: var(--text-muted);
         }
 
         .score-right {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .score-badge {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 500;
-            padding: 4px 14px;
+            padding: 3px 12px;
             border-radius: 20px;
             display: flex;
             align-items: center;
@@ -499,14 +638,13 @@
             border: 1px solid rgba(251, 191, 36, 0.08);
         }
 
-        /* Overall Progress Bar */
         .overall-bar {
             width: 100%;
             height: 4px;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 4px;
             overflow: hidden;
-            margin: 8px 0 14px;
+            margin: 6px 0 10px;
         }
 
         .overall-bar-fill {
@@ -517,90 +655,28 @@
             width: 0%;
         }
 
-        /* ============================================================
-           METRICS GRID
-           ============================================================ */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 6px;
-            margin: 10px 0 14px;
-        }
-
-        .metric-card {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: var(--radius-sm);
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            transition: all var(--transition);
-        }
-
-        .metric-card:hover {
-            border-color: rgba(124, 108, 240, 0.1);
-        }
-
-        .metric-card .label {
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .metric-card .label i {
-            font-size: 9px;
-            color: var(--primary);
-        }
-
-        .metric-card .value {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-top: 2px;
-        }
-
-        .metric-card .bar-mini {
-            width: 100%;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 4px;
-            margin-top: 4px;
-            overflow: hidden;
-        }
-
-        .metric-card .bar-mini-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 1s ease;
-        }
-
-        /* ============================================================
-           GOLDEN RATIO
-           ============================================================ */
+        /* Golden Ratio */
         .gr-card {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 10px 14px;
+            gap: 10px;
+            padding: 8px 12px;
             background: rgba(161, 136, 255, 0.04);
             border-radius: var(--radius-sm);
             border: 1px solid rgba(161, 136, 255, 0.06);
-            margin: 10px 0 14px;
+            margin: 6px 0 10px;
         }
 
         .gr-card .label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
         }
 
         .gr-card .value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--secondary);
-            min-width: 50px;
+            min-width: 44px;
         }
 
         .gr-card .bar {
@@ -618,146 +694,277 @@
             transition: width 1.2s ease;
         }
 
-        /* ============================================================
-           CHARTS
-           ============================================================ */
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            margin: 8px 0 10px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition);
+        }
+
+        .metric-card .label {
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .metric-card .label i {
+            font-size: 8px;
+            color: var(--primary);
+        }
+
+        .metric-card .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 1px;
+        }
+
+        .metric-card .bar-mini {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin-top: 3px;
+            overflow: hidden;
+        }
+
+        .metric-card .bar-mini-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Charts */
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 12px 0;
+            gap: 8px;
+            margin: 8px 0 10px;
         }
 
         .chart-box {
             background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius-sm);
-            padding: 12px;
+            padding: 10px;
             border: 1px solid var(--border-color);
         }
 
         .chart-box .title {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-align: center;
         }
 
         .chart-box canvas {
             width: 100%;
             height: 100%;
-            max-height: 120px;
+            max-height: 100px;
         }
 
         /* ============================================================
-           FEEDBACK
+           AI ANALYSIS REPORT
            ============================================================ */
-        .feedback-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin: 10px 0 12px;
-        }
-
-        .feedback-box {
-            background: rgba(255, 255, 255, 0.02);
+        .ai-report {
+            background: linear-gradient(135deg, rgba(124, 108, 240, 0.04), rgba(161, 136, 255, 0.02));
             border-radius: var(--radius-sm);
-            padding: 12px 14px;
-            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            border: 1px solid rgba(124, 108, 240, 0.06);
+            margin: 10px 0;
+            position: relative;
+            overflow: hidden;
         }
 
-        .feedback-box .title {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+        .ai-report::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .ai-report .report-header {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .feedback-box .title i {
-            font-size: 11px;
-        }
-
-        .feedback-box .title .fa-check-circle {
-            color: var(--success);
-        }
-        .feedback-box .title .fa-arrow-right {
-            color: var(--warning);
-        }
-        .feedback-box .title .fa-lightbulb {
+        .ai-report .report-header .icon {
+            font-size: 18px;
             color: var(--primary);
         }
 
-        .feedback-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
+        .ai-report .report-header .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .feedback-list li {
-            font-size: 12px;
-            color: #c8d0dc;
+        .ai-report .report-header .badge-ai {
+            margin-left: auto;
+            font-size: 8px;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(124, 108, 240, 0.1);
+            padding: 2px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(124, 108, 240, 0.05);
+        }
+
+        .ai-report .report-content {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #d2d9e8;
+        }
+
+        .ai-report .report-content .section {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .ai-report .report-content .section:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .ai-report .report-content .section-title {
+            font-weight: 600;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 2px 0;
-            animation: fadeItem 0.3s ease forwards;
-            opacity: 0;
+            font-size: 12px;
+            margin-bottom: 4px;
         }
 
-        .feedback-list li:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-        .feedback-list li:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        .feedback-list li:nth-child(3) {
-            animation-delay: 0.15s;
+        .ai-report .report-content .section-title .emoji {
+            font-size: 14px;
         }
 
-        @keyframes fadeItem {
-            to {
-                opacity: 1;
-            }
+        .ai-report .report-content .highlight-success {
+            color: var(--success);
         }
 
-        .feedback-list li i {
+        .ai-report .report-content .highlight-warning {
+            color: var(--warning);
+        }
+
+        .ai-report .report-content .highlight-primary {
+            color: var(--secondary);
+        }
+
+        .ai-report .report-content .bullet {
+            padding-left: 16px;
+            position: relative;
+            margin: 2px 0;
+        }
+
+        .ai-report .report-content .bullet::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        .ai-report .report-content .score-tag {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .score-tag.good {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--success);
+        }
+        .score-tag.medium {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--warning);
+        }
+        .score-tag.bad {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* Improvement Plan */
+        .improvement-plan {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 8px;
+            margin-top: 6px;
+        }
+
+        .improvement-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #c8d0dc;
+            padding: 3px 0;
+        }
+
+        .improvement-item .point {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 16px;
+        }
+
+        .improvement-item .gain {
             font-size: 10px;
-            flex-shrink: 0;
+            color: var(--text-muted);
+            margin-left: auto;
         }
 
         /* ============================================================
-           SHARE BUTTONS
+           SHARE & ACTIONS
            ============================================================ */
         .share-row {
             display: flex;
-            gap: 8px;
-            margin-top: 12px;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
         }
 
         .btn {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border-color);
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 30px;
             color: var(--text-primary);
             font-weight: 500;
-            font-size: 12px;
+            font-size: 11px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             transition: all var(--transition);
             cursor: pointer;
             flex: 1;
-            min-height: 38px;
+            min-height: 34px;
         }
 
         .btn:active {
@@ -778,10 +985,15 @@
         }
 
         .btn-sm {
-            padding: 4px 12px;
-            font-size: 10px;
-            min-height: 28px;
+            padding: 3px 10px;
+            font-size: 9px;
+            min-height: 24px;
             flex: 0 1 auto;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.08);
         }
 
         /* ============================================================
@@ -796,7 +1008,7 @@
             width: 100%;
             display: flex;
             justify-content: space-around;
-            padding: 8px 16px 12px;
+            padding: 6px 12px 10px;
             background: rgba(10, 12, 16, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -808,21 +1020,21 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 1px;
             background: none;
             border: none;
             color: var(--text-muted);
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 500;
             cursor: pointer;
             transition: all var(--transition);
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 3px 10px;
+            border-radius: 10px;
             position: relative;
         }
 
         .nav-item i {
-            font-size: 18px;
+            font-size: 16px;
             transition: all var(--transition);
         }
 
@@ -836,10 +1048,10 @@
 
         .nav-item .badge-dot {
             position: absolute;
-            top: 2px;
-            right: 4px;
-            width: 6px;
-            height: 6px;
+            top: 1px;
+            right: 3px;
+            width: 5px;
+            height: 5px;
             background: var(--primary);
             border-radius: 50%;
             display: none;
@@ -850,7 +1062,7 @@
         }
 
         /* ============================================================
-           HISTORY PAGE
+           PAGES
            ============================================================ */
         .page {
             display: none;
@@ -864,7 +1076,7 @@
         @keyframes fadePage {
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: translateY(6px);
             }
             to {
                 opacity: 1;
@@ -876,31 +1088,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .page-header h2 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-primary);
         }
 
         .page-header .count {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
         }
 
         .history-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
         .history-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
@@ -920,12 +1132,12 @@
         }
 
         .history-item .left .date {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
         }
 
         .history-item .left .score-small {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
         }
@@ -933,50 +1145,48 @@
         .history-item .right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .history-item .right .shape-tag {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--secondary);
             background: rgba(161, 136, 255, 0.08);
-            padding: 2px 10px;
-            border-radius: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
         }
 
         .history-item .right .arrow {
             color: var(--text-muted);
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 16px;
             color: var(--text-muted);
         }
 
         .empty-state i {
-            font-size: 40px;
-            margin-bottom: 12px;
+            font-size: 32px;
+            margin-bottom: 8px;
             opacity: 0.3;
         }
 
         .empty-state p {
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        /* ============================================================
-           SETTINGS PAGE
-           ============================================================ */
+        /* Settings */
         .settings-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            margin-bottom: 14px;
+            gap: 5px;
+            margin-bottom: 12px;
         }
 
         .settings-group .group-title {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -988,30 +1198,29 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius-sm);
             border: 1px solid var(--border-color);
         }
 
         .settings-item .label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .settings-item .label i {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
-            width: 20px;
+            width: 18px;
         }
 
-        /* Toggle Switch */
         .toggle {
-            width: 40px;
-            height: 22px;
+            width: 36px;
+            height: 20px;
             background: rgba(255, 255, 255, 0.06);
             border-radius: 12px;
             position: relative;
@@ -1025,8 +1234,8 @@
         }
 
         .toggle .knob {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             background: white;
             border-radius: 50%;
             position: absolute;
@@ -1036,7 +1245,7 @@
         }
 
         .toggle.active .knob {
-            left: 21px;
+            left: 19px;
         }
 
         /* ============================================================
@@ -1044,24 +1253,24 @@
            ============================================================ */
         .toast {
             position: fixed;
-            bottom: 80px;
+            bottom: 72px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: rgba(16, 18, 24, 0.95);
             backdrop-filter: blur(20px);
-            padding: 10px 20px;
-            border-radius: 14px;
+            padding: 8px 18px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
             color: var(--text-primary);
-            font-size: 13px;
+            font-size: 12px;
             z-index: 1000;
             transition: all 0.5s ease;
             opacity: 0;
             pointer-events: none;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             max-width: 90%;
         }
 
@@ -1072,7 +1281,7 @@
         }
 
         .toast i {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--primary);
         }
 
@@ -1081,7 +1290,7 @@
            ============================================================ */
         @media (max-width: 480px) {
             .app-content {
-                padding: 10px 10px 70px;
+                padding: 8px 10px 60px;
             }
 
             .camera-section {
@@ -1095,11 +1304,11 @@
             }
 
             .metric-card {
-                padding: 8px 10px;
+                padding: 6px 8px;
             }
 
             .metric-card .value {
-                font-size: 15px;
+                font-size: 14px;
             }
 
             .charts-grid {
@@ -1107,16 +1316,24 @@
                 gap: 6px;
             }
 
-            .feedback-grid {
+            .score-number {
+                font-size: 28px;
+            }
+
+            .scan-steps {
+                gap: 8px;
+            }
+
+            .scan-step-item {
+                min-width: 50px;
+            }
+
+            .improvement-plan {
                 grid-template-columns: 1fr;
             }
 
-            .score-number {
-                font-size: 30px;
-            }
-
-            .score-header {
-                padding: 10px 12px;
+            .ai-report {
+                padding: 12px 14px;
             }
         }
 
@@ -1130,15 +1347,28 @@
             }
 
             .camera-controls .cam-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
             }
 
             .camera-controls .cam-btn.primary {
                 width: 38px;
                 height: 38px;
                 font-size: 14px;
+            }
+
+            .score-number {
+                font-size: 24px;
+            }
+
+            .scan-animation {
+                width: 70px;
+                height: 70px;
+            }
+
+            .scan-center-icon {
+                font-size: 22px;
             }
         }
 
@@ -1149,11 +1379,17 @@
             }
 
             .metric-card {
-                padding: 6px 8px;
+                padding: 4px 6px;
             }
 
             .metric-card .value {
-                font-size: 13px;
+                font-size: 12px;
+            }
+
+            .btn {
+                font-size: 10px;
+                padding: 4px 10px;
+                min-height: 28px;
             }
         }
     </style>
@@ -1175,18 +1411,23 @@
             <!-- ====== HOME PAGE ====== -->
             <div class="page active" id="page-home">
 
-                <!-- Camera -->
+                <!-- Camera Section -->
                 <div class="camera-section">
                     <video id="video" playsinline autoplay></video>
                     <img id="image-preview" alt="Preview" />
                     <canvas id="overlay-canvas"></canvas>
 
-                    <div class="guidance-frame" id="guidanceFrame">
-                        <div class="guidance-text">📸 Đặt khuôn mặt vào khung</div>
+                    <!-- Detection Box -->
+                    <div class="face-detection-overlay">
+                        <div class="detection-box" id="detectionBox">
+                            <div class="detection-text" id="detectionText">📸 Đặt khuôn mặt vào khung</div>
+                        </div>
                     </div>
 
+                    <!-- Laser Scan -->
                     <div class="laser-scan" id="laserScan">
                         <div class="laser-line"></div>
+                        <div class="laser-glow"></div>
                     </div>
 
                     <!-- Camera Controls -->
@@ -1194,30 +1435,59 @@
                         <button class="cam-btn" id="cameraSwitchBtn" title="Đổi camera">
                             <i class="fas fa-rotate"></i>
                         </button>
-                        <button class="cam-btn" id="flashBtn" title="Đèn flash">
-                            <i class="fas fa-bolt"></i>
-                        </button>
                         <button class="cam-btn" id="uploadBtn" title="Tải ảnh">
                             <i class="fas fa-image"></i>
                         </button>
-                        <button class="cam-btn primary" id="captureBtn" title="Chụp ảnh">
+                        <button class="cam-btn primary" id="captureBtn" title="Chụp & Phân tích">
                             <i class="fas fa-camera"></i>
                         </button>
                     </div>
                     <input type="file" id="file-input" accept="image/*">
                 </div>
 
-                <!-- Scan Overlay -->
+                <!-- ===== AI SCANNING OVERLAY ===== -->
                 <div class="scan-overlay" id="scanOverlay">
-                    <div class="scan-spinner"></div>
-                    <div class="scan-title">Đang phân tích...</div>
-                    <div class="scan-subtitle">AI đang đánh giá khuôn mặt của bạn</div>
+                    <div class="scan-animation">
+                        <div class="scan-ring"></div>
+                        <div class="scan-ring"></div>
+                        <div class="scan-ring"></div>
+                        <div class="scan-center-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                    </div>
+
+                    <div class="scan-title">🔬 Phân tích khuôn mặt</div>
+                    <div class="scan-subtitle">AI đang đánh giá cấu trúc gương mặt của bạn</div>
+
+                    <div class="scan-steps" id="scanSteps">
+                        <div class="scan-step-item" data-step="0">
+                            <div class="step-icon"><i class="fas fa-camera"></i></div>
+                            <span class="step-label">Ảnh</span>
+                        </div>
+                        <div class="scan-step-item" data-step="1">
+                            <div class="step-icon"><i class="fas fa-face-smile"></i></div>
+                            <span class="step-label">Khuôn mặt</span>
+                        </div>
+                        <div class="scan-step-item" data-step="2">
+                            <div class="step-icon"><i class="fas fa-bezier-curve"></i></div>
+                            <span class="step-label">Cấu trúc</span>
+                        </div>
+                        <div class="scan-step-item" data-step="3">
+                            <div class="step-icon"><i class="fas fa-divide"></i></div>
+                            <span class="step-label">Tỷ lệ</span>
+                        </div>
+                        <div class="scan-step-item" data-step="4">
+                            <div class="step-icon"><i class="fas fa-chart-simple"></i></div>
+                            <span class="step-label">Điểm số</span>
+                        </div>
+                    </div>
+
                     <div class="scan-progress-wrap">
-                        <div class="scan-progress-fill"></div>
+                        <div class="scan-progress-fill" id="scanProgress"></div>
                     </div>
                 </div>
 
-                <!-- Results -->
+                <!-- ===== RESULTS ===== -->
                 <div class="results-section" id="resultsSection">
 
                     <!-- Score Header -->
@@ -1244,7 +1514,7 @@
 
                     <!-- Golden Ratio -->
                     <div class="gr-card">
-                        <span class="label">Tỷ lệ vàng</span>
+                        <span class="label">📐 Tỷ lệ vàng</span>
                         <span class="value" id="grValue">0%</span>
                         <div class="bar"><div class="bar-fill" id="grBar" style="width:0%"></div></div>
                     </div>
@@ -1301,39 +1571,47 @@
                     <!-- Charts -->
                     <div class="charts-grid">
                         <div class="chart-box">
-                            <div class="title">Radar Chart</div>
+                            <div class="title">📊 Radar</div>
                             <canvas id="radarChart"></canvas>
                         </div>
                         <div class="chart-box">
-                            <div class="title">Bar Chart</div>
+                            <div class="title">📊 Bar</div>
                             <canvas id="barChart"></canvas>
                         </div>
                     </div>
 
-                    <!-- Feedback -->
-                    <div class="feedback-grid">
-                        <div class="feedback-box">
-                            <div class="title"><i class="fas fa-check-circle"></i> Điểm mạnh</div>
-                            <ul class="feedback-list" id="strengthList">
-                                <li><i class="fas fa-check-circle" style="color:var(--success)"></i> Chưa có dữ liệu</li>
-                            </ul>
+                    <!-- ===== AI REPORT ===== -->
+                    <div class="ai-report" id="aiReport">
+                        <div class="report-header">
+                            <span class="icon">🤖</span>
+                            <span class="title">Phân tích AI</span>
+                            <span class="badge-ai"><i class="fas fa-circle" style="font-size:5px;color:var(--success);margin-right:4px;"></i> Xác thực</span>
                         </div>
-                        <div class="feedback-box">
-                            <div class="title"><i class="fas fa-arrow-right" style="color:var(--warning)"></i> Cải thiện</div>
-                            <ul class="feedback-list" id="improveList">
-                                <li><i class="fas fa-arrow-right" style="color:var(--warning)"></i> Chưa có dữ liệu</li>
-                            </ul>
+                        <div class="report-content" id="reportContent">
+                            <div class="section">
+                                <div class="section-title"><span class="emoji">📋</span> Tổng quan</div>
+                                <div id="reportOverview">Đang phân tích...</div>
+                            </div>
+                            <div class="section">
+                                <div class="section-title"><span class="emoji">💪</span> Điểm mạnh</div>
+                                <div id="reportStrengths">Đang phân tích...</div>
+                            </div>
+                            <div class="section">
+                                <div class="section-title"><span class="emoji">📈</span> Cần cải thiện</div>
+                                <div id="reportWeaknesses">Đang phân tích...</div>
+                            </div>
+                            <div class="section">
+                                <div class="section-title"><span class="emoji">🎯</span> Kế hoạch cải thiện</div>
+                                <div id="reportPlan">Đang phân tích...</div>
+                            </div>
+                            <div class="section">
+                                <div class="section-title"><span class="emoji">📸</span> Góc chụp & Ánh sáng</div>
+                                <div id="reportPhotoTips">Đang phân tích...</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="feedback-box" style="margin-bottom:10px;">
-                        <div class="title"><i class="fas fa-lightbulb" style="color:var(--primary)"></i> Gợi ý chi tiết</div>
-                        <ul class="feedback-list" id="tipList">
-                            <li><i class="fas fa-lightbulb" style="color:var(--primary)"></i> Chưa có dữ liệu</li>
-                        </ul>
-                    </div>
-
-                    <!-- Share -->
+                    <!-- Share Actions -->
                     <div class="share-row">
                         <button class="btn btn-primary" id="shareBtn"><i class="fas fa-share-alt"></i> Chia sẻ</button>
                         <button class="btn btn-success" id="exportBtn"><i class="fas fa-download"></i> Xuất PNG</button>
@@ -1399,11 +1677,15 @@
                     <div class="group-title">Thông tin</div>
                     <div class="settings-item">
                         <span class="label"><i class="fas fa-code"></i> Version</span>
-                        <span style="font-size:12px;color:var(--text-muted);">v3.5 Pro</span>
+                        <span style="font-size:11px;color:var(--text-muted);">v4.0 Pro</span>
                     </div>
                     <div class="settings-item">
                         <span class="label"><i class="fas fa-face-smile"></i> AI Engine</span>
-                        <span style="font-size:12px;color:var(--text-muted);">MediaPipe FaceMesh</span>
+                        <span style="font-size:11px;color:var(--text-muted);">MediaPipe 468 landmarks</span>
+                    </div>
+                    <div class="settings-item">
+                        <span class="label"><i class="fas fa-bolt"></i> Analysis</span>
+                        <span style="font-size:11px;color:var(--text-muted);">Real-time + AI Scan</span>
                     </div>
                 </div>
             </div>
@@ -1441,8 +1723,9 @@
     <script>
         /**
          * ============================================================
-         * LOOKSMAX AI PRO - COMPLETE APPLICATION
-         * Version: 3.5 Pro
+         * LOOKSMAX AI PRO v4.0 - Complete Face Analysis
+         * Uses MediaPipe FaceMesh 468 landmarks
+         * Real-time face detection + AI scanning animation
          * ============================================================
          */
 
@@ -1457,11 +1740,13 @@
         const captureBtn = $('captureBtn');
         const uploadBtn = $('uploadBtn');
         const cameraSwitchBtn = $('cameraSwitchBtn');
-        const flashBtn = $('flashBtn');
 
-        const guidanceFrame = $('guidanceFrame');
+        const detectionBox = $('detectionBox');
+        const detectionText = $('detectionText');
         const laserScan = $('laserScan');
         const scanOverlay = $('scanOverlay');
+        const scanProgress = $('scanProgress');
+        const scanSteps = $('scanSteps');
 
         const resultsSection = $('resultsSection');
         const overallScore = $('overallScore');
@@ -1483,9 +1768,11 @@
             harmony: { el: $('harmony'), bar: $('harmonyBar') },
         };
 
-        const strengthList = $('strengthList');
-        const improveList = $('improveList');
-        const tipList = $('tipList');
+        const reportOverview = $('reportOverview');
+        const reportStrengths = $('reportStrengths');
+        const reportWeaknesses = $('reportWeaknesses');
+        const reportPlan = $('reportPlan');
+        const reportPhotoTips = $('reportPhotoTips');
 
         const historyList = $('historyList');
         const historyCount = $('historyCount');
@@ -1509,7 +1796,6 @@
         let cameraStream = null;
         let cameraActive = false;
         let cameraFacing = 'user';
-        let flashActive = false;
         let faceMesh = null;
         let faceMeshReady = false;
         let isScanning = false;
@@ -1521,6 +1807,7 @@
         let useAnimation = true;
         let history = [];
         let currentResults = null;
+        let scanComplete = false;
 
         // ===== LOAD HISTORY =====
         try {
@@ -1582,7 +1869,6 @@
 
                 faceMesh.initialize().then(() => {
                     console.log('✅ FaceMesh initialized');
-                    showToast('✅ AI đã sẵn sàng', 'success');
                 }).catch((err) => {
                     console.error('FaceMesh init error:', err);
                 });
@@ -1599,10 +1885,14 @@
             if (hasFace) {
                 currentLandmarks = results.multiFaceLandmarks[0];
                 isFaceDetected = true;
-                if (guidanceFrame) guidanceFrame.classList.add('face-detected');
+                if (detectionBox) detectionBox.classList.add('face-detected');
+                if (detectionText) detectionText.classList.add('face-detected');
+                if (detectionText) detectionText.textContent = '✅ Đã nhận diện khuôn mặt';
             } else {
                 isFaceDetected = false;
-                if (guidanceFrame) guidanceFrame.classList.remove('face-detected');
+                if (detectionBox) detectionBox.classList.remove('face-detected');
+                if (detectionText) detectionText.classList.remove('face-detected');
+                if (detectionText) detectionText.textContent = '📸 Đặt khuôn mặt vào khung';
             }
 
             if (showOverlay && isFaceDetected) {
@@ -1634,7 +1924,7 @@
             const lm = currentLandmarks;
             const scale = size;
 
-            // Face Outline
+            // Face Outline (468 points - simplified)
             const faceIndices = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152,
                 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109
             ];
@@ -1794,7 +2084,7 @@
                 const lBrow = getLM(lm, 70);
                 const rBrow = getLM(lm, 300);
 
-                // Symmetry
+                // ===== FACIAL SYMMETRY =====
                 const eyeDistL = dist(lEye, lEyeOuter);
                 const eyeDistR = dist(rEye, rEyeOuter);
                 const eyeSym = eyeDistL + eyeDistR > 0.001 ?
@@ -1814,13 +2104,13 @@
 
                 const symmetry = clamp((eyeSym * 0.6 + mouthSym * 0.4) * 10, 0, 10);
 
-                // Jawline
+                // ===== JAWLINE =====
                 const jawWidth = dist(lJaw, rJaw);
                 const faceHeight = dist(forehead, chin);
                 const jawRatio = faceHeight > 0.001 ? jawWidth / faceHeight : 0.65;
                 const jawline = clamp((1 - Math.abs(jawRatio - 0.65) * 2.5) * 10, 0, 10);
 
-                // Eyes
+                // ===== EYES =====
                 const eyeWidthL = dist(lEyeOuter, lEyeInner);
                 const eyeWidthR = dist(rEyeOuter, rEyeInner);
                 const eyeHeightL = dist(lEyeTop, lEyeBottom);
@@ -1830,46 +2120,49 @@
                     3.0;
                 const eyes = clamp((1 - Math.abs(eyeSize - 3.0) * 0.6) * 10, 0, 10);
 
-                // Eyebrows
+                // ===== EYEBROWS =====
                 const browDist = dist(lBrow, rBrow);
                 const browRatio = faceHeight > 0.001 ? browDist / faceHeight : 0.3;
                 const eyebrows = clamp((1 - Math.abs(browRatio - 0.3) * 3) * 10, 0, 10);
 
-                // Nose
+                // ===== NOSE =====
                 const noseWidth = dist(getLM(lm, 64), getLM(lm, 294));
                 const noseLength = dist(noseTip, noseBridge);
                 const noseRatio = noseLength > 0.001 ? noseWidth / noseLength : 0.5;
                 const nose = clamp((1 - Math.abs(noseRatio - 0.5) * 2) * 10, 0, 10);
 
-                // Lips
+                // ===== LIPS =====
                 const lipWidth = dist(lMouth, rMouth);
                 const lipHeight = dist(upperLip, lowerLip);
                 const lipRatio = lipWidth > 0.001 ? lipHeight / lipWidth : 0.35;
                 const lips = clamp((1 - Math.abs(lipRatio - 0.35) * 2.5) * 10, 0, 10);
 
-                // Skin (proxy)
+                // ===== SKIN (proxy from symmetry) =====
                 const skin = clamp(symmetry * 0.8 + 0.5, 0, 10);
 
-                // Hair
+                // ===== HAIR =====
                 const hairline = getLM(lm, 10);
                 const hair = clamp((1 - Math.abs(hairline.y - 0.15) * 3) * 10, 0, 10);
 
-                // Harmony
+                // ===== HARMONY =====
                 const harmony = clamp((symmetry + jawline + eyes + nose + lips) / 5 * 1.1, 0, 10);
 
-                // Golden Ratio
+                // ===== GOLDEN RATIO =====
                 const faceWidth = dist(lCheek, rCheek);
                 const gr = faceHeight > 0.001 ? faceWidth / faceHeight : 0.618;
                 const goldenRatio = clamp((1 - Math.abs(gr - 0.618) * 3.5) * 100, 0, 100);
 
-                // Face Shape
+                // ===== FACE SHAPE =====
                 const shape = detectFaceShape(lm);
 
-                // Overall
+                // ===== OVERALL =====
                 const overall = clamp(
                     symmetry * 0.15 + jawline * 0.15 + eyes * 0.12 + eyebrows * 0.08 +
                     nose * 0.1 + lips * 0.1 + harmony * 0.15 + skin * 0.05 + hair * 0.05, 0, 10
                 );
+
+                // ===== HEAD POSE =====
+                const headPose = estimateHeadPose(lm);
 
                 return {
                     symmetry,
@@ -1883,7 +2176,8 @@
                     harmony,
                     goldenRatio,
                     faceShape: shape,
-                    overall
+                    overall,
+                    headPose
                 };
 
             } catch (err) {
@@ -1905,7 +2199,8 @@
                 harmony: 5.0,
                 goldenRatio: 50,
                 faceShape: 'Unknown',
-                overall: 5.0
+                overall: 5.0,
+                headPose: { yaw: 0, pitch: 0, roll: 0 }
             };
         }
 
@@ -1942,7 +2237,58 @@
             }
         }
 
-        // ===== CAPTURE / SCAN =====
+        function estimateHeadPose(lm) {
+            try {
+                // Simplified head pose from nose and eyes
+                const nose = getLM(lm, 1);
+                const lEye = getLM(lm, 33);
+                const rEye = getLM(lm, 263);
+                const chin = getLM(lm, 152);
+
+                // Yaw: asymmetry of eyes relative to nose
+                const eyeCenter = { x: (lEye.x + rEye.x) / 2, y: (lEye.y + rEye.y) / 2 };
+                const yaw = clamp((nose.x - eyeCenter.x) * 100, -30, 30);
+
+                // Pitch: nose to chin ratio
+                const pitch = clamp((nose.y - chin.y) * 50, -20, 20);
+
+                // Roll: eye line angle
+                const roll = clamp(Math.atan2(rEye.y - lEye.y, rEye.x - lEye.x) * 50, -15, 15);
+
+                return { yaw, pitch, roll };
+            } catch (e) {
+                return { yaw: 0, pitch: 0, roll: 0 };
+            }
+        }
+
+        // ===== AI SCAN ANIMATION =====
+        async function runScanAnimation() {
+            const steps = scanSteps.querySelectorAll('.scan-step-item');
+            const totalSteps = steps.length;
+
+            for (let i = 0; i < totalSteps; i++) {
+                steps.forEach(s => s.classList.remove('active', 'done'));
+                for (let j = 0; j <= i; j++) {
+                    if (j < i) steps[j].classList.add('done');
+                    else steps[j].classList.add('active');
+                }
+                const progress = ((i + 1) / totalSteps) * 100;
+                scanProgress.style.width = progress + '%';
+
+                // Random delay between 300-600ms for natural feel
+                await sleep(300 + Math.random() * 300);
+            }
+
+            // All done
+            steps.forEach(s => {
+                s.classList.remove('active');
+                s.classList.add('done');
+            });
+            scanProgress.style.width = '100%';
+            await sleep(300);
+        }
+
+        // ===== PERFORM CAPTURE & ANALYSIS =====
         async function performCapture() {
             if (isScanning) return;
             if (!faceMeshReady) {
@@ -1959,11 +2305,23 @@
             }
 
             isScanning = true;
+            scanComplete = false;
+
+            // Show scan overlay
             scanOverlay.classList.add('active');
             laserScan.classList.add('active');
             resultsSection.classList.remove('active');
 
+            // Reset scan progress
+            scanProgress.style.width = '0%';
+            const steps = scanSteps.querySelectorAll('.scan-step-item');
+            steps.forEach(s => s.classList.remove('active', 'done'));
+
             try {
+                // Run AI scan animation (2-3 seconds)
+                await runScanAnimation();
+
+                // Get frame
                 const blob = await getCurrentFrame();
                 if (!blob) throw new Error('Không có ảnh');
 
@@ -1974,10 +2332,20 @@
                     throw new Error('Không tìm thấy khuôn mặt');
                 }
 
+                // Compute all metrics
                 const metrics = computeMetrics(currentLandmarks);
+                currentResults = metrics;
+
+                // Show results
                 displayResults(metrics);
 
-                await sleep(400);
+                // Generate AI report
+                generateAIReport(metrics);
+
+                scanComplete = true;
+
+                // Hide scan overlay with delay
+                await sleep(500);
                 scanOverlay.classList.remove('active');
                 laserScan.classList.remove('active');
 
@@ -2048,14 +2416,12 @@
             metricKeys.forEach(key => {
                 const val = metrics[key];
                 if (metrics[key] !== undefined) {
-                    animateNumber(metrics[key].el || document.getElementById(key), 0, val, 600);
-                    const bar = metrics[key].bar || document.getElementById(key + 'Bar');
+                    const el = document.getElementById(key);
+                    if (el) animateNumber(el, 0, val, 600);
+                    const bar = document.getElementById(key + 'Bar');
                     if (bar) bar.style.width = (val * 10) + '%';
                 }
             });
-
-            // Feedback
-            generateFeedback(metrics);
 
             // Charts
             drawCharts(metrics);
@@ -2086,52 +2452,6 @@
             requestAnimationFrame(update);
         }
 
-        // ===== GENERATE FEEDBACK =====
-        function generateFeedback(metrics) {
-            const strengths = [];
-            const improves = [];
-            const tips = [];
-
-            const checks = [
-                { key: 'symmetry', good: 'Khuôn mặt cân đối', bad: 'Cải thiện độ đối xứng' },
-                { key: 'jawline', good: 'Đường jawline sắc nét', bad: 'Góc chụp thấp hơn' },
-                { key: 'eyes', good: 'Đôi mắt rõ nét', bad: 'Mở mắt tự nhiên hơn' },
-                { key: 'eyebrows', good: 'Lông mày đẹp', bad: 'Tỉa lông mày gọn gàng' },
-                { key: 'nose', good: 'Cấu trúc mũi hài hòa', bad: 'Góc nghiêng phù hợp' },
-                { key: 'lips', good: 'Môi cân đối', bad: 'Cười nhẹ để tôn môi' },
-                { key: 'skin', good: 'Da sáng mịn', bad: 'Tăng ánh sáng khi chụp' },
-                { key: 'hair', good: 'Tóc hợp phong cách', bad: 'Chọn kiểu tóc phù hợp' },
-            ];
-
-            checks.forEach(c => {
-                if (metrics[c.key] > 7) strengths.push(c.good);
-                else improves.push(c.bad);
-            });
-
-            if (strengths.length < 3) strengths.push('Tổng thể hài hòa');
-            if (improves.length < 3) {
-                improves.push('Cười nhẹ sẽ tăng điểm');
-                improves.push('Góc máy thấp hơn');
-            }
-
-            tips.push(metrics.overall > 7 ? 'Bạn có tiềm năng Looksmax cao!' : 'Tập trung vào chăm sóc da và ánh sáng');
-            tips.push('Thử nhiều góc chụp khác nhau');
-            if (metrics.overall < 6) tips.push('Duy trì chế độ chăm sóc da tốt');
-            if (metrics.jawline < 6) tips.push('Tập gym để cải thiện jawline');
-
-            strengthList.innerHTML = strengths.slice(0, 4).map(s =>
-                `<li><i class="fas fa-check-circle" style="color:var(--success)"></i> ${s}</li>`
-            ).join('');
-
-            improveList.innerHTML = improves.slice(0, 4).map(s =>
-                `<li><i class="fas fa-arrow-right" style="color:var(--warning)"></i> ${s}</li>`
-            ).join('');
-
-            tipList.innerHTML = tips.slice(0, 4).map(s =>
-                `<li><i class="fas fa-lightbulb" style="color:var(--primary)"></i> ${s}</li>`
-            ).join('');
-        }
-
         // ===== DRAW CHARTS =====
         function drawCharts(metrics) {
             drawRadarChart(metrics);
@@ -2139,15 +2459,15 @@
         }
 
         function drawRadarChart(metrics) {
-            const canvas = document.getElementById('radarChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            const size = Math.min(rect.width - 20, 160);
-            canvas.width = size;
-            canvas.height = size;
+            const c = document.getElementById('radarChart');
+            if (!c) return;
+            const ctx2 = c.getContext('2d');
+            const rect = c.parentElement.getBoundingClientRect();
+            const size = Math.min(rect.width - 20, 140);
+            c.width = size;
+            c.height = size;
 
-            const labels = ['Jawline', 'Eyes', 'Nose', 'Lips', 'Symmetry', 'Harmony'];
+            const labels = ['Jaw', 'Eyes', 'Nose', 'Lips', 'Sym', 'Harm'];
             const values = [
                 metrics.jawline / 10,
                 metrics.eyes / 10,
@@ -2159,65 +2479,65 @@
 
             const cx = size / 2;
             const cy = size / 2;
-            const radius = Math.min(cx, cy) * 0.75;
+            const radius = Math.min(cx, cy) * 0.7;
 
-            ctx.clearRect(0, 0, size, size);
+            ctx2.clearRect(0, 0, size, size);
 
             // Grid
             for (let r = 0.25; r <= 1; r += 0.25) {
-                ctx.beginPath();
+                ctx2.beginPath();
                 for (let i = 0; i < labels.length; i++) {
                     const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
                     const x = cx + radius * r * Math.cos(angle);
                     const y = cy + radius * r * Math.sin(angle);
-                    if (i === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
+                    if (i === 0) ctx2.moveTo(x, y);
+                    else ctx2.lineTo(x, y);
                 }
-                ctx.closePath();
-                ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
+                ctx2.closePath();
+                ctx2.strokeStyle = 'rgba(255,255,255,0.04)';
+                ctx2.lineWidth = 0.5;
+                ctx2.stroke();
             }
 
             // Data
-            ctx.beginPath();
+            ctx2.beginPath();
             for (let i = 0; i < labels.length; i++) {
                 const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
                 const val = Math.min(values[i] || 0, 1);
                 const x = cx + radius * val * Math.cos(angle);
                 const y = cy + radius * val * Math.sin(angle);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+                if (i === 0) ctx2.moveTo(x, y);
+                else ctx2.lineTo(x, y);
             }
-            ctx.closePath();
-            ctx.fillStyle = 'rgba(124,108,240,0.2)';
-            ctx.fill();
-            ctx.strokeStyle = 'rgba(124,108,240,0.6)';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
+            ctx2.closePath();
+            ctx2.fillStyle = 'rgba(124,108,240,0.15)';
+            ctx2.fill();
+            ctx2.strokeStyle = 'rgba(124,108,240,0.5)';
+            ctx2.lineWidth = 1.5;
+            ctx2.stroke();
 
             // Labels
-            ctx.fillStyle = 'rgba(255,255,255,0.3)';
-            ctx.font = '7px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+            ctx2.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx2.font = '6px Inter, sans-serif';
+            ctx2.textAlign = 'center';
+            ctx2.textBaseline = 'middle';
             for (let i = 0; i < labels.length; i++) {
                 const angle = (i / labels.length) * Math.PI * 2 - Math.PI / 2;
-                const x = cx + (radius + 14) * Math.cos(angle);
-                const y = cy + (radius + 14) * Math.sin(angle);
-                ctx.fillText(labels[i], x, y);
+                const x = cx + (radius + 12) * Math.cos(angle);
+                const y = cy + (radius + 12) * Math.sin(angle);
+                ctx2.fillText(labels[i], x, y);
             }
         }
 
         function drawBarChart(metrics) {
-            const canvas = document.getElementById('barChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const rect = canvas.parentElement.getBoundingClientRect();
-            const width = Math.min(rect.width - 20, 160);
-            const height = 120;
-            canvas.width = width;
-            canvas.height = height;
+            const c = document.getElementById('barChart');
+            if (!c) return;
+            const ctx2 = c.getContext('2d');
+            const rect = c.parentElement.getBoundingClientRect();
+            const width = Math.min(rect.width - 20, 140);
+            const height = 100;
+            c.width = width;
+            c.height = height;
 
             const labels = ['Jaw', 'Eyes', 'Nose', 'Lips', 'Skin', 'Hair'];
             const values = [
@@ -2230,42 +2550,158 @@
             ];
             const colors = ['#8b7cf7', '#fbbf24', '#4ade80', '#f472b6', '#a188ff', '#f59e0b'];
 
-            const padding = 8;
-            const barWidth = (width - padding * 2) / labels.length - 4;
-            const maxVal = 1;
+            const padding = 6;
+            const barWidth = (width - padding * 2) / labels.length - 3;
+            const chartHeight = height - 18;
 
-            ctx.clearRect(0, 0, width, height);
-
-            const chartHeight = height - 20;
-            const bottom = height - 4;
+            ctx2.clearRect(0, 0, width, height);
 
             labels.forEach((label, i) => {
-                const x = padding + i * (barWidth + 4);
+                const x = padding + i * (barWidth + 3);
                 const val = Math.min(values[i] || 0, 1);
                 const barHeight = val * chartHeight;
 
-                // Bar
-                const grad = ctx.createLinearGradient(x, bottom, x, bottom - barHeight);
+                const grad = ctx2.createLinearGradient(x, height - 4, x, height - 4 - barHeight);
                 grad.addColorStop(0, colors[i]);
-                grad.addColorStop(1, colors[i] + '88');
-                ctx.fillStyle = grad;
-                ctx.beginPath();
-                ctx.roundRect(x, bottom - barHeight, barWidth, barHeight, 2);
-                ctx.fill();
+                grad.addColorStop(1, colors[i] + '66');
+                ctx2.fillStyle = grad;
+                ctx2.beginPath();
+                ctx2.roundRect(x, height - 4 - barHeight, barWidth, barHeight, 2);
+                ctx2.fill();
 
-                // Label
-                ctx.fillStyle = 'rgba(255,255,255,0.3)';
-                ctx.font = '6px Inter, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'top';
-                ctx.fillText(label, x + barWidth / 2, bottom + 2);
+                ctx2.fillStyle = 'rgba(255,255,255,0.2)';
+                ctx2.font = '5px Inter, sans-serif';
+                ctx2.textAlign = 'center';
+                ctx2.textBaseline = 'top';
+                ctx2.fillText(label, x + barWidth / 2, height - 2);
 
-                // Value
-                ctx.fillStyle = 'rgba(255,255,255,0.5)';
-                ctx.font = '6px Inter, sans-serif';
-                ctx.textBaseline = 'bottom';
-                ctx.fillText((values[i] * 10).toFixed(1), x + barWidth / 2, bottom - barHeight - 2);
+                ctx2.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx2.font = '5px Inter, sans-serif';
+                ctx2.textBaseline = 'bottom';
+                ctx2.fillText((val * 10).toFixed(1), x + barWidth / 2, height - 4 - barHeight - 1);
             });
+        }
+
+        // ============================================================
+        // AI REPORT GENERATION
+        // ============================================================
+        function generateAIReport(metrics) {
+            const o = metrics.overall;
+            const shape = metrics.faceShape;
+
+            // ===== OVERVIEW =====
+            const rating = o >= 9 ? 'xuất sắc' : o >= 8 ? 'rất tốt' : o >= 7 ? 'tốt' : o >= 6 ? 'trung bình' : 'cần cải thiện';
+            const gender = o >= 6 ? 'nam tính' : 'trung tính';
+
+            let overview = `🔍 **Khuôn mặt ${shape.toLowerCase()}** với tổng điểm ${o.toFixed(1)}/10 — mức độ ${rating}.\n\n`;
+            overview += `📐 **Tỷ lệ vàng**: ${metrics.goldenRatio.toFixed(0)}% — ${metrics.goldenRatio > 70 ? 'gần đạt chuẩn 👏' : 'có thể cải thiện 📈'}.\n\n`;
+            overview += `🔄 **Độ đối xứng**: ${metrics.symmetry.toFixed(1)}/10 — ${metrics.symmetry > 7 ? 'rất cân đối' : 'cần cân bằng hơn'}.\n\n`;
+            overview += `🎭 **Mức độ ${gender}**: ${o > 6 ? 'có nét nam tính rõ rệt' : 'nét mặt trung tính, dễ thay đổi phong cách'}.`;
+
+            reportOverview.innerHTML = overview.replace(/\n/g, '<br>');
+
+            // ===== STRENGTHS =====
+            let strengths = '';
+            const strongPoints = [];
+            if (metrics.symmetry > 7) strongPoints.push('✅ Khuôn mặt cân đối, tỷ lệ hài hòa');
+            if (metrics.jawline > 7) strongPoints.push('✅ Đường jawline sắc nét, tạo khung mặt đẹp');
+            if (metrics.eyes > 7) strongPoints.push('✅ Đôi mắt to rõ, có chiều sâu');
+            if (metrics.eyebrows > 7) strongPoints.push('✅ Lông mày dày tự nhiên, tạo điểm nhấn');
+            if (metrics.nose > 7) strongPoints.push('✅ Cấu trúc mũi cân đối, hài hòa với khuôn mặt');
+            if (metrics.lips > 7) strongPoints.push('✅ Đôi môi đầy đặn, cân đối');
+            if (metrics.skin > 7) strongPoints.push('✅ Làn da sáng mịn, tạo ấn tượng tốt');
+            if (metrics.hair > 7) strongPoints.push('✅ Tóc dày, dễ tạo kiểu');
+
+            if (strongPoints.length === 0) {
+                strengths = '🔸 Bạn có tiềm năng phát triển tốt. Hãy tập trung vào các mục cải thiện bên dưới.';
+            } else {
+                strengths = strongPoints.slice(0, 4).join('<br>');
+                if (strongPoints.length > 4) strengths += `<br>✅ Và các yếu tố khác đều ở mức khá.`;
+            }
+            reportStrengths.innerHTML = strengths;
+
+            // ===== WEAKNESSES =====
+            let weaknesses = '';
+            const weakPoints = [];
+            if (metrics.symmetry < 6) weakPoints.push('⚠️ Độ đối xứng chưa cao, nên điều chỉnh góc chụp');
+            if (metrics.jawline < 6) weakPoints.push('⚠️ Jawline chưa rõ nét, có thể cải thiện bằng tập gym');
+            if (metrics.eyes < 6) weakPoints.push('⚠️ Có thể mở mắt tự nhiên hơn khi chụp');
+            if (metrics.eyebrows < 6) weakPoints.push('⚠️ Lông mày nên được tỉa gọn gàng hơn');
+            if (metrics.nose < 6) weakPoints.push('⚠️ Góc chụp nghiêng sẽ giúp mũi đẹp hơn');
+            if (metrics.lips < 6) weakPoints.push('⚠️ Cười nhẹ sẽ tạo độ cong cho môi');
+            if (metrics.skin < 6) weakPoints.push('⚠️ Chăm sóc da và ánh sáng sẽ cải thiện đáng kể');
+            if (metrics.hair < 6) weakPoints.push('⚠️ Nên thử kiểu tóc mới phù hợp với khuôn mặt');
+
+            if (weakPoints.length === 0) {
+                weaknesses = '🌟 Không có điểm yếu nổi bật. Bạn đã có một khuôn mặt khá hoàn chỉnh!';
+            } else {
+                weaknesses = weakPoints.slice(0, 4).join('<br>');
+                if (weakPoints.length > 4) weaknesses += `<br>⚠️ Và một số yếu tố khác có thể cải thiện thêm.`;
+            }
+            reportWeaknesses.innerHTML = weaknesses;
+
+            // ===== IMPROVEMENT PLAN =====
+            let plan = '';
+            const planItems = [];
+
+            // Prioritize improvements
+            if (metrics.jawline < 6) planItems.push(
+                '🏋️ **Gym & Giảm mỡ mặt**: Tập thể dục và chế độ ăn giúp jawline rõ nét hơn. (+0.5-1.0 điểm)');
+            if (metrics.skin < 6) planItems.push(
+                '🧴 **Skincare**: Chăm sóc da với serum vitamin C và kem chống nắng. (+0.5 điểm)');
+            if (metrics.hair < 6) planItems.push('💇 **Hairstyle**: Kiểu tóc layer hoặc side part phù hợp với mặt bạn. (+0.5 điểm)');
+            if (metrics.eyebrows < 6) planItems.push('✂️ **Grooming**: Tỉa lông mày gọn gàng để tạo khung cho mắt. (+0.3 điểm)');
+            if (metrics.lips < 6) planItems.push('😊 **Cười tự nhiên**: Nụ cười nhẹ giúp môi đẹp hơn. (+0.3 điểm)');
+
+            if (planItems.length === 0) {
+                plan = '✨ Bạn đã có nền tảng tốt. Hãy duy trì và tập trung vào các chi tiết nhỏ để hoàn hảo hơn!';
+            } else {
+                plan = planItems.slice(0, 5).join('<br>');
+            }
+
+            // Add beard recommendation if applicable
+            if (metrics.jawline < 5 && metrics.faceShape !== 'Oval') {
+                plan +=
+                    `<br>🧔 **Beard**: Nuôi râu ngắn sẽ giúp tạo khung hàm và che đi khuyết điểm. (+0.5 điểm)`;
+            }
+
+            reportPlan.innerHTML = plan;
+
+            // ===== PHOTO TIPS =====
+            let photoTips = '';
+            const tips = [];
+
+            // Best angle
+            if (metrics.headPose) {
+                const yaw = Math.abs(metrics.headPose.yaw || 0);
+                if (yaw < 5) {
+                    tips.push('📸 **Góc chụp đẹp nhất**: Chính diện nhẹ 10-15 độ');
+                } else if (yaw < 15) {
+                    tips.push('📸 **Góc chụp đẹp nhất**: Hơi nghiêng 15 độ, rất hợp với bạn');
+                } else {
+                    tips.push('📸 **Góc chụp đẹp nhất**: Nên chụp chính diện hoặc nghiêng nhẹ');
+                }
+            }
+
+            // Lighting
+            if (metrics.skin < 6) {
+                tips.push('💡 **Ánh sáng**: Nên chụp với ánh sáng tự nhiên, tránh bóng đổ');
+            } else {
+                tips.push('💡 **Ánh sáng**: Ánh sáng ban mai (golden hour) sẽ làm da bạn đẹp hơn');
+            }
+
+            // Expression
+            if (metrics.lips < 6) {
+                tips.push('😊 **Biểu cảm**: Cười nhẹ hoặc biểu cảm tự nhiên sẽ tăng điểm');
+            } else {
+                tips.push('😊 **Biểu cảm**: Gương mặt thư giãn, tự nhiên là tốt nhất');
+            }
+
+            // Background
+            tips.push('🎨 **Phông nền**: Nền tối hoặc trung tính sẽ làm nổi bật gương mặt');
+
+            photoTips = tips.slice(0, 4).join('<br>');
+            reportPhotoTips.innerHTML = photoTips;
         }
 
         // ===== SAVE HISTORY =====
@@ -2277,6 +2713,7 @@
                 date: new Date().toLocaleDateString(),
                 score: metrics.overall.toFixed(1),
                 faceShape: metrics.faceShape,
+                goldenRatio: metrics.goldenRatio.toFixed(0),
                 metrics: {
                     jawline: metrics.jawline.toFixed(1),
                     eyes: metrics.eyes.toFixed(1),
@@ -2287,7 +2724,6 @@
                     hair: metrics.hair.toFixed(1),
                     symmetry: metrics.symmetry.toFixed(1),
                     harmony: metrics.harmony.toFixed(1),
-                    goldenRatio: metrics.goldenRatio.toFixed(0)
                 }
             };
 
@@ -2346,6 +2782,7 @@
             const metrics = {
                 overall: parseFloat(item.score),
                 faceShape: item.faceShape,
+                goldenRatio: parseFloat(item.goldenRatio || 50),
                 jawline: parseFloat(item.metrics?.jawline || 5),
                 eyes: parseFloat(item.metrics?.eyes || 5),
                 eyebrows: parseFloat(item.metrics?.eyebrows || 5),
@@ -2355,11 +2792,11 @@
                 hair: parseFloat(item.metrics?.hair || 5),
                 symmetry: parseFloat(item.metrics?.symmetry || 5),
                 harmony: parseFloat(item.metrics?.harmony || 5),
-                goldenRatio: parseFloat(item.metrics?.goldenRatio || 50)
+                headPose: { yaw: 0, pitch: 0, roll: 0 }
             };
 
-            // Display without animation
             displayResults(metrics);
+            generateAIReport(metrics);
             showToast(`📊 Đã tải kết quả lúc ${item.time}`, 'success');
         };
 
@@ -2427,13 +2864,6 @@
             showToast(`🔄 Đã chuyển sang camera ${cameraFacing === 'user' ? 'trước' : 'sau'}`, 'info');
         }
 
-        function toggleFlash() {
-            flashActive = !flashActive;
-            // Note: Flash control requires track.getCapabilities() which may not be supported
-            flashBtn.classList.toggle('active');
-            showToast(flashActive ? '💡 Đèn flash bật' : '💡 Đèn flash tắt', 'info');
-        }
-
         // ===== LOAD IMAGE =====
         function loadImageFile(file) {
             if (!file) return;
@@ -2443,9 +2873,9 @@
                 imagePreview.style.display = 'block';
                 video.style.display = 'none';
                 stopCamera();
-                showToast('📷 Đã tải ảnh! Nhấn nút chụp để phân tích', 'success');
-                // Auto analyze
-                setTimeout(performCapture, 500);
+                showToast('📷 Đã tải ảnh!', 'success');
+                // Auto analyze after short delay
+                setTimeout(performCapture, 600);
             };
             reader.onerror = () => {
                 showToast('⚠️ Lỗi đọc ảnh', 'error');
@@ -2463,8 +2893,10 @@
             const text =
                 `🔥 Looksmax AI Pro - Điểm của tôi: ${currentResults.overall.toFixed(1)}/10\n` +
                 `📊 Khuôn mặt: ${currentResults.faceShape}\n` +
-                `✨ Tỷ lệ vàng: ${currentResults.goldenRatio.toFixed(0)}%\n\n` +
-                `Thử ngay để biết điểm của bạn!`;
+                `📐 Tỷ lệ vàng: ${currentResults.goldenRatio.toFixed(0)}%\n` +
+                `👤 Jawline: ${currentResults.jawline.toFixed(1)} | Eyes: ${currentResults.eyes.toFixed(1)}\n` +
+                `🔹 Nose: ${currentResults.nose.toFixed(1)} | Lips: ${currentResults.lips.toFixed(1)}\n\n` +
+                `🤖 Phân tích bởi Looksmax AI Pro`;
 
             if (navigator.share) {
                 navigator.share({ title: 'Looksmax AI Pro', text }).catch(() => {});
@@ -2483,29 +2915,39 @@
                 return;
             }
 
-            html2canvas ? html2canvas(section, {
-                backgroundColor: '#0a0c10',
-                scale: 2
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `looksmax_result_${Date.now()}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showToast('✅ Đã xuất PNG!', 'success');
-            }).catch(() => {
-                showToast('⚠️ Lỗi xuất ảnh', 'error');
-            }) : showToast('⚠️ Đang tải thư viện...', 'warning');
+            // Simple screenshot using canvas
+            const canvas2 = document.createElement('canvas');
+            const ctx2 = canvas2.getContext('2d');
+            const rect = section.getBoundingClientRect();
+            canvas2.width = rect.width * 2;
+            canvas2.height = rect.height * 2;
+            ctx2.scale(2, 2);
+
+            // Draw background
+            ctx2.fillStyle = '#0a0c10';
+            ctx2.fillRect(0, 0, rect.width, rect.height);
+
+            // Draw content (simplified)
+            ctx2.fillStyle = '#f0f2f5';
+            ctx2.font = '16px Inter, sans-serif';
+            ctx2.fillText(`Looksmax AI Pro - ${currentResults?.overall.toFixed(1)}/10`, 20, 40);
+
+            const link = document.createElement('a');
+            link.download = `looksmax_result_${Date.now()}.png`;
+            link.href = canvas2.toDataURL('image/png');
+            link.click();
+            showToast('✅ Đã xuất PNG!', 'success');
         }
 
-        // ===== COPY TO CLIPBOARD =====
+        // ===== COPY =====
         function copyResult() {
             if (!currentResults) {
-                showToast('Không có kết quả để sao chép', 'error');
+                showToast('Không có kết quả', 'error');
                 return;
             }
 
             const text =
-                `🔥 Looksmax AI Pro\n` +
+                `🤖 Looksmax AI Pro\n` +
                 `Điểm: ${currentResults.overall.toFixed(1)}/10\n` +
                 `Khuôn mặt: ${currentResults.faceShape}\n` +
                 `Tỷ lệ vàng: ${currentResults.goldenRatio.toFixed(0)}%\n` +
@@ -2523,7 +2965,7 @@
         // ===== EXPORT DATA =====
         function exportData() {
             if (history.length === 0) {
-                showToast('Không có dữ liệu để xuất', 'error');
+                showToast('Không có dữ liệu', 'error');
                 return;
             }
 
@@ -2552,11 +2994,12 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
 
-            // Scroll to top
             document.getElementById('appContent').scrollTop = 0;
         }
 
-        // ===== FRAME LOOP =====
+        // ============================================================
+        // FRAME LOOP
+        // ============================================================
         function frameLoop() {
             if (!isPageVisible) {
                 animationFrameId = requestAnimationFrame(frameLoop);
@@ -2583,8 +3026,7 @@
         // Navigation
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
-                const page = item.dataset.page;
-                navigateTo(page);
+                navigateTo(item.dataset.page);
             });
         });
 
@@ -2600,7 +3042,6 @@
         });
 
         cameraSwitchBtn.addEventListener('click', switchCamera);
-        flashBtn.addEventListener('click', toggleFlash);
 
         // Share
         shareBtn.addEventListener('click', shareResult);
@@ -2613,7 +3054,6 @@
         // Settings
         darkToggle.addEventListener('click', function() {
             this.classList.toggle('active');
-            // Toggle dark mode (simplified)
             document.body.style.background = this.classList.contains('active') ? '#0a0c10' : '#f0f2f5';
             showToast(this.classList.contains('active') ? '🌙 Dark Mode' : '☀️ Light Mode', 'info');
         });
@@ -2671,7 +3111,7 @@
         // INIT
         // ============================================================
 
-        console.log('🚀 Looksmax AI Pro v3.5');
+        console.log('🚀 Looksmax AI Pro v4.0 - Complete Face Analysis');
 
         // Load FaceMesh
         if (window.FaceMesh) {
@@ -2729,7 +3169,8 @@
 
         console.log('✅ All systems ready');
         console.log(`📊 History: ${history.length} entries`);
-        console.log('📸 Capture → Analyze → Results');
+        console.log('📸 Press capture button or Space/Enter to analyze');
+        console.log('🤖 AI will generate detailed report after scanning');
     </script>
 </body>
 </html>
