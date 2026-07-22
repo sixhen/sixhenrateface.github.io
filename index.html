@@ -1,2088 +1,616 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>📚 DocStream - Kho tài liệu</title>
-    <style>
-        /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #141414;
-            --bg-card: #1a1a1a;
-            --bg-card-hover: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --accent: #e50914;
-            --accent-hover: #f40612;
-            --accent-green: #46d369;
-            --border-color: #333333;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-            --radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) var(--bg-secondary);
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 4px;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* ===== HEADER / NAVBAR ===== */
-        .navbar {
-            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 100%);
-            padding: 16px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .navbar-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), #ff6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .logo span {
-            -webkit-text-fill-color: white;
-            font-weight: 300;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .nav-actions button {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: var(--transition);
-            background: transparent;
-            color: var(--text-secondary);
-        }
-
-        .nav-actions button:hover {
-            color: var(--text-primary);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .btn-primary {
-            background: var(--accent) !important;
-            color: white !important;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-hover) !important;
-            transform: scale(1.05);
-        }
-
-        .btn-outline {
-            border: 1px solid var(--border-color) !important;
-        }
-
-        .btn-outline:hover {
-            border-color: var(--text-primary) !important;
-        }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--bg-card);
-            padding: 6px 16px 6px 12px;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
-        }
-
-        .user-badge .avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .user-badge .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
-
-        .user-badge .user-info .name {
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .user-badge .user-info .code {
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 24px;
-        }
-
-        /* ===== AUTH SECTION ===== */
-        .auth-section {
-            max-width: 420px;
-            margin: 60px auto;
-            animation: fadeUp 0.5s ease;
-        }
-
-        .auth-box {
-            background: var(--bg-card);
-            padding: 40px 36px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .auth-box h2 {
-            font-size: 28px;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .auth-box .subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-            font-size: 14px;
-        }
-
-        .auth-box input {
-            width: 100%;
-            padding: 14px 16px;
-            margin-bottom: 14px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .auth-box input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15);
-        }
-
-        .auth-box input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .auth-box .btn-full {
-            width: 100%;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: 700;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .auth-box .auth-switch {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .auth-box .auth-switch a {
-            color: var(--accent);
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .auth-box .auth-switch a:hover {
-            text-decoration: underline;
-        }
-
-        .auth-box .demo-hint {
-            margin-top: 20px;
-            padding: 12px;
-            background: rgba(229, 9, 20, 0.08);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-secondary);
-            border: 1px dashed var(--border-color);
-        }
-
-        .auth-box .demo-hint code {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        /* ===== DASHBOARD ===== */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .section-header h2 {
-            font-size: 26px;
-            font-weight: 700;
-        }
-
-        .section-header h2 i {
-            color: var(--accent);
-            margin-right: 8px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .controls input {
-            padding: 10px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            min-width: 200px;
-            transition: var(--transition);
-        }
-
-        .controls input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .controls input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .controls select {
-            padding: 10px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .controls select:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        /* ===== DOCUMENT CARDS ===== */
-        .doc-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 24px;
-        }
-
-        .doc-card {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            overflow: hidden;
-            transition: var(--transition);
-            cursor: pointer;
-            border: 1px solid transparent;
-            position: relative;
-            animation: fadeUp 0.4s ease;
-        }
-
-        .doc-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--accent);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-        }
-
-        .doc-card .card-thumb {
-            height: 180px;
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 64px;
-            position: relative;
-        }
-
-        .doc-card .card-thumb .badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-free {
-            background: var(--accent-green);
-            color: #000;
-        }
-
-        .badge-paid {
-            background: var(--accent);
-            color: #fff;
-        }
-
-        .badge-owned {
-            background: #2d3748;
-            color: var(--accent-green);
-        }
-
-        .doc-card .card-body {
-            padding: 18px 20px 20px;
-        }
-
-        .doc-card .card-body h3 {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .doc-card .card-body .desc {
-            font-size: 13px;
-            color: var(--text-secondary);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-bottom: 12px;
-            min-height: 36px;
-        }
-
-        .doc-card .card-body .meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-        }
-
-        .doc-card .card-body .price {
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--accent-green);
-        }
-
-        .doc-card .card-body .price.free {
-            color: var(--text-secondary);
-        }
-
-        .doc-card .card-actions {
-            padding: 0 20px 18px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .doc-card .card-actions button {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn-view {
-            background: var(--accent);
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: var(--accent-hover);
-        }
-
-        .btn-buy {
-            background: var(--accent-green);
-            color: #000;
-        }
-
-        .btn-buy:hover {
-            opacity: 0.85;
-            transform: scale(1.02);
-        }
-
-        .btn-owned {
-            background: #2d3748;
-            color: var(--accent-green);
-            cursor: default;
-        }
-
-        .btn-disabled {
-            background: #2d3748;
-            color: var(--text-secondary);
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        /* ===== VIEWER MODAL ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.92);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-box {
-            background: var(--bg-secondary);
-            border-radius: var(--radius);
-            max-width: 95vw;
-            max-height: 95vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-        }
-
-        .modal-header {
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .modal-header h3 {
-            font-size: 18px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-header .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 28px;
-            cursor: pointer;
-            transition: var(--transition);
-            padding: 0 8px;
-        }
-
-        .modal-header .close-btn:hover {
-            color: var(--text-primary);
-            transform: rotate(90deg);
-        }
-
-        .modal-body {
-            flex: 1;
-            overflow: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #0a0a0a;
-            position: relative;
-            min-height: 400px;
-        }
-
-        .canvas-wrapper {
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 400px;
-        }
-
-        #viewerCanvas {
-            max-width: 100%;
-            max-height: 70vh;
-            object-fit: contain;
-            border-radius: 4px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.6);
-            background: white;
-            touch-action: none;
-        }
-
-        .watermark-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            border-radius: 4px;
-        }
-
-        .watermark-text {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.12);
-            font-size: 14px;
-            font-weight: 600;
-            text-shadow: 0 0 20px rgba(0,0,0,0.8);
-            transform: rotate(-20deg);
-            white-space: nowrap;
-            letter-spacing: 1px;
-            user-select: none;
-            pointer-events: none;
-            font-family: monospace;
-        }
-
-        .viewer-controls {
-            padding: 14px 20px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0;
-            flex-wrap: wrap;
-            background: var(--bg-card);
-        }
-
-        .viewer-controls button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .viewer-controls button:hover {
-            background: var(--border-color);
-        }
-
-        .viewer-controls .page-info {
-            color: var(--text-secondary);
-            font-size: 14px;
-            min-width: 80px;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        .viewer-controls .page-info span {
-            color: var(--text-primary);
-        }
-
-        /* ===== HISTORY ===== */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .history-item {
-            background: var(--bg-card);
-            padding: 16px 20px;
-            border-radius: var(--radius);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .history-item:hover {
-            border-color: var(--accent);
-        }
-
-        .history-item .left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .history-item .left .icon {
-            font-size: 28px;
-        }
-
-        .history-item .left .info h4 {
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .history-item .left .info small {
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        .history-item .time {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* ===== ADMIN ===== */
-        .admin-panel {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 900px) {
-            .admin-panel {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .admin-card {
-            background: var(--bg-card);
-            padding: 28px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-        }
-
-        .admin-card h3 {
-            font-size: 18px;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-card input,
-        .admin-card textarea {
-            width: 100%;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .admin-card input:focus,
-        .admin-card textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .admin-card textarea {
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .admin-card input[type="file"] {
-            padding: 10px;
-            background: var(--bg-secondary);
-        }
-
-        .admin-card .btn-upload {
-            padding: 12px 24px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-        }
-
-        .admin-card .btn-upload:hover {
-            background: var(--accent-hover);
-        }
-
-        .admin-doc-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .admin-doc-item:last-child {
-            border-bottom: none;
-        }
-
-        .admin-doc-item .info h4 {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .admin-doc-item .info small {
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        .admin-doc-item .actions button {
-            padding: 4px 12px;
-            border: none;
-            border-radius: 4px;
-            background: var(--accent);
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            transition: var(--transition);
-        }
-
-        .admin-doc-item .actions button:hover {
-            background: var(--accent-hover);
-        }
-
-        .admin-doc-item .actions button.danger {
-            background: #c0392b;
-        }
-
-        .admin-doc-item .actions button.danger:hover {
-            background: #e74c3c;
-        }
-
-        /* ===== PROFILE ===== */
-        .profile-card {
-            background: var(--bg-card);
-            padding: 32px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .profile-card .avatar-large {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0 auto 16px;
-        }
-
-        .profile-card .field {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .profile-card .field .label {
-            color: var(--text-secondary);
-        }
-
-        .profile-card .field .value {
-            font-weight: 500;
-        }
-
-        /* ===== TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            padding: 16px 24px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 500;
-            z-index: 3000;
-            box-shadow: var(--shadow);
-            animation: slideUp 0.3s ease;
-            max-width: 420px;
-            display: none;
-        }
-
-        .toast.show {
-            display: block;
-        }
-
-        .toast.success {
-            border-color: var(--accent-green);
-        }
-
-        .toast.error {
-            border-color: var(--accent);
-        }
-
-        /* ===== TABS ===== */
-        .tab-bar {
-            display: flex;
-            gap: 4px;
-            background: var(--bg-card);
-            padding: 4px;
-            border-radius: var(--radius);
-            margin-bottom: 28px;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-        }
-
-        .tab-bar .tab {
-            padding: 10px 24px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: var(--transition);
-            white-space: nowrap;
-        }
-
-        .tab-bar .tab:hover {
-            color: var(--text-primary);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .tab-bar .tab.active {
-            background: var(--accent);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeUp 0.3s ease;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* ===== EMPTY STATE ===== */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state .icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            font-size: 20px;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 12px 16px;
-            }
-
-            .logo {
-                font-size: 20px;
-            }
-
-            .nav-actions button {
-                padding: 6px 14px;
-                font-size: 12px;
-            }
-
-            .user-badge {
-                padding: 4px 12px 4px 8px;
-            }
-            .user-badge .user-info .name {
-                font-size: 12px;
-            }
-            .user-badge .user-info .code {
-                display: none;
-            }
-
-            .container {
-                padding: 16px;
-            }
-
-            .auth-section {
-                margin: 30px auto;
-            }
-            .auth-box {
-                padding: 28px 20px;
-            }
-
-            .section-header h2 {
-                font-size: 20px;
-            }
-
-            .controls input {
-                min-width: 140px;
-            }
-
-            .doc-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 16px;
-            }
-
-            .doc-card .card-thumb {
-                height: 140px;
-                font-size: 48px;
-            }
-
-            .modal-box {
-                max-width: 100vw;
-                max-height: 100vh;
-                border-radius: 0;
-            }
-
-            .modal-body {
-                padding: 12px;
-                min-height: 300px;
-            }
-
-            #viewerCanvas {
-                max-height: 55vh;
-            }
-
-            .viewer-controls {
-                padding: 10px 12px;
-                gap: 8px;
-            }
-
-            .viewer-controls button {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-
-            .history-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .admin-card {
-                padding: 20px;
-            }
-
-            .toast {
-                left: 16px;
-                right: 16px;
-                bottom: 16px;
-                max-width: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .doc-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-
-            .doc-card .card-body {
-                padding: 12px 14px 14px;
-            }
-            .doc-card .card-body h3 {
-                font-size: 14px;
-            }
-            .doc-card .card-body .desc {
-                font-size: 12px;
-                min-height: 28px;
-            }
-            .doc-card .card-actions {
-                padding: 0 14px 14px;
-            }
-            .doc-card .card-actions button {
-                font-size: 11px;
-                padding: 8px;
-            }
-            .doc-card .card-thumb {
-                height: 110px;
-                font-size: 36px;
-            }
-
-            .controls input {
-                min-width: 100px;
-                font-size: 12px;
-                padding: 8px 12px;
-            }
-            .controls select {
-                font-size: 12px;
-                padding: 8px 12px;
-            }
-
-            .tab-bar .tab {
-                padding: 8px 14px;
-                font-size: 12px;
-            }
-        }
-
-        /* ===== UTILITY ===== */
-        .hidden {
-            display: none !important;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .mt-16 {
-            margin-top: 16px;
-        }
-        .mb-16 {
-            margin-bottom: 16px;
-        }
-        .gap-8 {
-            gap: 8px;
-        }
-        .flex {
-            display: flex;
-        }
-        .flex-center {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>LookMax Archive • Tài Liệu Độc Quyền</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface2: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #e0e0e0;
+      --text2: #a0a0a0;
+      --accent: #d4af37;
+      --accent2: #b8960f;
+      --danger: #c0392b;
+      --success: #27ae60;
+      --shadow: 0 8px 30px rgba(0,0,0,0.6);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 0 16px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background var(--transition);
+    }
+
+    /* Container chính */
+    .app {
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-top: 20px;
+    }
+
+    /* Header + Auth */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      background: var(--surface);
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #d4af37, #f5e7b3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0a0a0a;
+      font-weight: 700;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn:hover {
+      background: #2c2c2c;
+      border-color: #444;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-small {
+      padding: 6px 14px;
+      font-size: 0.8rem;
+    }
+
+    .username-display {
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(212,175,55,0.1);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.9rem;
+    }
+
+    /* Auth form */
+    .auth-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 50px;
+      font-size: 1rem;
+      outline: none;
+      transition: var(--transition);
+      width: 100%;
+    }
+
+    .input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+    }
+
+    /* Tài liệu */
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all var(--transition);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+    }
+
+    .doc-card.owned {
+      border-left: 4px solid var(--accent);
+    }
+
+    .doc-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .doc-meta {
+      font-size: 0.8rem;
+      color: var(--text2);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .price {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Viewer bảo vệ */
+    .viewer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .viewer-container {
+      background: var(--surface);
+      border-radius: var(--radius);
+      max-width: 700px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .viewer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .protected-content {
+      padding: 24px;
+      overflow-y: auto;
+      position: relative;
+      min-height: 300px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-25deg);
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: rgba(212, 175, 55, 0.08);
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    /* Lịch sử */
+    .history-list {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .doc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    canvas {
+      display: none;
+    }
+  </style>
 </head>
 <body>
+<div class="app" id="app"></div>
 
-<!-- ===== NAVBAR ===== -->
-<nav class="navbar">
-    <div class="navbar-content">
-        <div class="logo" onclick="showTab('dashboard')">
-            📚 Doc<span>Stream</span>
-        </div>
-        <div class="nav-actions" id="navActions">
-            <!-- Guest view -->
-            <div id="guestNav">
-                <button class="btn-outline" onclick="showAuth('login')">Đăng nhập</button>
-                <button class="btn-primary" onclick="showAuth('register')">Đăng ký</button>
-            </div>
-            <!-- User view -->
-            <div id="userNav" class="hidden">
-                <div class="user-badge">
-                    <div class="avatar" id="userAvatar">U</div>
-                    <div class="user-info">
-                        <span class="name" id="userNameDisplay">User</span>
-                        <span class="code" id="userCodeDisplay">ID: ---</span>
-                    </div>
-                </div>
-                <button class="btn-outline" onclick="logout()" style="font-size:13px; padding:6px 14px;">Đăng xuất</button>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- ===== MAIN ===== -->
-<main class="container">
-
-    <!-- ===== TABS ===== -->
-    <div class="tab-bar" id="tabBar" style="display:none;">
-        <button class="tab active" data-tab="dashboard" onclick="showTab('dashboard')">📖 Tài liệu</button>
-        <button class="tab" data-tab="mydocs" onclick="showTab('mydocs')">📚 Đã mua</button>
-        <button class="tab" data-tab="history" onclick="showTab('history')">📜 Lịch sử</button>
-        <button class="tab" data-tab="profile" onclick="showTab('profile')">👤 Cá nhân</button>
-        <button class="tab" data-tab="admin" id="adminTab" style="display:none;" onclick="showTab('admin')">⚙️ Admin</button>
-    </div>
-
-    <!-- ===== AUTH SECTION ===== -->
-    <div id="authSection" class="auth-section">
-        <div class="auth-box">
-            <!-- Login -->
-            <div id="loginForm">
-                <h2>🔐 Đăng nhập</h2>
-                <p class="subtitle">Chào mừng bạn quay trở lại</p>
-                <form onsubmit="handleLogin(event)">
-                    <input type="text" id="loginUsername" placeholder="Tên đăng nhập" required>
-                    <input type="password" id="loginPassword" placeholder="Mật khẩu" required>
-                    <button type="submit" class="btn-full btn-primary">Đăng nhập</button>
-                </form>
-                <div class="auth-switch">
-                    Chưa có tài khoản? <a onclick="showAuth('register')">Đăng ký ngay</a>
-                </div>
-                <div class="demo-hint">
-                    🎯 Demo: <code>admin</code> / <code>admin123</code>
-                </div>
-            </div>
-
-            <!-- Register -->
-            <div id="registerForm" style="display:none;">
-                <h2>📝 Đăng ký</h2>
-                <p class="subtitle">Tạo tài khoản mới</p>
-                <form onsubmit="handleRegister(event)">
-                    <input type="text" id="regUsername" placeholder="Tên đăng nhập" required>
-                    <input type="email" id="regEmail" placeholder="Email" required>
-                    <input type="text" id="regFullName" placeholder="Họ và tên (tùy chọn)">
-                    <input type="password" id="regPassword" placeholder="Mật khẩu (tối thiểu 6 ký tự)" required minlength="6">
-                    <button type="submit" class="btn-full btn-primary">Đăng ký</button>
-                </form>
-                <div class="auth-switch">
-                    Đã có tài khoản? <a onclick="showAuth('login')">Đăng nhập</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== DASHBOARD ===== -->
-    <div id="tabDashboard" class="tab-content">
-        <div class="section-header">
-            <h2><i>📖</i> Tài liệu</h2>
-            <div class="controls">
-                <input type="text" id="searchInput" placeholder="🔍 Tìm kiếm..." oninput="renderDocuments()">
-                <select id="filterSelect" onchange="renderDocuments()">
-                    <option value="all">Tất cả</option>
-                    <option value="free">Miễn phí</option>
-                    <option value="paid">Có phí</option>
-                    <option value="owned">Đã mua</option>
-                </select>
-            </div>
-        </div>
-        <div id="docGrid" class="doc-grid"></div>
-    </div>
-
-    <!-- ===== MY DOCS ===== -->
-    <div id="tabMydocs" class="tab-content">
-        <div class="section-header">
-            <h2><i>📚</i> Tài liệu đã mua</h2>
-            <button class="btn-outline" onclick="renderMyDocuments()" style="padding:8px 16px;border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);border-radius:8px;cursor:pointer;">🔄 Làm mới</button>
-        </div>
-        <div id="myDocsGrid" class="doc-grid"></div>
-    </div>
-
-    <!-- ===== HISTORY ===== -->
-    <div id="tabHistory" class="tab-content">
-        <div class="section-header">
-            <h2><i>📜</i> Lịch sử xem</h2>
-        </div>
-        <div id="historyList" class="history-list"></div>
-    </div>
-
-    <!-- ===== PROFILE ===== -->
-    <div id="tabProfile" class="tab-content">
-        <div class="profile-card">
-            <div class="avatar-large" id="profileAvatar">U</div>
-            <div class="field">
-                <span class="label">👤 Tên</span>
-                <span class="value" id="profileName">---</span>
-            </div>
-            <div class="field">
-                <span class="label">📧 Email</span>
-                <span class="value" id="profileEmail">---</span>
-            </div>
-            <div class="field">
-                <span class="label">🔑 Mã tài khoản</span>
-                <span class="value" id="profileCode">---</span>
-            </div>
-            <div class="field">
-                <span class="label">📊 Số lần xem</span>
-                <span class="value" id="profileViews">0</span>
-            </div>
-            <div class="field">
-                <span class="label">📚 Tài liệu đã mua</span>
-                <span class="value" id="profilePurchased">0</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== ADMIN ===== -->
-    <div id="tabAdmin" class="tab-content">
-        <div class="section-header">
-            <h2><i>⚙️</i> Quản trị</h2>
-        </div>
-        <div class="admin-panel">
-            <div class="admin-card">
-                <h3>📤 Tải lên tài liệu</h3>
-                <form onsubmit="handleUpload(event)">
-                    <input type="text" id="docTitle" placeholder="Tiêu đề" required>
-                    <textarea id="docDesc" placeholder="Mô tả (tùy chọn)"></textarea>
-                    <input type="number" id="docPrice" placeholder="Giá (VNĐ)" value="0" min="0">
-                    <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt" required>
-                    <button type="submit" class="btn-upload">🚀 Tải lên</button>
-                </form>
-                <div id="uploadStatus" style="margin-top:12px;font-size:14px;"></div>
-            </div>
-            <div class="admin-card">
-                <h3>📋 Quản lý tài liệu</h3>
-                <div id="adminDocList"></div>
-            </div>
-        </div>
-    </div>
-
-</main>
-
-<!-- ===== VIEWER MODAL ===== -->
-<div class="modal-overlay" id="viewerModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3 id="viewerTitle">📄 Tài liệu</h3>
-            <button class="close-btn" onclick="closeViewer()">✕</button>
-        </div>
-        <div class="modal-body">
-            <div class="canvas-wrapper">
-                <canvas id="viewerCanvas"></canvas>
-                <div class="watermark-layer" id="watermarkLayer"></div>
-            </div>
-        </div>
-        <div class="viewer-controls">
-            <button onclick="viewerZoomOut()">🔍−</button>
-            <button onclick="viewerZoomIn()">🔍+</button>
-            <button onclick="viewerReset()">⟲</button>
-            <span class="page-info">Trang <span id="currentPage">1</span> / <span id="totalPages">1</span></span>
-            <button onclick="viewerPrev()">◀</button>
-            <button onclick="viewerNext()">▶</button>
-        </div>
-    </div>
-</div>
-
-<!-- ===== TOAST ===== -->
-<div class="toast" id="toast"></div>
-
-<!-- ===== JAVASCRIPT ===== -->
 <script>
-    // ===== DATA LAYER =====
-    const DB = {
-        get(key, fallback) {
-            try {
-                const data = localStorage.getItem('docstore_' + key);
-                return data ? JSON.parse(data) : fallback;
-            } catch { return fallback; }
-        },
-        set(key, value) {
-            localStorage.setItem('docstore_' + key, JSON.stringify(value));
-        }
-    };
+  (function() {
+    // ---------- DATABASE ----------
+    const STORAGE_KEY = 'lookmax_db';
+    const SESSION_KEY = 'lookmax_session';
 
-    // ===== STATE =====
-    let currentUser = null;
-    let documents = [];
-    let purchases = [];
-    let history = [];
-    let viewerDoc = null;
-    let viewerZoom = 1;
-    let viewerPage = 0;
-    let viewerPages = [];
-
-    // ===== INIT =====
-    function init() {
-        // Load data
-        documents = DB.get('documents', []);
-        purchases = DB.get('purchases', []);
-        history = DB.get('history', []);
-        const userData = DB.get('user', null);
-        if (userData) {
-            currentUser = userData;
-            showDashboard();
-        } else {
-            showAuth('login');
-        }
-
-        // Add default documents if empty
-        if (documents.length === 0) {
-            documents = [
-                { id: 1, title: 'Hướng dẫn sử dụng DocStream', description: 'Tài liệu hướng dẫn cơ bản cho người mới bắt đầu', filename: 'guide.pdf', price: 0, uploadedBy: 'admin', views: 42 },
-                { id: 2, title: 'JavaScript Từ cơ bản đến nâng cao', description: 'Khóa học JavaScript đầy đủ với ví dụ thực tế', filename: 'js-course.pdf', price: 100000, uploadedBy: 'admin', views: 128 },
-                { id: 3, title: 'Thiết kế UI/UX cho người mới', description: 'Nguyên tắc cơ bản và thực hành thiết kế giao diện', filename: 'ui-ux.pdf', price: 75000, uploadedBy: 'admin', views: 89 },
-                { id: 4, title: 'Python cho Data Science', description: 'Thư viện Pandas, NumPy và Matplotlib', filename: 'python-data.pdf', price: 150000, uploadedBy: 'admin', views: 203 },
-            ];
-            DB.set('documents', documents);
-        }
-
-        // Ensure admin exists
-        const users = DB.get('users', []);
-        if (!users.find(u => u.username === 'admin')) {
-            users.push({
-                id: Date.now() + 1,
-                username: 'admin',
-                email: 'admin@docstream.com',
-                password: 'admin123',
-                fullName: 'Administrator',
-                accountCode: 'ADMIN-001',
-                isAdmin: true
-            });
-            DB.set('users', users);
-        }
-    }
-
-    // ===== AUTH =====
-    function showAuth(type) {
-        document.getElementById('authSection').style.display = 'block';
-        document.getElementById('tabBar').style.display = 'none';
-        document.getElementById('tabDashboard').classList.remove('active');
-        document.getElementById('tabMydocs').classList.remove('active');
-        document.getElementById('tabHistory').classList.remove('active');
-        document.getElementById('tabProfile').classList.remove('active');
-        document.getElementById('tabAdmin').classList.remove('active');
-        document.getElementById('guestNav').style.display = 'flex';
-        document.getElementById('userNav').classList.add('hidden');
-
-        document.getElementById('loginForm').style.display = type === 'login' ? 'block' : 'none';
-        document.getElementById('registerForm').style.display = type === 'register' ? 'block' : 'none';
-    }
-
-    function handleLogin(e) {
-        e.preventDefault();
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPassword').value;
-
-        const users = DB.get('users', []);
-        const user = users.find(u => u.username === username && u.password === password);
-
-        if (!user) {
-            showToast('❌ Tên đăng nhập hoặc mật khẩu không đúng', 'error');
-            return;
-        }
-
-        currentUser = user;
-        DB.set('user', user);
-        showToast('✅ Đăng nhập thành công!', 'success');
-        showDashboard();
-    }
-
-    function handleRegister(e) {
-        e.preventDefault();
-        const username = document.getElementById('regUsername').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
-        const fullName = document.getElementById('regFullName').value.trim() || username;
-        const password = document.getElementById('regPassword').value;
-
-        if (password.length < 6) {
-            showToast('❌ Mật khẩu phải có ít nhất 6 ký tự', 'error');
-            return;
-        }
-
-        const users = DB.get('users', []);
-        if (users.find(u => u.username === username)) {
-            showToast('❌ Tên đăng nhập đã tồn tại', 'error');
-            return;
-        }
-        if (users.find(u => u.email === email)) {
-            showToast('❌ Email đã được sử dụng', 'error');
-            return;
-        }
-
-        const newUser = {
-            id: Date.now(),
-            username,
-            email,
-            password,
-            fullName,
-            accountCode: 'USR-' + String(Date.now()).slice(-6) + Math.random().toString(36).slice(2, 5).toUpperCase(),
-            isAdmin: false
+    function getDB() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        const defaultDB = {
+          users: {},
+          documents: [
+            { id: 'doc1', title: 'Bí Kíp Mewing Chuyên Sâu', price: 199000, content: 'Nội dung độc quyền về kỹ thuật mewing nâng cao...', preview: 'Hướng dẫn đặt lưỡi đúng cách.' },
+            { id: 'doc2', title: 'Skin Care Routine Tối Giản', price: 149000, content: 'Chu trình skincare 3 bước hiệu quả nhất.', preview: 'Sáng - tối khác biệt.' },
+            { id: 'doc3', title: 'Góc Chụp Ảnh Nam Tính', price: 99000, content: 'Bố cục, ánh sáng, biểu cảm.', preview: 'Tạo dáng tự nhiên.' }
+          ]
         };
-
-        users.push(newUser);
-        DB.set('users', users);
-
-        currentUser = newUser;
-        DB.set('user', newUser);
-        showToast('✅ Đăng ký thành công!', 'success');
-        showDashboard();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultDB));
+        return defaultDB;
+      }
+      return JSON.parse(raw);
     }
 
-    function logout() {
+    function saveDB(db) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    function getSession() {
+      return JSON.parse(localStorage.getItem(SESSION_KEY));
+    }
+
+    function setSession(username) {
+      localStorage.setItem(SESSION_KEY, JSON.stringify({ username, loginTime: Date.now() }));
+    }
+
+    function clearSession() {
+      localStorage.removeItem(SESSION_KEY);
+    }
+
+    // Khởi tạo
+    let db = getDB();
+    let currentUser = getSession()?.username || null;
+
+    // ---------- HÀM TIỆN ÍCH ----------
+    function formatMoney(amount) {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+    }
+
+    function getUserData(username) {
+      return db.users[username] || { purchases: {}, history: [] };
+    }
+
+    function updateUserData(username, data) {
+      db.users[username] = data;
+      saveDB(db);
+    }
+
+    function addHistory(username, docId, action) {
+      const user = getUserData(username);
+      user.history.unshift({
+        docId,
+        action, // 'view' hoặc 'buy'
+        timestamp: new Date().toISOString()
+      });
+      if (user.history.length > 30) user.history.pop();
+      updateUserData(username, user);
+    }
+
+    // ---------- BẢO VỆ TÀI LIỆU ----------
+    function generateWatermark(username) {
+      return `${username} • ${new Date().toLocaleDateString('vi-VN')} • LookMax Archive`;
+    }
+
+    // Canvas + watermark động (chống screenshot cơ bản)
+    function renderProtectedContent(doc, username) {
+      const container = document.createElement('div');
+      container.className = 'protected-content';
+      container.style.position = 'relative';
+
+      const watermarkDiv = document.createElement('div');
+      watermarkDiv.className = 'watermark';
+      watermarkDiv.textContent = generateWatermark(username);
+      container.appendChild(watermarkDiv);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.style.position = 'relative';
+      contentDiv.style.zIndex = '2';
+      contentDiv.innerHTML = `<h3>${doc.title}</h3><p style="margin-top:16px; white-space:pre-wrap;">${doc.content}</p>`;
+      container.appendChild(contentDiv);
+
+      // Chặn chuột phải, kéo thả
+      container.addEventListener('contextmenu', e => e.preventDefault());
+      container.addEventListener('dragstart', e => e.preventDefault());
+      
+      // Vô hiệu hóa selection copy (đã có CSS user-select)
+      return container;
+    }
+
+    // ---------- RENDER UI ----------
+    const app = document.getElementById('app');
+
+    function renderAll() {
+      if (!currentUser) {
+        renderLoginRegister();
+      } else {
+        renderMainApp();
+      }
+    }
+
+    function renderLoginRegister() {
+      app.innerHTML = `
+        <div class="header">
+          <span class="logo">LookMax Archive</span>
+        </div>
+        <div class="auth-modal" id="authBox">
+          <h3 style="margin-bottom:8px;">Đăng nhập / Đăng ký</h3>
+          <input type="text" class="input" id="usernameInput" placeholder="Tên tài khoản" autocomplete="off">
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-primary" id="loginBtn">Đăng nhập</button>
+            <button class="btn" id="registerBtn">Tạo tài khoản mới</button>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text2);">Dữ liệu lưu cục bộ trình duyệt.</p>
+        </div>
+      `;
+
+      document.getElementById('loginBtn').addEventListener('click', () => {
+        const username = document.getElementById('usernameInput').value.trim();
+        if (!username) return alert('Nhập tên tài khoản');
+        if (!db.users[username]) return alert('Tài khoản không tồn tại.');
+        currentUser = username;
+        setSession(username);
+        renderAll();
+      });
+
+      document.getElementById('registerBtn').addEventListener('click', () => {
+        const username = document.getElementById('usernameInput').value.trim();
+        if (!username) return alert('Nhập tên tài khoản');
+        if (db.users[username]) return alert('Tài khoản đã tồn tại, hãy đăng nhập.');
+        db.users[username] = { purchases: {}, history: [] };
+        saveDB(db);
+        currentUser = username;
+        setSession(username);
+        renderAll();
+      });
+    }
+
+    function renderMainApp() {
+      const userData = getUserData(currentUser);
+      const docs = db.documents;
+
+      const purchasedDocs = docs.filter(d => userData.purchases[d.id]);
+      const availableDocs = docs.filter(d => !userData.purchases[d.id]);
+
+      app.innerHTML = `
+        <div class="header">
+          <span class="logo">LookMax Archive</span>
+          <div class="user-area">
+            <span class="username-display">👤 ${currentUser}</span>
+            <button class="btn btn-small" id="logoutBtn">Đăng xuất</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title">📚 Tài liệu đã mua</div>
+          <div class="doc-grid" id="purchasedGrid">
+            ${purchasedDocs.length === 0 ? '<p style="color:var(--text2);">Chưa có tài liệu nào.</p>' : ''}
+            ${purchasedDocs.map(d => `
+              <div class="doc-card owned" data-docid="${d.id}">
+                <div class="doc-title">${d.title}</div>
+                <div class="doc-meta"><span>Đã sở hữu</span><span class="price">✓</span></div>
+                <button class="btn btn-small view-doc" data-docid="${d.id}">📖 Xem</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title">🛒 Tài liệu bán</div>
+          <div class="doc-grid" id="availableGrid">
+            ${availableDocs.map(d => `
+              <div class="doc-card" data-docid="${d.id}">
+                <div class="doc-title">${d.title}</div>
+                <div class="doc-meta"><span>${d.preview || ''}</span><span class="price">${formatMoney(d.price)}</span></div>
+                <button class="btn btn-primary btn-small buy-doc" data-docid="${d.id}">💳 Mua ngay</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="section-title">🕒 Lịch sử hoạt động</div>
+          <div class="history-list" id="historyList">
+            ${userData.history.length === 0 ? '<p style="color:var(--text2);">Chưa có hoạt động.</p>' : ''}
+            ${userData.history.slice(0, 10).map(h => {
+              const doc = docs.find(d => d.id === h.docId);
+              return `<div class="history-item"><span>${doc?.title || h.docId}</span><span>${h.action === 'buy' ? '🛒 Mua' : '👁 Xem'} • ${new Date(h.timestamp).toLocaleString('vi-VN')}</span></div>`;
+            }).join('')}
+          </div>
+        </div>
+      `;
+
+      // Event listeners
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        clearSession();
         currentUser = null;
-        DB.set('user', null);
-        document.getElementById('guestNav').style.display = 'flex';
-        document.getElementById('userNav').classList.add('hidden');
-        document.getElementById('authSection').style.display = 'block';
-        document.getElementById('tabBar').style.display = 'none';
-        document.getElementById('tabDashboard').classList.remove('active');
-        document.getElementById('tabMydocs').classList.remove('active');
-        document.getElementById('tabHistory').classList.remove('active');
-        document.getElementById('tabProfile').classList.remove('active');
-        document.getElementById('tabAdmin').classList.remove('active');
-        showAuth('login');
-        showToast('👋 Đã đăng xuất', 'success');
-    }
+        renderAll();
+      });
 
-    // ===== DASHBOARD =====
-    function showDashboard() {
-        document.getElementById('authSection').style.display = 'none';
-        document.getElementById('tabBar').style.display = 'flex';
-        document.getElementById('guestNav').style.display = 'none';
-        document.getElementById('userNav').classList.remove('hidden');
-
-        // Update user info
-        document.getElementById('userAvatar').textContent = (currentUser.fullName || currentUser.username)[0].toUpperCase();
-        document.getElementById('userNameDisplay').textContent = currentUser.fullName || currentUser.username;
-        document.getElementById('userCodeDisplay').textContent = 'ID: ' + currentUser.accountCode;
-
-        // Profile
-        document.getElementById('profileAvatar').textContent = (currentUser.fullName || currentUser.username)[0].toUpperCase();
-        document.getElementById('profileName').textContent = currentUser.fullName || currentUser.username;
-        document.getElementById('profileEmail').textContent = currentUser.email;
-        document.getElementById('profileCode').textContent = currentUser.accountCode;
-
-        // Admin tab
-        if (currentUser.isAdmin) {
-            document.getElementById('adminTab').style.display = 'inline-block';
-        } else {
-            document.getElementById('adminTab').style.display = 'none';
-        }
-
-        showTab('dashboard');
-        renderDocuments();
-        renderMyDocuments();
-        renderHistory();
-        if (currentUser.isAdmin) renderAdminDocs();
-
-        // Update profile stats
-        const userPurchases = purchases.filter(p => p.userId === currentUser.id);
-        const userHistory = history.filter(h => h.userId === currentUser.id);
-        document.getElementById('profilePurchased').textContent = userPurchases.length;
-        document.getElementById('profileViews').textContent = userHistory.length;
-    }
-
-    // ===== TABS =====
-    function showTab(tab) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-bar .tab').forEach(el => el.classList.remove('active'));
-
-        const target = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-        if (target) target.classList.add('active');
-
-        const btn = document.querySelector(`.tab-bar .tab[data-tab="${tab}"]`);
-        if (btn) btn.classList.add('active');
-
-        if (tab === 'dashboard') renderDocuments();
-        if (tab === 'mydocs') renderMyDocuments();
-        if (tab === 'history') renderHistory();
-        if (tab === 'admin' && currentUser?.isAdmin) renderAdminDocs();
-        if (tab === 'profile') updateProfileStats();
-    }
-
-    function updateProfileStats() {
-        const userPurchases = purchases.filter(p => p.userId === currentUser.id);
-        const userHistory = history.filter(h => h.userId === currentUser.id);
-        document.getElementById('profilePurchased').textContent = userPurchases.length;
-        document.getElementById('profileViews').textContent = userHistory.length;
-    }
-
-    // ===== RENDER DOCUMENTS =====
-    function renderDocuments() {
-        const grid = document.getElementById('docGrid');
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        const filter = document.getElementById('filterSelect').value;
-
-        let filtered = documents.filter(d => {
-            const matchSearch = d.title.toLowerCase().includes(search) || d.description.toLowerCase().includes(search);
-            const isOwned = purchases.some(p => p.userId === currentUser.id && p.docId === d.id);
-            const matchFilter = filter === 'all' ||
-                (filter === 'free' && d.price === 0) ||
-                (filter === 'paid' && d.price > 0) ||
-                (filter === 'owned' && isOwned);
-            return matchSearch && matchFilter;
+      // Mua tài liệu
+      document.querySelectorAll('.buy-doc').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const docId = btn.dataset.docid;
+          const doc = db.documents.find(d => d.id === docId);
+          if (!doc) return;
+          if (confirm(`Xác nhận mua "${doc.title}" với giá ${formatMoney(doc.price)}?`)) {
+            const user = getUserData(currentUser);
+            user.purchases[docId] = { purchasedAt: new Date().toISOString() };
+            updateUserData(currentUser, user);
+            addHistory(currentUser, docId, 'buy');
+            renderAll();
+          }
         });
+      });
 
-        if (filtered.length === 0) {
-            grid.innerHTML = `
-                <div class="empty-state" style="grid-column:1/-1">
-                    <div class="icon">📭</div>
-                    <h3>Không tìm thấy tài liệu</h3>
-                    <p>Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
-                </div>
-            `;
-            return;
-        }
-
-        grid.innerHTML = filtered.map(doc => {
-            const isOwned = purchases.some(p => p.userId === currentUser.id && p.docId === doc.id);
-            const viewCount = history.filter(h => h.docId === doc.id).length;
-
-            let badge = '';
-            if (isOwned) badge = '<span class="badge badge-owned">✓ Đã mua</span>';
-            else if (doc.price === 0) badge = '<span class="badge badge-free">Miễn phí</span>';
-            else badge = `<span class="badge badge-paid">${formatPrice(doc.price)} VNĐ</span>`;
-
-            let actions = '';
-            if (isOwned) {
-                actions = `<button class="btn-view" onclick="openViewer(${doc.id})">📖 Xem</button>`;
-            } else if (doc.price === 0) {
-                actions = `<button class="btn-buy" onclick="purchaseDoc(${doc.id})">🛒 Mua miễn phí</button>`;
-            } else {
-                actions = `<button class="btn-buy" onclick="purchaseDoc(${doc.id})">🛒 Mua ${formatPrice(doc.price)} VNĐ</button>`;
-            }
-
-            return `
-                <div class="doc-card">
-                    <div class="card-thumb">
-                        📄
-                        ${badge}
-                    </div>
-                    <div class="card-body">
-                        <h3>${escapeHtml(doc.title)}</h3>
-                        <div class="desc">${escapeHtml(doc.description || 'Không có mô tả')}</div>
-                        <div class="meta">
-                            <span style="font-size:12px;color:var(--text-secondary);">👁 ${viewCount} lượt xem</span>
-                            <span class="price ${doc.price === 0 ? 'free' : ''}">${doc.price === 0 ? 'Miễn phí' : formatPrice(doc.price) + ' VNĐ'}</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        ${actions}
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // ===== RENDER MY DOCUMENTS =====
-    function renderMyDocuments() {
-        const grid = document.getElementById('myDocsGrid');
-        const myDocs = documents.filter(d => purchases.some(p => p.userId === currentUser.id && p.docId === d.id));
-
-        if (myDocs.length === 0) {
-            grid.innerHTML = `
-                <div class="empty-state" style="grid-column:1/-1">
-                    <div class="icon">📚</div>
-                    <h3>Chưa có tài liệu</h3>
-                    <p>Mua tài liệu từ danh sách để đọc nhé!</p>
-                </div>
-            `;
-            return;
-        }
-
-        grid.innerHTML = myDocs.map(doc => {
-            const viewCount = history.filter(h => h.docId === doc.id).length;
-            return `
-                <div class="doc-card" style="border-color:var(--accent-green);">
-                    <div class="card-thumb">
-                        📄
-                        <span class="badge badge-owned">✓ Đã mua</span>
-                    </div>
-                    <div class="card-body">
-                        <h3>${escapeHtml(doc.title)}</h3>
-                        <div class="desc">${escapeHtml(doc.description || 'Không có mô tả')}</div>
-                        <div class="meta">
-                            <span style="font-size:12px;color:var(--text-secondary);">👁 ${viewCount} lượt xem</span>
-                            <span class="price free">${doc.price === 0 ? 'Miễn phí' : formatPrice(doc.price) + ' VNĐ'}</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="btn-view" onclick="openViewer(${doc.id})">📖 Đọc ngay</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // ===== RENDER HISTORY =====
-    function renderHistory() {
-        const list = document.getElementById('historyList');
-        const userHistory = history.filter(h => h.userId === currentUser.id).reverse();
-
-        if (userHistory.length === 0) {
-            list.innerHTML = `
-                <div class="empty-state">
-                    <div class="icon">📜</div>
-                    <h3>Chưa có lịch sử</h3>
-                    <p>Bạn chưa xem tài liệu nào</p>
-                </div>
-            `;
-            return;
-        }
-
-        list.innerHTML = userHistory.map(h => {
-            const doc = documents.find(d => d.id === h.docId);
-            return `
-                <div class="history-item">
-                    <div class="left">
-                        <div class="icon">📄</div>
-                        <div class="info">
-                            <h4>${doc ? escapeHtml(doc.title) : 'Tài liệu đã xóa'}</h4>
-                            <small>👁 Xem lúc: ${formatDate(h.timestamp)}</small>
-                        </div>
-                    </div>
-                    <div class="time">${formatTimeAgo(h.timestamp)}</div>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // ===== PURCHASE =====
-    function purchaseDoc(docId) {
-        const doc = documents.find(d => d.id === docId);
-        if (!doc) return;
-
-        if (purchases.some(p => p.userId === currentUser.id && p.docId === docId)) {
-            showToast('📚 Bạn đã mua tài liệu này rồi', 'success');
-            return;
-        }
-
-        if (doc.price > 0) {
-            if (!confirm(`💰 Bạn có chắc muốn mua "${doc.title}" với giá ${formatPrice(doc.price)} VNĐ?`)) {
-                return;
-            }
-        }
-
-        purchases.push({
-            userId: currentUser.id,
-            docId: docId,
-            purchasedAt: Date.now()
+      // Xem tài liệu
+      document.querySelectorAll('.view-doc').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const docId = btn.dataset.docid;
+          openDocViewer(docId);
         });
-        DB.set('purchases', purchases);
-
-        showToast(`✅ Mua "${doc.title}" thành công!`, 'success');
-        renderDocuments();
-        renderMyDocuments();
-        updateProfileStats();
+      });
     }
 
-    // ===== VIEWER =====
-    function openViewer(docId) {
-        const doc = documents.find(d => d.id === docId);
-        if (!doc) {
-            showToast('❌ Không tìm thấy tài liệu', 'error');
-            return;
+    function openDocViewer(docId) {
+      const doc = db.documents.find(d => d.id === docId);
+      if (!doc) return;
+      const userData = getUserData(currentUser);
+      if (!userData.purchases[docId]) {
+        alert('Bạn chưa mua tài liệu này.');
+        return;
+      }
+
+      addHistory(currentUser, docId, 'view');
+
+      const overlay = document.createElement('div');
+      overlay.className = 'viewer-overlay';
+      const container = document.createElement('div');
+      container.className = 'viewer-container';
+
+      container.innerHTML = `
+        <div class="viewer-header">
+          <strong>${doc.title}</strong>
+          <button class="btn btn-small" id="closeViewer">✕ Đóng</button>
+        </div>
+      `;
+
+      const protectedArea = renderProtectedContent(doc, currentUser);
+      container.appendChild(protectedArea);
+      overlay.appendChild(container);
+      document.body.appendChild(overlay);
+
+      document.getElementById('closeViewer').addEventListener('click', () => {
+        document.body.removeChild(overlay);
+      });
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) document.body.removeChild(overlay);
+      });
+
+      // Chặn PrintScreen + phím tắt (hạn chế)
+      const blockKeys = (e) => {
+        if (e.key === 'PrintScreen' || (e.ctrlKey && e.key === 'p') || (e.ctrlKey && e.key === 's')) {
+          e.preventDefault();
+          return false;
         }
-
-        if (!purchases.some(p => p.userId === currentUser.id && p.docId === docId)) {
-            showToast('❌ Bạn chưa mua tài liệu này', 'error');
-            return;
-        }
-
-        viewerDoc = doc;
-        viewerPage = 0;
-        viewerZoom = 1;
-
-        // Add to history
-        history.push({
-            userId: currentUser.id,
-            docId: docId,
-            timestamp: Date.now()
-        });
-        DB.set('history', history);
-
-        document.getElementById('viewerTitle').textContent = '📄 ' + doc.title;
-        document.getElementById('viewerModal').classList.add('active');
-        document.body.style.overflow = 'hidden';
-
-        // Generate watermark
-        generateWatermark();
-
-        // Render document (demo content)
-        renderDocumentContent(doc);
-
-        // Update stats
-        renderDocuments();
-        renderMyDocuments();
-        renderHistory();
-        updateProfileStats();
+      };
+      document.addEventListener('keydown', blockKeys);
+      overlay.addEventListener('remove', () => document.removeEventListener('keydown', blockKeys), { once: true });
     }
 
-    function generateWatermark() {
-        const layer = document.getElementById('watermarkLayer');
-        layer.innerHTML = '';
-        
-        const userInfo = currentUser;
-        const texts = [
-            `${userInfo.fullName || userInfo.username}`,
-            `${userInfo.accountCode}`,
-            new Date().toLocaleString('vi-VN')
-        ];
-
-        // Random positions for each watermark
-        const positions = [
-            { top: '5%', left: '5%' },
-            { top: '15%', right: '10%' },
-            { bottom: '20%', left: '8%' },
-            { bottom: '8%', right: '5%' },
-            { top: '45%', left: '25%' },
-            { top: '30%', right: '20%' },
-            { bottom: '40%', left: '30%' },
-            { bottom: '25%', right: '25%' },
-        ];
-
-        // Shuffle positions
-        const shuffled = positions.sort(() => Math.random() - 0.5);
-
-        texts.forEach((text, index) => {
-            const pos = shuffled[index % shuffled.length];
-            const div = document.createElement('div');
-            div.className = 'watermark-text';
-            div.textContent = text;
-            
-            // Random rotation between -30 and 30 degrees
-            const rotation = (Math.random() * 60) - 30;
-            div.style.transform = `rotate(${rotation}deg)`;
-            div.style.fontSize = (12 + Math.random() * 8) + 'px';
-            
-            // Random opacity
-            div.style.opacity = 0.08 + Math.random() * 0.12;
-            
-            // Apply position
-            if (pos.top) div.style.top = pos.top;
-            if (pos.left) div.style.left = pos.left;
-            if (pos.right) div.style.right = pos.right;
-            if (pos.bottom) div.style.bottom = pos.bottom;
-            
-            layer.appendChild(div);
-        });
+    // Tự động đăng nhập nếu có session
+    if (currentUser && db.users[currentUser]) {
+      renderMainApp();
+    } else {
+      clearSession();
+      currentUser = null;
+      renderAll();
     }
-
-    function renderDocumentContent(doc) {
-        const canvas = document.getElementById('viewerCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // Generate demo content
-        const width = 800;
-        const height = 1100;
-        canvas.width = width;
-        canvas.height = height;
-
-        // Background
-        const gradient = ctx.createLinearGradient(0, 0, 0, height);
-        gradient.addColorStop(0, '#ffffff');
-        gradient.addColorStop(1, '#f0f2f5');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, width, height);
-
-        // Document title
-        ctx.fillStyle = '#1a1a2e';
-        ctx.font = 'bold 32px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(doc.title, width/2, 100);
-
-        // Divider
-        ctx.strokeStyle = '#e0e0e0';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(50, 130);
-        ctx.lineTo(width - 50, 130);
-        ctx.stroke();
-
-        // Content
-        ctx.fillStyle = '#333';
-        ctx.font = '18px Arial';
-        ctx.textAlign = 'left';
-
-        const content = [
-            'Đây là nội dung demo của tài liệu.',
-            '',
-            '📌 Mô tả: ' + (doc.description || 'Không có mô tả'),
-            '',
-            '📄 Tên file: ' + doc.filename,
-            '💰 Giá: ' + (doc.price === 0 ? 'Miễn phí' : formatPrice(doc.price) + ' VNĐ'),
-            '👤 Người tải lên: ' + (doc.uploadedBy || 'admin'),
-            '',
-            '📖 Nội dung mẫu:',
-            '---------------------------',
-            'Đây là nội dung demo để hiển thị tài liệu.',
-            'Trong thực tế, đây sẽ là nội dung thực của tài liệu bạn đã mua.',
-            'Hệ thống hiển thị tài liệu dưới dạng canvas để bảo vệ nội dung.',
-            'Watermark được thêm vào để bảo vệ bản quyền.',
-            '',
-            '✨ Watermark bao gồm:',
-            '• Tên người dùng: ' + (currentUser.fullName || currentUser.username),
-            '• Mã tài khoản: ' + currentUser.accountCode,
-            '• Thời gian xem: ' + new Date().toLocaleString('vi-VN'),
-            '',
-            '© 2024 DocStream - Bảo vệ bản quyền',
-        ];
-
-        let y = 180;
-        content.forEach(line => {
-            ctx.fillStyle = line.startsWith('📌') || line.startsWith('📄') || line.startsWith('💰') || line.startsWith('👤') ? '#2d3748' : '#444';
-            ctx.font = line.includes('📌') || line.includes('📄') || line.includes('💰') || line.includes('👤') ? 'bold 18px Arial' : '16px Arial';
-            if (line === '---------------------------') {
-                ctx.strokeStyle = '#ddd';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(50, y);
-                ctx.lineTo(width - 50, y);
-                ctx.stroke();
-                y += 20;
-                return;
-            }
-            ctx.fillText(line, 50, y);
-            y += 30;
-        });
-
-        // Page info
-        document.getElementById('currentPage').textContent = 1;
-        document.getElementById('totalPages').textContent = 1;
-
-        applyZoom();
-    }
-
-    function applyZoom() {
-        const canvas = document.getElementById('viewerCanvas');
-        const container = canvas.parentElement;
-        const maxWidth = container.clientWidth - 40;
-        const maxHeight = container.clientHeight - 40;
-
-        const scale = Math.min(1, maxWidth / canvas.width, maxHeight / canvas.height) * viewerZoom;
-        canvas.style.transform = `scale(${scale})`;
-        canvas.style.transformOrigin = 'center center';
-    }
-
-    function viewerZoomIn() {
-        viewerZoom = Math.min(3, viewerZoom + 0.2);
-        applyZoom();
-    }
-
-    function viewerZoomOut() {
-        viewerZoom = Math.max(0.3, viewerZoom - 0.2);
-        applyZoom();
-    }
-
-    function viewerReset() {
-        viewerZoom = 1;
-        applyZoom();
-    }
-
-    function viewerPrev() {
-        // Demo only - single page
-        showToast('📄 Đã ở trang đầu tiên', 'success');
-    }
-
-    function viewerNext() {
-        showToast('📄 Đã ở trang cuối cùng', 'success');
-    }
-
-    function closeViewer() {
-        document.getElementById('viewerModal').classList.remove('active');
-        document.body.style.overflow = '';
-        viewerDoc = null;
-    }
-
-    // ===== ADMIN =====
-    function renderAdminDocs() {
-        const list = document.getElementById('adminDocList');
-        if (!list) return;
-
-        if (documents.length === 0) {
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-secondary);">Chưa có tài liệu</div>';
-            return;
-        }
-
-        list.innerHTML = documents.map(doc => `
-            <div class="admin-doc-item">
-                <div class="info">
-                    <h4>${escapeHtml(doc.title)}</h4>
-                    <small>${escapeHtml(doc.filename)} - ${doc.price === 0 ? 'Miễn phí' : formatPrice(doc.price) + ' VNĐ'} - 👁 ${history.filter(h => h.docId === doc.id).length} lượt</small>
-                </div>
-                <div class="actions">
-                    <button onclick="deleteDoc(${doc.id})" class="danger">🗑</button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function handleUpload(e) {
-        e.preventDefault();
-        if (!currentUser?.isAdmin) {
-            showToast('❌ Bạn không có quyền admin', 'error');
-            return;
-        }
-
-        const title = document.getElementById('docTitle').value.trim();
-        const desc = document.getElementById('docDesc').value.trim();
-        const price = parseInt(document.getElementById('docPrice').value) || 0;
-        const file = document.getElementById('docFile').files[0];
-
-        if (!title || !file) {
-            showToast('❌ Vui lòng nhập tiêu đề và chọn file', 'error');
-            return;
-        }
-
-        const newDoc = {
-            id: Date.now(),
-            title,
-            description: desc,
-            filename: file.name,
-            price,
-            uploadedBy: currentUser.username,
-            views: 0,
-            fileData: null // In real app would store base64, but we'll just store metadata
-        };
-
-        documents.push(newDoc);
-        DB.set('documents', documents);
-
-        document.getElementById('uploadForm').reset();
-        document.getElementById('uploadStatus').innerHTML = '✅ Tải lên thành công!';
-        document.getElementById('uploadStatus').style.color = 'var(--accent-green)';
-
-        renderAdminDocs();
-        renderDocuments();
-        showToast('✅ Tài liệu đã được tải lên!', 'success');
-
-        setTimeout(() => {
-            document.getElementById('uploadStatus').innerHTML = '';
-        }, 3000);
-    }
-
-    function deleteDoc(docId) {
-        if (!currentUser?.isAdmin) return;
-        if (!confirm('Bạn có chắc muốn xóa tài liệu này?')) return;
-
-        documents = documents.filter(d => d.id !== docId);
-        DB.set('documents', documents);
-
-        // Also remove from purchases and history
-        purchases = purchases.filter(p => p.docId !== docId);
-        DB.set('purchases', purchases);
-        history = history.filter(h => h.docId !== docId);
-        DB.set('history', history);
-
-        renderAdminDocs();
-        renderDocuments();
-        renderMyDocuments();
-        renderHistory();
-        showToast('🗑 Đã xóa tài liệu', 'success');
-    }
-
-    // ===== UTILITY =====
-    function formatPrice(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-
-    function formatDate(ts) {
-        return new Date(ts).toLocaleString('vi-VN');
-    }
-
-    function formatTimeAgo(ts) {
-        const diff = Date.now() - ts;
-        const minutes = Math.floor(diff / 60000);
-        if (minutes < 1) return 'Vừa xong';
-        if (minutes < 60) return minutes + ' phút trước';
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return hours + ' giờ trước';
-        const days = Math.floor(hours / 24);
-        if (days < 7) return days + ' ngày trước';
-        return formatDate(ts);
-    }
-
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    function showToast(message, type = 'info') {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.className = 'toast show ' + type;
-        clearTimeout(toast._timer);
-        toast._timer = setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3500);
-    }
-
-    // ===== KEYBOARD =====
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeViewer();
-        if (e.key === 'ArrowLeft' && document.getElementById('viewerModal').classList.contains('active')) viewerPrev();
-        if (e.key === 'ArrowRight' && document.getElementById('viewerModal').classList.contains('active')) viewerNext();
-    });
-
-    // ===== RESIZE =====
-    window.addEventListener('resize', () => {
-        if (document.getElementById('viewerModal').classList.contains('active')) {
-            applyZoom();
-        }
-    });
-
-    // ===== START =====
-    document.addEventListener('DOMContentLoaded', init);
+  })();
 </script>
 </body>
 </html>
