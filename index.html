@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DocSecure - Hệ thống quản lý tài liệu bảo mật cao</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Hệ thống quản lý và phân phối tài liệu an toàn">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="appHeader">
+        <div class="container">
+            <div class="header-inner">
+                <a href="#" class="logo" onclick="app.navigate('home')">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>DocSecure</span>
+                </a>
+                
+                <nav class="nav-main" id="mainNav">
+                    <ul>
+                        <li><a href="#" onclick="app.navigate('home')">Trang chủ</a></li>
+                        <li><a href="#" onclick="app.navigate('documents')">Tài liệu</a></li>
+                        <li><a href="#" onclick="app.navigate('wishlist')"><i class="fas fa-heart"></i> Yêu thích</a></li>
+                        <li class="admin-only" style="display:none;"><a href="admin.html">Quản trị</a></li>
+                    </ul>
+                </nav>
+
+                <div class="header-actions">
+                    <button class="icon-btn search-toggle" onclick="app.toggleSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="cart-icon" onclick="app.navigate('cart')">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </div>
+                    <div class="user-menu" id="userMenu"></div>
+                    <button class="icon-btn menu-toggle" onclick="app.toggleMobileMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-bar" id="searchBar">
+            <div class="container">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm tài liệu..." onkeyup="if(event.key==='Enter') app.search()">
+                <button onclick="app.search()"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification Bell -->
+    <div class="notification-bell" onclick="app.toggleNotifications()">
+        <i class="fas fa-bell"></i>
+        <span class="badge" id="notifBadge">0</span>
+        <div class="notification-dropdown" id="notifDropdown">
+            <div class="notif-header">
+                <span>Thông báo</span>
+                <button onclick="app.clearNotifications()">Đánh dấu đã đọc</button>
+            </div>
+            <div class="notif-list" id="notifList"></div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="mainContent"></main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4><i class="fas fa-shield-alt"></i> DocSecure</h4>
+                    <p>Hệ thống quản lý tài liệu an toàn hàng đầu</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Liên kết</h4>
+                    <ul>
+                        <li><a href="#" onclick="app.navigate('home')">Trang chủ</a></li>
+                        <li><a href="#" onclick="app.navigate('documents')">Tài liệu</a></li>
+                        <li><a href="#" onclick="app.navigate('about')">Giới thiệu</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Hỗ trợ</h4>
+                    <ul>
+                        <li><a href="#" onclick="app.showHelp()">Hướng dẫn</a></li>
+                        <li><a href="#" onclick="app.showHelp()">Báo cáo lỗi</a></li>
+                        <li><a href="#" onclick="app.showHelp()">Liên hệ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DocSecure. All rights reserved. <span style="color:var(--gray-500);font-size:0.8rem;">v2.0</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal" onclick="if(event.target===this) app.closeModal()">
+        <div class="modal-content">
+            <span class="modal-close" onclick="app.closeModal()">&times;</span>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Document Viewer -->
+    <div class="document-viewer" id="documentViewer" onclick="if(event.target===this) app.closeDocument()">
+        <div class="viewer-content">
+            <button class="viewer-close" onclick="app.closeDocument()">&times;</button>
+            <div class="viewer-progress" id="viewerProgress">
+                <div class="progress-bar" id="progressBar" style="width:0%"></div>
+            </div>
+            <div class="viewer-body" id="viewerBody">
+                <div class="watermark-overlay" id="watermarkOverlay"></div>
+                <div id="documentContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

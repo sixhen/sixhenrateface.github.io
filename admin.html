@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocSecure Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="admin-body">
+    <div id="adminApp">
+        <header class="admin-header">
+            <div class="container">
+                <div class="admin-header-inner">
+                    <a href="#" class="logo" onclick="admin.navigate('dashboard')">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>DocSecure Admin</span>
+                    </a>
+                    <div class="admin-header-actions">
+                        <span class="admin-user-badge" id="adminUserBadge">
+                            <i class="fas fa-user-cog"></i>
+                            <span id="adminUsername">Admin</span>
+                        </span>
+                        <button class="icon-btn" onclick="admin.logout()" title="Đăng xuất">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                        <button class="icon-btn menu-toggle" onclick="admin.toggleMobileSidebar()">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-layout">
+            <aside class="admin-sidebar" id="adminSidebar">
+                <nav class="admin-nav">
+                    <ul>
+                        <li><a href="#" data-page="dashboard" onclick="admin.navigate('dashboard')">
+                            <i class="fas fa-chart-pie"></i> Tổng quan
+                        </a></li>
+                        <li><a href="#" data-page="documents" onclick="admin.navigate('documents')">
+                            <i class="fas fa-file-alt"></i> Tài liệu
+                        </a></li>
+                        <li><a href="#" data-page="users" onclick="admin.navigate('users')">
+                            <i class="fas fa-users"></i> Người dùng
+                        </a></li>
+                        <li><a href="#" data-page="permissions" onclick="admin.navigate('permissions')">
+                            <i class="fas fa-lock"></i> Phân quyền
+                        </a></li>
+                        <li><a href="#" data-page="vouchers" onclick="admin.navigate('vouchers')">
+                            <i class="fas fa-ticket-alt"></i> Voucher
+                        </a></li>
+                        <li><a href="#" data-page="orders" onclick="admin.navigate('orders')">
+                            <i class="fas fa-shopping-cart"></i> Đơn hàng
+                        </a></li>
+                        <li><a href="#" data-page="payment" onclick="admin.navigate('payment')">
+                            <i class="fas fa-credit-card"></i> Thanh toán
+                        </a></li>
+                        <li><a href="#" data-page="logs" onclick="admin.navigate('logs')">
+                            <i class="fas fa-history"></i> Nhật ký
+                        </a></li>
+                        <li><a href="#" data-page="backup" onclick="admin.navigate('backup')">
+                            <i class="fas fa-database"></i> Sao lưu
+                        </a></li>
+                        <li><a href="#" data-page="settings" onclick="admin.navigate('settings')">
+                            <i class="fas fa-cog"></i> Cài đặt
+                        </a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="admin-main" id="adminContent"></main>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <div class="modal" id="modal" onclick="if(event.target===this) admin.closeModal()">
+        <div class="modal-content modal-lg">
+            <span class="modal-close" onclick="admin.closeModal()">&times;</span>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
